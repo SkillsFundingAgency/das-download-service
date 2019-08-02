@@ -25,7 +25,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.DownloadService.Inf
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.DownloadService.Api.Types", "SFA.DAS.DownloadService.Api.Types\SFA.DAS.DownloadService.Api.Types.csproj", "{486E41C9-DE04-420C-89DE-5D3414B96030}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.DownloadService.Api.Client", "SFA.DAS.DownloadService.Api.Client\SFA.DAS.DownloadService.Api.Client.csproj", "{CC00D060-EC38-4EBC-A2DB-7EF7A11AE512}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.DownloadService.Api.Client", "SFA.DAS.DownloadService.Api.Client\SFA.DAS.DownloadService.Api.Client.csproj", "{CC00D060-EC38-4EBC-A2DB-7EF7A11AE512}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{EA0E791E-28E0-4124-A63F-B2999FAA525A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.DownloadService.UnitTests", "SFA.DAS.DownloadService.UnitTests\SFA.DAS.DownloadService.UnitTests.csproj", "{9E4090F1-4C1E-4452-B999-F153BC3F5CA5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +69,10 @@ Global
 		{CC00D060-EC38-4EBC-A2DB-7EF7A11AE512}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC00D060-EC38-4EBC-A2DB-7EF7A11AE512}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC00D060-EC38-4EBC-A2DB-7EF7A11AE512}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E4090F1-4C1E-4452-B999-F153BC3F5CA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E4090F1-4C1E-4452-B999-F153BC3F5CA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E4090F1-4C1E-4452-B999-F153BC3F5CA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E4090F1-4C1E-4452-B999-F153BC3F5CA5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -78,6 +86,7 @@ Global
 		{3440B884-43E3-4E07-8999-33DE056D6B51} = {0FA8A37D-AB8B-4771-9B4F-0916E8DEB01D}
 		{486E41C9-DE04-420C-89DE-5D3414B96030} = {B9A36BC6-05ED-4EBF-8720-C358A5EDD3BC}
 		{CC00D060-EC38-4EBC-A2DB-7EF7A11AE512} = {86EFCADE-1642-4DB1-8D9C-D221B2F2D6BE}
+		{9E4090F1-4C1E-4452-B999-F153BC3F5CA5} = {EA0E791E-28E0-4124-A63F-B2999FAA525A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BF275729-EFB0-4987-8742-025B969AA13F}
