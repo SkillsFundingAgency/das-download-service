@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.DownloadService.Api.Client\SFA.DAS.DownloadService.Api.Client.csproj" />
+    <ProjectReference Include="..\SFA.DAS.Roatp.ApplicationServices\SFA.DAS.Roatp.ApplicationServices.csproj" />
   </ItemGroup>
 
 </Project>

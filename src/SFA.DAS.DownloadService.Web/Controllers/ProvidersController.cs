@@ -18,11 +18,11 @@ namespace SFA.DAS.DownloadService.Web.Controllers
     [ApiController]
     public class ProvidersController : Controller
     {
-        private readonly IRoatpServiceApiClient _apiClient;
+        private readonly IRoatpApiClient _apiClient;
         private readonly ILogger<ProvidersController> _log;
         private readonly IRoatpMapper _mapper;
         private readonly IHostingEnvironment _hostingEnv = null;
-        public ProvidersController(ILogger<ProvidersController> log, IRoatpServiceApiClient apiClient, IRoatpMapper mapper, IHostingEnvironment hostingEnv) //IGetProviders providerRepo,
+        public ProvidersController(ILogger<ProvidersController> log, IRoatpApiClient apiClient, IRoatpMapper mapper, IHostingEnvironment hostingEnv) //IGetProviders providerRepo,
         {
             _log = log;
             _apiClient = apiClient;

@@ -22,7 +22,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
 
         private ProvidersController _controller;
         private Moq.Mock<ILogger<ProvidersController>> _mockLogger;
-        private Mock<IRoatpServiceApiClient> _mockClient;
+        private Mock<IRoatpApiClient> _mockClient;
         private Mock<IRoatpMapper> _mockMapper;
         private Mock<IHostingEnvironment> _mockEnv;
 
@@ -37,7 +37,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
         {
             _ukprn = 12345678;
             _mockLogger = new Mock<ILogger<ProvidersController>>();
-            _mockClient = new Mock<IRoatpServiceApiClient>();
+            _mockClient = new Mock<IRoatpApiClient>();
             _mockMapper = new Mock<IRoatpMapper>();
             _mockEnv = new Mock<IHostingEnvironment>();
             _mockClient.Setup(z => z.GetRoatpSummaryByUkprn(It.IsAny<int>())).ReturnsAsync((RoatpResult)null);

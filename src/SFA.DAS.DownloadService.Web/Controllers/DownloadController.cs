@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.DownloadService.Web.Models;
+using SFA.DAS.Roatp.Api.Client;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
 using SFA.DAS.Roatp.ApplicationServices.Interfaces;
 
@@ -13,10 +12,10 @@ namespace SFA.DAS.DownloadService.Web.Controllers
 {
     public class DownloadController : Controller
     {
-        private readonly IRoatpServiceApiClient _roatpApiClient;
+        private readonly IRoatpApiClient _roatpApiClient;
         private readonly IRoatpMapper _mapper;
 
-        public DownloadController(IRoatpServiceApiClient roatpApiClient, IRoatpMapper mapper)
+        public DownloadController(IRoatpApiClient roatpApiClient, IRoatpMapper mapper)
         {
             _roatpApiClient = roatpApiClient;
             _mapper = mapper;

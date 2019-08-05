@@ -25,7 +25,7 @@ namespace SFA.DAS.DownloadService.Web
     {
         private readonly IHostingEnvironment _env;
         private readonly ILogger<Startup> _logger;
-        private const string ServiceName = "SFA.DAS.RoatpRegister";
+        private const string ServiceName = "SFA.DAS.DownloadService";
         private const string Version = "1.0";
         public IConfiguration Configuration { get; }
         public IWebConfiguration ApplicationConfiguration { get; set; }
@@ -59,14 +59,14 @@ namespace SFA.DAS.DownloadService.Web
 
 
             // MFCMFC See AdminServices for this detail
-            //        ApplicationConfiguration = new WebConfiguration
-            //        {
-            //            RoatpApiClientBaseUrl = "",
-            //            RoatpApiAuthentication = new ClientApiAuthentication()
+            ApplicationConfiguration = new WebConfiguration
+            {
+                RoatpApiClientBaseUrl = "",
+                RoatpApiAuthentication = new ClientApiAuthentication()
 
-            //};
+            };
 
-            //ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+            ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -107,9 +107,9 @@ namespace SFA.DAS.DownloadService.Web
                     _.WithDefaultConventions();
                 });
                 config.For<IRoatpMapper>().Use<RoatpMapper>();
-                config.For<IRoatpServiceApiClient>().Use<RoatpServiceApiClient>();
-
-                
+                config.For<IRoatpApiClient>().Use<RoatpApiClient>();
+                config.For<ITokenService>().Use<TokenService>();
+                config.For<IWebConfiguration>().Use(ApplicationConfiguration);
                 //MFCMFC not sure if this will be used or not.  LEave in till APR-526 (wiring in API calls) is done
                 //config.For<ILog>().Use(x => new NLogLogger(
                 //    x.ParentType,
@@ -120,12 +120,12 @@ namespace SFA.DAS.DownloadService.Web
                 //config.For<IApplyTokenService>().Use<ApplyTokenService>();
                 //config.For<IWebConfiguration>().Use(ApplicationConfiguration);
                 //config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
-             
+
                 //config.For<IApiClient>().Use<ApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
 
-            
+
                 //config.For<IValidationService>().Use<ValidationService>();
-             
+
                 //config.For<ISpecialCharacterCleanserService>().Use<SpecialCharacterCleanserService>();
 
 
