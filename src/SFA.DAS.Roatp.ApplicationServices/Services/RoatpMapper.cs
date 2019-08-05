@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.Roatp.ApplicationServices.Interfaces;
-using SFA.DAS.Roatp.ApplicationServices.Models;
-
 namespace SFA.DAS.Roatp.ApplicationServices.Services
 {
     public class RoatpMapper : IRoatpMapper
@@ -12,19 +10,20 @@ namespace SFA.DAS.Roatp.ApplicationServices.Services
         public Provider Map(RoatpResult roatpResult)
         {
 
-            // MFCMFC lossy?
+            if (!long.TryParse(roatpResult?.Ukprn, out long ukprn))
+            {
+                return null;
+            }
+
             return new Provider
             {
-                Ukprn = Convert.ToInt64(roatpResult.Ukprn),
+                Ukprn = ukprn,
                 Name = roatpResult.OrganisationName,
-                ProviderType = MapProviderType(roatpResult.ProviderType),
-                NewOrganisationWithoutFinancialTrackRecord = !string.IsNullOrEmpty(roatpResult.NewOrganisationWithoutFinancialTrackRecord) & roatpResult.NewOrganisationWithoutFinancialTrackRecord.ToUpper() == "Y",
+                ProviderType = MapProviderType(roatpResult?.ProviderType),
+                NewOrganisationWithoutFinancialTrackRecord = !string.IsNullOrEmpty(roatpResult.NewOrganisationWithoutFinancialTrackRecord) && roatpResult.NewOrganisationWithoutFinancialTrackRecord.ToUpper() == "Y",
                 ParentCompanyGuarantee = roatpResult.ParentCompanyGuarantee != null && roatpResult.ParentCompanyGuarantee.ToUpper() == "Y",
-
-                //ContractedForNonLeviedEmployers = roatpResult.ContractedToDeliverToNonLeviedEmployers != null && roatpResult.ContractedToDeliverToNonLeviedEmployers.ToUpper() == "Y",
-                StartDate = roatpResult.StartDate,
-                ApplicationDeterminedDate = roatpResult.ApplicationDeterminedDate,
-                //EndDate = roatpResult.EndDate,
+                StartDate = roatpResult?.StartDate,
+                ApplicationDeterminedDate = roatpResult?.ApplicationDeterminedDate,
                 CurrentlyNotStartingNewApprentices = roatpResult.ProviderNotCurrentlyStartingNewApprentices != null,
 
             };
@@ -33,15 +32,15 @@ namespace SFA.DAS.Roatp.ApplicationServices.Services
         private static ProviderType MapProviderType(string providerType)
         {
             ProviderType returnedProviderType;
-            switch (providerType)
+            switch (providerType?.ToLower())
             {
-                case "Main provider":
+                case "main provider":
                     returnedProviderType = ProviderType.MainProvider;
                     break;
-                case "Employer provider":
+                case "employer provider":
                     returnedProviderType = ProviderType.EmployerProvider;
                     break;
-                case "Supporting provider":
+                case "supporting provider":
                     returnedProviderType = ProviderType.SupportingProvider;
                     break;
                 default:
@@ -51,11 +50,6 @@ namespace SFA.DAS.Roatp.ApplicationServices.Services
             return returnedProviderType;
         }
 
-        private static string FormatDate(DateTime? date)
-        {
-            return date?.ToString("dd/MM/yyyy") ?? string.Empty;
-        }
-
         public List<Provider> Map(List<RoatpResult> roatpResults)
         {
             return roatpResults.Select(Map).ToList();
@@ -63,18 +57,23 @@ namespace SFA.DAS.Roatp.ApplicationServices.Services
 
         public CsvProvider MapCsv(RoatpResult result)
         {
+            if (!long.TryParse(result?.Ukprn, out long ukprn))
+            {
+                return null;
+            }
+
             var csvProvider = new CsvProvider
             {
-                Ukprn = Convert.ToInt64(result.Ukprn),
+                Ukprn = ukprn,
                 Name = result.OrganisationName,
-                ProviderType = result.ProviderType,
-                NewOrganisationWithoutFinancialTrackRecord = !string.IsNullOrEmpty(result.NewOrganisationWithoutFinancialTrackRecord) & result.NewOrganisationWithoutFinancialTrackRecord.ToUpper() == "Y",
+                ProviderType = result?.ProviderType,
+                NewOrganisationWithoutFinancialTrackRecord = !string.IsNullOrEmpty(result.NewOrganisationWithoutFinancialTrackRecord) && result.NewOrganisationWithoutFinancialTrackRecord.ToUpper() == "Y",
                 ParentCompanyGuarantee = result.ParentCompanyGuarantee != null && result.ParentCompanyGuarantee.ToUpper() == "Y",
 
 
-                StartDate = FormatDate(result.StartDate),
+                StartDate = FormatDate(result?.StartDate),
                 ProviderNotCurrentlyStartingNewApprentices = result.ProviderNotCurrentlyStartingNewApprentices != null ? "TRUE" : string.Empty,
-                ApplicationDeterminedDate = FormatDate(result.ApplicationDeterminedDate)
+                ApplicationDeterminedDate = FormatDate(result?.ApplicationDeterminedDate)
             };
 
             return csvProvider;
@@ -83,6 +82,11 @@ namespace SFA.DAS.Roatp.ApplicationServices.Services
         public List<CsvProvider> MapCsv(List<RoatpResult> roatpResults)
         {
             return roatpResults.Select(MapCsv).ToList();
+        }
+
+        private static string FormatDate(DateTime? date)
+        {
+            return date?.ToString("dd/MM/yyyy") ?? string.Empty;
         }
     }
 }

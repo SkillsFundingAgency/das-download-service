@@ -20,12 +20,9 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         {
             _roatpApiClient = roatpApiClient;
             _mapper = mapper;
-            //_roatpApiClient = new RoatpServiceApiClient();
-            //_mapper = new RoatpMapper();
         }
 
         [ResponseCache(Duration = 600)]
-        // GET: Home
         public ActionResult Index()
         {
 

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SFA.DAS.Roatp.ApplicationServices.Models;
+using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.Roatp.ApplicationServices.Utility;
 
 namespace SFA.DAS.Roatp.ApplicationServices.Services

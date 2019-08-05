@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Roatp.ApplicationServices.Models
+﻿namespace SFA.DAS.DownloadService.Api.Types.Roatp
 {
     public class CsvProvider
     {

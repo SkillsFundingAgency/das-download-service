@@ -36,7 +36,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
 
             builder.AppendLine("User-agent: *");
 
-            // MFCMFC Need to replicate this in azure
+            // MFCMFC Need to replicate this in config???
             //if (!bool.Parse(CloudConfigurationManager.GetSetting("FeatureToggle.RobotsAllowFeature")??"false"))
             //{
             builder.AppendLine("Disallow: /");
