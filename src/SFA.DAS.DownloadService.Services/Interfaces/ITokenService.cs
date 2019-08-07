@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Roatp.ApplicationServices.Interfaces
+﻿namespace SFA.DAS.DownloadService.Services.Interfaces
 {
     public interface ITokenService
     {

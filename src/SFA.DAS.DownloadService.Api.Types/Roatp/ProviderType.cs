@@ -4,6 +4,7 @@ namespace SFA.DAS.DownloadService.Api.Types.Roatp
 {
     public enum ProviderType
     {
+        [Description("Unknown")]
         Unknown = 0,
         [Description("Main provider")]
         MainProvider = 1,

@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
+using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
-using SFA.DAS.Roatp.ApplicationServices.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Examples;
 

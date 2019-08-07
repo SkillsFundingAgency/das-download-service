@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using SFA.DAS.DownloadService.Services.Interfaces;
+using SFA.DAS.DownloadService.Services.Services;
 using SFA.DAS.Roatp.Api.Client;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
-using SFA.DAS.Roatp.ApplicationServices.Interfaces;
-using SFA.DAS.Roatp.ApplicationServices.Services;
 using StructureMap;
 
 namespace SFA.DAS.DownloadService.Infrastructure.DependencyResolution

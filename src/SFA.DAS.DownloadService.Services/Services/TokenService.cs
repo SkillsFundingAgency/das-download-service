@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Settings;
-using SFA.DAS.Roatp.ApplicationServices.Interfaces;
 
-namespace SFA.DAS.Roatp.ApplicationServices.Services
+namespace SFA.DAS.DownloadService.Services.Services
 {
     public class TokenService : ITokenService
     {

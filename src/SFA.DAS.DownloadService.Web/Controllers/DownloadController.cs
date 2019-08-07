@@ -5,10 +5,10 @@ using System.Linq;
 using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
+using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Web.Models;
 using SFA.DAS.Roatp.Api.Client;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
-using SFA.DAS.Roatp.ApplicationServices.Interfaces;
 
 namespace SFA.DAS.DownloadService.Web.Controllers
 {

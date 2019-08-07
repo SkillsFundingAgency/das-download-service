@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;
 using NUnit.Framework;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
-using SFA.DAS.Roatp.ApplicationServices.Services;
+using SFA.DAS.DownloadService.Services.Services;
 
 namespace SFA.DAS.DownloadService.UnitTests.Mappers
 {

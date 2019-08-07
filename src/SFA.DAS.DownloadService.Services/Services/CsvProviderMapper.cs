@@ -1,8 +1,8 @@
 ﻿using System;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
-using SFA.DAS.Roatp.ApplicationServices.Utility;
+using SFA.DAS.DownloadService.Services.Utility;
 
-namespace SFA.DAS.Roatp.ApplicationServices.Services
+namespace SFA.DAS.DownloadService.Services.Services
 {
     public static class CsvProviderMapper
     {
