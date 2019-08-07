@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using SFA.DAS.DownloadService.Settings;
 using SFA.DAS.Roatp.ApplicationServices.Interfaces;
-using SFA.DAS.Roatp.ApplicationServices.Shared;
 
 namespace SFA.DAS.Roatp.ApplicationServices.Services
 {
@@ -25,10 +20,10 @@ namespace SFA.DAS.Roatp.ApplicationServices.Services
             if (_hostingEnvironment.IsDevelopment())
                 return string.Empty;
 
-            var tenantId = _configuration.RoatpApiAuthentication.TenantId;// 
-            var clientId = _configuration.RoatpApiAuthentication.ClientId;// 
-            var appKey = _configuration.RoatpApiAuthentication.ClientSecret;// 
-            var resourceId = _configuration.RoatpApiAuthentication.ResourceId;// 
+            var tenantId = _configuration.RoatpApiAuthentication.TenantId;
+            var clientId = _configuration.RoatpApiAuthentication.ClientId; 
+            var appKey = _configuration.RoatpApiAuthentication.ClientSecret; 
+            var resourceId = _configuration.RoatpApiAuthentication.ResourceId; 
 
             var authority = $"https://login.microsoftonline.com/{tenantId}";
             var clientCredential = new ClientCredential(clientId, appKey);

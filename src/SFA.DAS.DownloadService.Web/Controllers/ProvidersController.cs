@@ -30,10 +30,10 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             _hostingEnv = hostingEnv;
         }
 
-        ///// <summary>
-        ///// Check if provider exists
-        ///// </summary>
-        ///// <param name="ukprn">UKPRN</param>
+        /////// <summary>
+        /////// Check if provider exists
+        /////// </summary>
+        /////// <param name="ukprn">UKPRN</param>
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, "Invalid UKPRN (should be 8 numbers long)")]
@@ -68,7 +68,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             }
 
             var roatpResult = await _apiClient.GetRoatpSummaryByUkprn(ukprn);
-            var provider = _mapper.Map(roatpResult);
+            var provider = _mapper.Map(roatpResult.FirstOrDefault());
 
             if (provider == null || !provider.IsDateValid(DateTime.UtcNow))
             {

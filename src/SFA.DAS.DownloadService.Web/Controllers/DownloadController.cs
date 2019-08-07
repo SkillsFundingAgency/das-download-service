@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Web.Models;
 using SFA.DAS.Roatp.Api.Client;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
@@ -36,7 +38,9 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         public ActionResult Csv()
         {
 
-            var roatpResults = _roatpApiClient.GetRoatpSummary().Result.Where(x => x.IsDateValid(DateTime.Now));
+            var roatpResults = _roatpApiClient.GetRoatpSummary().Result;
+                            
+            //.Where(x => x.IsDateValid(DateTime.Now));
             var providers = _mapper.MapCsv(roatpResults.ToList());
             var date = _roatpApiClient.GetLatestNonOnboardingOrganisationChangeDate().Result;
             if (date == null)

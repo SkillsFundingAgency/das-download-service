@@ -8,8 +8,10 @@ namespace SFA.DAS.Roatp.Api.Client.Interfaces
 {
     public interface IRoatpApiClient
     {
-        Task<List<RoatpResult>> GetRoatpSummary();
-        Task<RoatpResult> GetRoatpSummaryByUkprn(int ukprn);
+        //Task<List<RoatpResult>> GetRoatpSummary();
+        Task<IEnumerable<RoatpResult>> GetRoatpSummary();
+        //Task<RoatpResult> GetRoatpSummaryByUkprn(int ukprn);
+        Task<IEnumerable<RoatpResult>> GetRoatpSummaryByUkprn(int ukprn);
         Task<DateTime?> GetLatestNonOnboardingOrganisationChangeDate();
         ///// <summary>
         ///// Get a provider details
