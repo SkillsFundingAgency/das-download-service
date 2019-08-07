@@ -5,7 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SFA.DAS.DownloadService.Api.Client\SFA.DAS.DownloadService.Api.Client.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.Roatp.ApplicationServices\SFA.DAS.Roatp.ApplicationServices.csproj" />
   </ItemGroup>
 

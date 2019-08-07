@@ -54,11 +54,6 @@ namespace SFA.DAS.DownloadService.Web
                 c.OperationFilter<ExamplesOperationFilter>();     
             });
 
-
-
-
-
-            // MFCMFC See AdminServices for this detail
             ApplicationConfiguration = new WebConfiguration
             {
                 RoatpApiClientBaseUrl = "",
@@ -76,22 +71,9 @@ namespace SFA.DAS.DownloadService.Web
             });
 
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
-
-            //if (!_env.IsDevelopment())
-            //{
-            //    services.AddDistributedRedisCache(options =>
-            //    {
-            //        options.Configuration = ApplicationConfiguration.SessionRedisConnectionString;
-            //    });
-            //}
-
-            //services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.Staff.AntiForgery", HttpOnly = false });
-
-            //MFCMFC this looks redundant MappingStartup.AddMappings();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             var configResult = ConfigureIoC(services);
-
 
             return configResult;
         }
@@ -110,28 +92,6 @@ namespace SFA.DAS.DownloadService.Web
                 config.For<IRoatpApiClient>().Use<RoatpApiClient>();
                 config.For<ITokenService>().Use<TokenService>();
                 config.For<IWebConfiguration>().Use(ApplicationConfiguration);
-                //MFCMFC not sure if this will be used or not.  LEave in till APR-526 (wiring in API calls) is done
-                //config.For<ILog>().Use(x => new NLogLogger(
-                //    x.ParentType,
-                //    x.GetInstance<IRequestContext>(),
-                //    GetProperties())).AlwaysUnique();
-
-
-                //config.For<IApplyTokenService>().Use<ApplyTokenService>();
-                //config.For<IWebConfiguration>().Use(ApplicationConfiguration);
-                //config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
-
-                //config.For<IApiClient>().Use<ApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
-
-
-                //config.For<IValidationService>().Use<ValidationService>();
-
-                //config.For<ISpecialCharacterCleanserService>().Use<SpecialCharacterCleanserService>();
-
-
-                //config.For<CacheService>().Use<CacheService>();
-                //config.For<ISessionService>().Use<SessionService>().Ctor<string>("environment")
-                //    .Is(Configuration["EnvironmentName"]);
                 config.Populate(services);
             });
             return container.GetInstance<IServiceProvider>();
@@ -150,17 +110,9 @@ namespace SFA.DAS.DownloadService.Web
                 app.UseHsts();
             }
 
-            //if (UseSandbox)
-            //{
-            //    app.UseMiddleware<SandboxHeadersMiddleware>();
-            //}
-
-            //app.UseMiddleware<GetHeadersMiddleware>();
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-            // app.UseAuthentication();
             app.UseSession();
             app.UseRequestLocalization();
 

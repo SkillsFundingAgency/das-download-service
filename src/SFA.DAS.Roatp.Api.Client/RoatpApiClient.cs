@@ -5,17 +5,17 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Settings;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
 using SFA.DAS.Roatp.ApplicationServices.Interfaces;
 using Newtonsoft.Json;
 using System.Net;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 
 namespace SFA.DAS.Roatp.Api.Client
 {
-    public class RoatpApiClient : IRoatpApiClient //ApiClientBase,
+    public class RoatpApiClient : IRoatpApiClient 
     {
 
         private readonly HttpClient _client;
