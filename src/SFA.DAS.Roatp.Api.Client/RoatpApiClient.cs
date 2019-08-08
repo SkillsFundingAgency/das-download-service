@@ -1,179 +1,63 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
-using System.Text;
-using Newtonsoft.Json;
-using SFA.DAS.DownloadService.Api.Types.Roatp;
-using SFA.DAS.DownloadService.Api.Client;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using SFA.DAS.DownloadService.Settings;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
+using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.DownloadService.Api.Types.Roatp;
+using SFA.DAS.DownloadService.Services.Interfaces;
 
 namespace SFA.DAS.Roatp.Api.Client
 {
-    public class RoatpApiClient : ApiClientBase, IRoatpClient
+    public class RoatpApiClient : IRoatpApiClient 
     {
-        /// <summary>
-        /// The constructor to optional set the api url for testing
-        /// </summary>
-        /// <param name="baseUri">ie: https://roatp.apprenticeships.sfa.bis.gov.uk</param>
-        //[Obsolete("This is constructor used for testing upcoming versions of the API")]
-        public RoatpApiClient(string baseUri) : base(baseUri)
+
+        private readonly HttpClient _client;
+        private readonly ILogger<RoatpApiClient> _logger;
+        private readonly ITokenService _tokenService;
+        private readonly string _baseUrl;
+        public RoatpApiClient( ILogger<RoatpApiClient> logger, ITokenService tokenService, IWebConfiguration configuration)
         {
+            _logger = logger;
+            _tokenService = tokenService;
+            _baseUrl = configuration.RoatpApiClientBaseUrl;
+            _client = new HttpClient { BaseAddress = new Uri($"{_baseUrl}") };
         }
 
-        /// <summary>
-        /// The default constructor to connect to https://roatp.apprenticeships.sfa.bis.gov.uk
-        /// </summary>
-        public RoatpApiClient() : base("https://roatp.apprenticeships.sfa.bis.gov.uk")
+        public async Task<IEnumerable<RoatpResult>> GetRoatpSummary()
         {
+            var url = $"{_baseUrl}/api/v1/download/roatp-summary";
+            _logger.LogInformation($"Retrieving RoATP summary data from {url}");
+            return await Get<IEnumerable<RoatpResult>>($"{url}");
         }
 
-
-        /// <summary>
-        /// Get a provider details
-        /// GET /providers/{ukprn}
-        /// </summary>
-        /// <param name="ukprn">the provider ukprn this should be 8 numbers long</param>
-        /// <returns>a provider details based on ukprn</returns>
-        /// <exception cref="EntityNotFoundException">when the resource you requested doesn't exist</exception>
-        /// <exception cref="HttpRequestException">There was an unexpected error</exception>
-        public Provider Get(string ukprn)
+        public async Task<IEnumerable<RoatpResult>> GetRoatpSummaryByUkprn(int ukprn)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/providers/{ukprn}"))
+            var url = $"{_baseUrl}/api/v1/download/roatp-summary/{ukprn}";
+            _logger.LogInformation($"Retrieving RoATP summary data from {url}");
+            return await Get<IEnumerable<RoatpResult>>($"{url}");
+        }
+
+        public async  Task<DateTime?> GetLatestNonOnboardingOrganisationChangeDate()
+        {
+            var url = $"{_baseUrl}/api/v1/download/roatp-summary/most-recent";
+            _logger.LogInformation($"Retrieving RoATP most recent change from {url}");
+            return await Get<DateTime>($"{url}");
+        }
+       
+        private async Task<T> Get<T>(string uri)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+
+            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Absolute)))
             {
-                request.Headers.Add("Accept", "application/json");
-
-                using (var response = _httpClient.SendAsync(request))
-                {
-                    var result = response.Result;
-                    if (result.StatusCode == HttpStatusCode.OK)
-                    {
-                        return JsonConvert.DeserializeObject<Provider>(result.Content.ReadAsStringAsync().Result,
-                            _jsonSettings);
-                    }
-                    if (result.StatusCode == HttpStatusCode.NotFound)
-                    {
-                        RaiseResponseError($"The provider {ukprn} could not be found", request, result);
-                    }
-
-                    RaiseResponseError(request, result);
-                }
-
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Get a provider details
-        /// GET /providers/{ukprn}
-        /// </summary>
-        /// <param name="ukprn">the provider ukprn this should be 8 numbers long</param>
-        /// <returns>a provider details based on ukprn</returns>
-        /// <exception cref="EntityNotFoundException">when the resource you requested doesn't exist</exception>
-        /// <exception cref="HttpRequestException">There was an unexpected error</exception>
-        public Provider Get(long ukprn)
-        {
-            return Get(ukprn.ToString());
-        }
-
-        /// <summary>
-        /// Get a provider details
-        /// GET /providers/{ukprn}
-        /// </summary>
-        /// <param name="ukprn">the provider ukprn this should be 8 numbers long</param>
-        /// <returns>a provider details based on ukprn</returns>
-        /// <exception cref="EntityNotFoundException">when the resource you requested doesn't exist</exception>
-        /// <exception cref="HttpRequestException">There was an unexpected error</exception>
-        public Provider Get(int ukprn)
-        {
-            return Get(ukprn.ToString());
-        }
-
-        /// <summary>
-        /// Check if a provider exists
-        /// HEAD /providers/{ukprn}
-        /// </summary>
-        /// <param name="ukprn">the provider ukprn this should be 8 numbers long</param>
-        /// <returns>bool</returns>
-        /// <exception cref="EntityNotFoundException">when the resource you requested doesn't exist</exception>
-        /// <exception cref="HttpRequestException">There was an unexpected error</exception>
-        public bool Exists(string ukprn)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Head, $"/api/providers/{ukprn}"))
-            {
-                request.Headers.Add("Accept", "application/json");
-
-                using (var response = _httpClient.SendAsync(request))
-                {
-                    var result = response.Result;
-                    if (result.StatusCode == HttpStatusCode.NoContent)
-                    {
-                        return true;
-                    }
-                    if (result.StatusCode == HttpStatusCode.NotFound)
-                    {
-                        return false;
-                    }
-
-                    RaiseResponseError("Unexpected exception", request, result);
-                }
-
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Check if a provider exists
-        /// HEAD /providers/{ukprn}
-        /// </summary>
-        /// <param name="ukprn">the provider ukprn this should be 8 numbers long</param>
-        /// <returns>bool</returns>
-        /// <exception cref="EntityNotFoundException">when the resource you requested doesn't exist</exception>
-        /// <exception cref="HttpRequestException">There was an unexpected error</exception>
-        public bool Exists(int ukprn)
-        {
-            return Exists(ukprn.ToString());
-        }
-
-
-        /// <summary>
-        /// Check if a provider exists
-        /// HEAD /providers/{ukprn}
-        /// </summary>
-        /// <param name="ukprn">the provider ukprn this should be 8 numbers long</param>
-        /// <returns>bool</returns>
-        /// <exception cref="EntityNotFoundException">when the resource you requested doesn't exist</exception>
-        /// <exception cref="HttpRequestException">There was an unexpected error</exception>
-        public bool Exists(long ukprn)
-        {
-            return Exists(ukprn.ToString());
-        }
-
-        /// <summary>
-        /// Get a list of active providers on ROATP
-        /// GET /providers
-        /// </summary>
-        /// <returns>Active providers</returns>
-        /// <exception cref="EntityNotFoundException">when the resource you requested doesn't exist</exception>
-        /// <exception cref="HttpRequestException">There was an unexpected error</exception>
-        public IEnumerable<Provider> FindAll()
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, "/api/providers"))
-            {
-                request.Headers.Add("Accept", "application/json");
-
-                using (var response = _httpClient.SendAsync(request))
-                {
-                    var result = response.Result;
-                    if (result.StatusCode == HttpStatusCode.OK)
-                    {
-                        return JsonConvert.DeserializeObject<IEnumerable<Provider>>(result.Content.ReadAsStringAsync().Result, _jsonSettings);
-                    }
-
-                    RaiseResponseError(request, result);
-                }
-
-                return null;
+                var serializedObject = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<T>(serializedObject);
             }
         }
     }

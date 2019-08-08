@@ -2,21 +2,22 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.DownloadService.Api.Types.Roatp;
+using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Web.Models;
+using SFA.DAS.Roatp.Api.Client;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
-using SFA.DAS.Roatp.ApplicationServices.Interfaces;
 
 namespace SFA.DAS.DownloadService.Web.Controllers
 {
     public class DownloadController : Controller
     {
-        private readonly IRoatpServiceApiClient _roatpApiClient;
+        private readonly IRoatpApiClient _roatpApiClient;
         private readonly IRoatpMapper _mapper;
 
-        public DownloadController(IRoatpServiceApiClient roatpApiClient, IRoatpMapper mapper)
+        public DownloadController(IRoatpApiClient roatpApiClient, IRoatpMapper mapper)
         {
             _roatpApiClient = roatpApiClient;
             _mapper = mapper;
@@ -37,7 +38,9 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         public ActionResult Csv()
         {
 
-            var roatpResults = _roatpApiClient.GetRoatpSummary().Result.Where(x => x.IsDateValid(DateTime.Now));
+            var roatpResults = _roatpApiClient.GetRoatpSummary().Result;
+                            
+            //.Where(x => x.IsDateValid(DateTime.Now));
             var providers = _mapper.MapCsv(roatpResults.ToList());
             var date = _roatpApiClient.GetLatestNonOnboardingOrganisationChangeDate().Result;
             if (date == null)

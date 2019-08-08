@@ -10,9 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SFA.DAS.DownloadService.Core\SFA.DAS.DownloadService.Core.csproj" />
     <ProjectReference Include="..\SFA.DAS.Roatp.Api.Client\SFA.DAS.Roatp.Api.Client.csproj" />
-    <ProjectReference Include="..\SFA.DAS.Roatp.ApplicationServices\SFA.DAS.Roatp.ApplicationServices.csproj" />
   </ItemGroup>
 
 </Project>

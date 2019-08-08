@@ -1,10 +1,7 @@
-﻿using System;
+﻿using SFA.DAS.DownloadService.Api.Types.Roatp;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SFA.DAS.DownloadService.Api.Types.Roatp;
 
-namespace SFA.DAS.Roatp.ApplicationServices.Interfaces
+namespace SFA.DAS.DownloadService.Services.Interfaces
 {
     public interface IRoatpMapper
     {

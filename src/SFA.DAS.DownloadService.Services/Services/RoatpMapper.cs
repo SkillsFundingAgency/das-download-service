@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
-using SFA.DAS.Roatp.ApplicationServices.Interfaces;
-namespace SFA.DAS.Roatp.ApplicationServices.Services
+using SFA.DAS.DownloadService.Services.Interfaces;
+
+namespace SFA.DAS.DownloadService.Services.Services
 {
     public class RoatpMapper : IRoatpMapper
     {

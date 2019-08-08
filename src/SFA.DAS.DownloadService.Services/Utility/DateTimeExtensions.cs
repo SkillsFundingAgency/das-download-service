@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SFA.DAS.DownloadService.Core.Utility
+namespace SFA.DAS.DownloadService.Services.Utility
 {
     public static class DateTimeExtensions
     {
@@ -48,6 +48,7 @@ namespace SFA.DAS.DownloadService.Core.Utility
         {
             return date.ToString("d MMM yyyy HH:mm:ss");
         }
+
 
         public static string ToMapperDateString(this DateTime? date)
         {

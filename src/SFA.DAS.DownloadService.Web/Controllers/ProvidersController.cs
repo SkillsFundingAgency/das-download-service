@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
+using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
-using SFA.DAS.Roatp.ApplicationServices.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Examples;
 
@@ -18,11 +18,11 @@ namespace SFA.DAS.DownloadService.Web.Controllers
     [ApiController]
     public class ProvidersController : Controller
     {
-        private readonly IRoatpServiceApiClient _apiClient;
+        private readonly IRoatpApiClient _apiClient;
         private readonly ILogger<ProvidersController> _log;
         private readonly IRoatpMapper _mapper;
         private readonly IHostingEnvironment _hostingEnv = null;
-        public ProvidersController(ILogger<ProvidersController> log, IRoatpServiceApiClient apiClient, IRoatpMapper mapper, IHostingEnvironment hostingEnv) //IGetProviders providerRepo,
+        public ProvidersController(ILogger<ProvidersController> log, IRoatpApiClient apiClient, IRoatpMapper mapper, IHostingEnvironment hostingEnv) //IGetProviders providerRepo,
         {
             _log = log;
             _apiClient = apiClient;
@@ -30,10 +30,10 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             _hostingEnv = hostingEnv;
         }
 
-        ///// <summary>
-        ///// Check if provider exists
-        ///// </summary>
-        ///// <param name="ukprn">UKPRN</param>
+        /////// <summary>
+        /////// Check if provider exists
+        /////// </summary>
+        /////// <param name="ukprn">UKPRN</param>
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, "Invalid UKPRN (should be 8 numbers long)")]
@@ -68,7 +68,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             }
 
             var roatpResult = await _apiClient.GetRoatpSummaryByUkprn(ukprn);
-            var provider = _mapper.Map(roatpResult);
+            var provider = _mapper.Map(roatpResult.FirstOrDefault());
 
             if (provider == null || !provider.IsDateValid(DateTime.UtcNow))
             {

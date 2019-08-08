@@ -6,7 +6,6 @@ namespace SFA.DAS.DownloadService.Api.Types.Exceptions
     {
         public EntityNotFoundException(string message, Exception innerException) : base(message, innerException)
         {
-
         }
     }
 }
