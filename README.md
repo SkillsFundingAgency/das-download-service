@@ -21,16 +21,7 @@
 - Add a row to the Configuration table with fields: 
   - PartitionKey: LOCAL
   - RowKey: SFA.DAS.DownloadService_1.0
-  - Data: {
-"RoatpApiClientBaseUrl" :"http://localhost:37951",
- "RoatpApiAuthentication": {
-      "Instance": "https://login.microsoftonline.com/",
-      "TenantId": "citizenazuresfabisgov.onmicrosoft.com",
-      "ClientId": "960... (ask a developer who has this set up",
-      "ClientSecret": "411... (ask a developer who has this set up)",
-      "ResourceId": "https://citizenazuresfabisgov.onmicrosoft.com/das-roatpservice-api",
-      "ApiBaseAddress": "http://localhost:37951"
-	  }
+  - Data: {The contents of the local config json file}
 }
 
 ##### Open the solution
