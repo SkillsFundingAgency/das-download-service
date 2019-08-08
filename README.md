@@ -32,4 +32,4 @@
 	- SFA.DAS.DownloadService.Web
 - Running the solution will launch the UI in your browser at address https://localhost:5001/
 
-You will need to have the SFA.DAS.RoatpService.Api projects running under a separate instance of Visual Studio
+You will need to have the SFA.DAS.RoatpService.Api projects running under a separate instance of Visual Studio (https://github.com/SkillsFundingAgency/das-roatp-service)
