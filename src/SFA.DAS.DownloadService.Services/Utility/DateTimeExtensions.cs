@@ -49,6 +49,10 @@ namespace SFA.DAS.DownloadService.Services.Utility
             return date.ToString("d MMM yyyy HH:mm:ss");
         }
 
+        public static string ToSeoFormat(this DateTime date)
+        {
+            return date.ToString("yyyy-MM-dd-HH-mm-ss");
+        }
 
         public static string ToMapperDateString(this DateTime? date)
         {

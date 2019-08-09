@@ -4,10 +4,9 @@ using System.Data.Common;
 using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Internal;
 using NUnit.Framework;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
-using SFA.DAS.DownloadService.Services.Services;
+using SFA.DAS.DownloadService.Services.Services.Roatp;
 
 namespace SFA.DAS.DownloadService.UnitTests.Mappers
 {

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Services.Interfaces;
+using SFA.DAS.DownloadService.Services.Utility;
 
-namespace SFA.DAS.DownloadService.Services.Services
+namespace SFA.DAS.DownloadService.Services.Services.Roatp
 {
     public class RoatpMapper : IRoatpMapper
     {
@@ -87,7 +88,7 @@ namespace SFA.DAS.DownloadService.Services.Services
 
         private static string FormatDate(DateTime? date)
         {
-            return date?.ToString("dd/MM/yyyy") ?? string.Empty;
+            return date.ToMapperDateString();
         }
     }
 }

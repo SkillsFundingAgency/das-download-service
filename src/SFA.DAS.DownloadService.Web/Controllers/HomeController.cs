@@ -9,20 +9,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         {
             return RedirectToAction("Index", "Download");
         }
-
-        //public IActionResult Privacy()
-        //{
-        //    return View();
-        //}
-
-        //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        //public IActionResult Error()
-        //{
-        //    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        //}
-
-
-
+        
 
         public ActionResult Api()
         {
@@ -34,14 +21,9 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         {
             var builder = new StringBuilder();
 
-            builder.AppendLine("User-agent: *");
-
-            // MFCMFC Need to replicate this in config???
-            //if (!bool.Parse(CloudConfigurationManager.GetSetting("FeatureToggle.RobotsAllowFeature")??"false"))
-            //{
+            builder.AppendLine("User-agent: *");      
             builder.AppendLine("Disallow: /");
-            //}
-
+ 
             return Content(builder.ToString(), "text/plain", Encoding.UTF8);
         }
     }
