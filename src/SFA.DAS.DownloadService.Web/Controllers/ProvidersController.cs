@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Polly;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
@@ -22,12 +23,15 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         private readonly ILogger<ProvidersController> _log;
         private readonly IRoatpMapper _mapper;
         private readonly IHostingEnvironment _hostingEnv = null;
-        public ProvidersController(ILogger<ProvidersController> log, IRoatpApiClient apiClient, IRoatpMapper mapper, IHostingEnvironment hostingEnv) //IGetProviders providerRepo,
+        private readonly IRetryService _retryService;
+
+        public ProvidersController(ILogger<ProvidersController> log, IRoatpApiClient apiClient, IRoatpMapper mapper, IHostingEnvironment hostingEnv,  IRetryService retryService) 
         {
             _log = log;
             _apiClient = apiClient;
             _mapper = mapper;
             _hostingEnv = hostingEnv;
+            _retryService = retryService;
         }
 
         /////// <summary>
@@ -67,8 +71,20 @@ namespace SFA.DAS.DownloadService.Web.Controllers
                 return BadRequest("Invalid UKPRN (should be 8 numbers long)");
             }
 
-            var roatpResult = await _apiClient.GetRoatpSummaryByUkprn(ukprn);
-            var provider = _mapper.Map(roatpResult.FirstOrDefault());
+            IEnumerable<RoatpResult> roatpResults;
+
+            try
+            {
+                var result = _retryService.RetryPolicy($"<roatpService>//api/v1/download/roatp-summary/{ukprn}").ExecuteAsync(context => _apiClient.GetRoatpSummaryByUkprn(ukprn), new Context());
+                roatpResults = result.Result;
+            }
+            catch (Exception ex)
+            {
+                _log.LogError($"Unable to retrieve results for roatp with ukprn [{ukprn}]", ex);
+                roatpResults = new List<RoatpResult>();
+            }
+
+            var provider = _mapper.Map(roatpResults?.FirstOrDefault());
 
             if (provider == null || !provider.IsDateValid(DateTime.UtcNow))
             {
@@ -96,7 +112,18 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             {
                 _log.LogDebug($"Fetching GET ALL for ukprns");
 
-                var results = _apiClient.GetRoatpSummary().Result.Where(x => x.IsDateValid(DateTime.UtcNow));
+                IEnumerable<RoatpResult> results;
+                
+                try
+                {
+                    var result = _retryService.RetryPolicy("<roatpService>//api/v1/download/roatp-summary").ExecuteAsync(context => _apiClient.GetRoatpSummary(), new Context());
+                    results = result.Result.Where(x => x.IsDateValid(DateTime.UtcNow));
+                }
+                catch (Exception ex)
+                {
+                    _log.LogError("Unable to retrieve results for all roatps", ex);
+                    results = new List<RoatpResult>();
+                }
 
                 var providers = new List<Provider>();
 

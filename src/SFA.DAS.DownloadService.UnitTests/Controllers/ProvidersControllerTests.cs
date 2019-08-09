@@ -1,6 +1,7 @@
 ﻿
 
 using System;
+using System.Collections.Generic;
 using System.Net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -9,9 +10,11 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
+using SFA.DAS.DownloadService.Services.Interfaces;
+using SFA.DAS.DownloadService.Services.Services;
+using SFA.DAS.DownloadService.Services.Services.Roatp;
 using SFA.DAS.DownloadService.Web.Controllers;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
-using SFA.DAS.Roatp.ApplicationServices.Interfaces;
 
 namespace SFA.DAS.DownloadService.UnitTests.Controllers
 {
@@ -23,25 +26,32 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
         private ProvidersController _controller;
         private Moq.Mock<ILogger<ProvidersController>> _mockLogger;
         private Mock<IRoatpApiClient> _mockClient;
-        private Mock<IRoatpMapper> _mockMapper;
+        private IRoatpMapper _mapper;
         private Mock<IHostingEnvironment> _mockEnv;
+       // private Mock<IRetryService> _mockRetryService;
+        private IRetryService retryService;
 
+        private Mock<ILogger<RetryService>> _mockRetryServiceLogger;
 
         protected Mock<HttpContext> HttpContext;
         protected Mock<HttpRequest> HttpContextRequest;
         protected Mock<HttpResponse> HttpResponseMock;
 
-        private long _ukprn;
+        private int _ukprn;
         [SetUp]
         public void Init()
         {
             _ukprn = 12345678;
             _mockLogger = new Mock<ILogger<ProvidersController>>();
             _mockClient = new Mock<IRoatpApiClient>();
-            _mockMapper = new Mock<IRoatpMapper>();
+           
             _mockEnv = new Mock<IHostingEnvironment>();
-            _mockClient.Setup(z => z.GetRoatpSummaryByUkprn(It.IsAny<int>())).ReturnsAsync((RoatpResult)null);
-
+            _mockRetryServiceLogger = new Mock<ILogger<RetryService>>();
+            retryService = new RetryService(_mockRetryServiceLogger.Object);
+            //_mockRetryService = new Mock<IRetryService>();
+            _mapper = new RoatpMapper();
+            _mockClient.Setup(z => z.GetRoatpSummaryByUkprn(It.IsAny<int>())).ReturnsAsync((IEnumerable<RoatpResult>)null);
+            _mockClient.Setup(z => z.GetRoatpSummary()).ReturnsAsync((IEnumerable<RoatpResult>) null);
 
             HttpContextRequest = new Mock<HttpRequest>();
             HttpContextRequest.Setup(r => r.Method).Returns("GET");
@@ -49,8 +59,8 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
             HttpContext.Setup(x => x.Request.Scheme).Returns("http");
             HttpContext.Setup(x => x.Request.Host).Returns(new HostString("localhost"));
 
-            _controller = new ProvidersController(_mockLogger.Object, _mockClient.Object, _mockMapper.Object,
-               _mockEnv.Object);
+            _controller = new ProvidersController(_mockLogger.Object, _mockClient.Object, _mapper,
+               _mockEnv.Object, retryService);
 
             _controller.ControllerContext = new ControllerContext();
             _controller.ControllerContext.HttpContext = HttpContext.Object;
@@ -71,14 +81,14 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
             Assert.AreEqual((int)HttpStatusCode.BadRequest, ((ObjectResult)res).StatusCode);
         }
 
-        [TestCase("goodukprn", "today", (int)HttpStatusCode.OK)]
-        [TestCase("goodukprn", "tomorrow", (int)HttpStatusCode.NotFound)]
-        [TestCase("goodukprn", "yesterday", (int)HttpStatusCode.OK)]
-        [TestCase("badurkpn", "today", (int)HttpStatusCode.NotFound)]
-        [TestCase("badukrpn", "tomorrow", (int)HttpStatusCode.NotFound)]
-        [TestCase("badukprn", "yesterday", (int)HttpStatusCode.NotFound)]
+        [TestCase("presentUkprn", "today", (int)HttpStatusCode.OK)]
+        [TestCase("presentUkprn", "tomorrow", (int)HttpStatusCode.NotFound)]
+        [TestCase("presentUkprn", "yesterday", (int)HttpStatusCode.OK)]
+        [TestCase("absentUkprn", "today", (int)HttpStatusCode.NotFound)]
+        [TestCase("absentUkprn", "tomorrow", (int)HttpStatusCode.NotFound)]
+        [TestCase("absentUkprn", "yesterday", (int)HttpStatusCode.NotFound)]
 
-        public void ShouldThroNotFoundIfUkprnNotMatchedOrStartDateNotTodayOrAfter(string ukprnType, string startDate, int httpStatusCode)
+        public void ShouldThrowNotFoundIfUkprnNotMatchedOrStartDateNotTodayOrAfter(string ukprnType, string startDate, int httpStatusCode)
         {
 
             DateTime startDateToUse;
@@ -95,25 +105,21 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
                     break;
             }
 
-            var provider = new Provider
+
+            var roatpResult = new RoatpResult
             {
-                Ukprn = _ukprn,
+                Ukprn = _ukprn.ToString(),
                 StartDate = startDateToUse
             };
 
-            if (ukprnType == "goodukprn")
-            {
-                _mockMapper.Setup(z => z.Map(It.IsAny<RoatpResult>())).Returns(provider);
-            }
-            else
-            {
-                _mockMapper.Setup(z => z.Map(It.IsAny<RoatpResult>())).Returns((Provider)null);
-            }
-            var resultFromGet = _controller.Get(12345678).Result;
+            if (ukprnType !="absentUkprn")
+            _mockClient.Setup(z => z.GetRoatpSummaryByUkprn(_ukprn)).ReturnsAsync(new List<RoatpResult>{roatpResult});
+
+            var resultFromGet = _controller.Get(_ukprn).Result;
 
             Assert.IsTrue(((ObjectResult)resultFromGet).StatusCode == httpStatusCode);
 
-            if (httpStatusCode == 200)
+            if (httpStatusCode == (int)HttpStatusCode.OK)
             {
                 var returnedProvider = (Provider)((ObjectResult)resultFromGet).Value;
                 Assert.AreEqual(_ukprn, returnedProvider.Ukprn);
@@ -123,6 +129,102 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
                 var returnedDetails = (string)((ObjectResult)resultFromGet).Value;
                 Assert.IsNotEmpty(returnedDetails);
             }
+        }
+
+
+        [TestCase("presentUkprn", "today", (int)HttpStatusCode.NoContent)]
+        [TestCase("presentUkprn", "tomorrow", (int)HttpStatusCode.NotFound)]
+        [TestCase("presentUkprn", "yesterday", (int)HttpStatusCode.NoContent)]
+        [TestCase("absentUkprn", "today", (int)HttpStatusCode.NotFound)]
+        [TestCase("absentUkprn", "tomorrow", (int)HttpStatusCode.NotFound)]
+        [TestCase("absentUkprn", "yesterday", (int)HttpStatusCode.NotFound)]
+
+        public void ShouldThrowNotFoundIfUkprnNotMatchedOrStartDateNotTodayOrAfterForHead(string ukprnType, string startDate, int httpStatusCode)
+        {
+
+            DateTime startDateToUse;
+            switch (startDate)
+            {
+                case "tomorrow":
+                    startDateToUse = DateTime.Today.AddDays(1);
+                    break;
+                case "yesterday":
+                    startDateToUse = DateTime.Today.AddDays(-1);
+                    break;
+                default:
+                    startDateToUse = DateTime.Today;
+                    break;
+            }
+
+
+            var roatpResult = new RoatpResult
+            {
+                Ukprn = _ukprn.ToString(),
+                StartDate = startDateToUse
+            };
+
+            if (ukprnType != "absentUkprn")
+                _mockClient.Setup(z => z.GetRoatpSummaryByUkprn(_ukprn)).ReturnsAsync(new List<RoatpResult> { roatpResult });
+
+            var resultFromGet = _controller.Head(_ukprn).Result;
+
+            if (httpStatusCode == (int)HttpStatusCode.NoContent)
+            {
+                Assert.IsTrue(((NoContentResult)resultFromGet).StatusCode == httpStatusCode);
+            }
+            else
+            {
+                Assert.IsTrue(((ObjectResult)resultFromGet).StatusCode == httpStatusCode);
+            }
+
+            if (httpStatusCode == (int)HttpStatusCode.OK)
+            {
+                var returnedProvider = (Provider)((ObjectResult)resultFromGet).Value;
+                Assert.AreEqual(_ukprn, returnedProvider.Ukprn);
+            }
+            else if (httpStatusCode != (int)HttpStatusCode.NoContent)
+            {
+                var returnedDetails = (string)((ObjectResult)resultFromGet).Value;
+                Assert.IsNotEmpty(returnedDetails);
+            }
+        }
+
+        [TestCase( "today", 2)]
+        [TestCase( "tomorrow", 1)]
+        [TestCase( "yesterday", 2)]
+
+
+        public void ShouldReturnExpectedNumberOfRecordsFromGetAll( string startDate, int expectedCount)
+        {
+            var roatpResults = new List<RoatpResult>
+            {
+                new RoatpResult {Ukprn = "11111111", StartDate = DateTime.Today}
+            };
+
+            DateTime startDateToUse;
+            switch (startDate)
+            {
+                case "tomorrow":
+                    startDateToUse = DateTime.Today.AddDays(1);
+                    break;
+                case "yesterday":
+                    startDateToUse = DateTime.Today.AddDays(-1);
+                    break;
+                default:
+                    startDateToUse = DateTime.Today;
+                    break;
+            }
+           
+            var roatpResult2 = new RoatpResult { Ukprn = "22222222", StartDate = startDateToUse };
+
+            roatpResults.Add(roatpResult2);
+
+            _mockClient.Setup(z => z.GetRoatpSummary()).ReturnsAsync(roatpResults);
+
+            var resultsFromGet = _controller.GetAll().Result;
+            var expectedProviders = (List<Provider>)((ObjectResult)resultsFromGet).Value;
+
+            Assert.AreEqual(expectedCount, expectedProviders.Count);
         }
     }
 }

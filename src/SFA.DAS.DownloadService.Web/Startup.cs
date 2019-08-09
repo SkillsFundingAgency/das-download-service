@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Services;
+using SFA.DAS.DownloadService.Services.Services.Roatp;
 using SFA.DAS.DownloadService.Settings;
 using SFA.DAS.Roatp.Api.Client;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
@@ -91,6 +92,7 @@ namespace SFA.DAS.DownloadService.Web
                 config.For<IRoatpMapper>().Use<RoatpMapper>();
                 config.For<IRoatpApiClient>().Use<RoatpApiClient>();
                 config.For<ITokenService>().Use<TokenService>();
+                config.For<IRetryService>().Use<RetryService>();
                 config.For<IWebConfiguration>().Use(ApplicationConfiguration);
                 config.Populate(services);
             });
