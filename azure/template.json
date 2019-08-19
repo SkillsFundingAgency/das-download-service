@@ -181,7 +181,10 @@
             "value": "[parameters('appServiceAllowedIPs')]"
           }
         }
-      }
+      },
+      "dependsOn": [
+        "app-service-certificate"
+      ]
     }
   ],
   "outputs": {
