@@ -1,5 +1,5 @@
 ﻿@using SFA.DAS.DownloadService.Services.Utility
-@model SFA.DAS.DownloadService.Web.Models.DownloadViewModel
+@model SFA.DAS.DownloadService.Web.Models.RoatpDownloadViewModel
 <main id="content" role="main">
     <div class="grid-row">
         <div class="column-two-thirds">
@@ -22,13 +22,13 @@
             <div class="signed-agreement">
                 <section class="attachment embedded">
                     <div class="attachment-thumb">
-                        <a aria-hidden="true" class="thumbnail" href="@Url.Action("Csv", "Download", new {filename = Model.Filename}, null)"><img alt="" src="~/Content/dist/images/pub-cover-csv.png"></a>
+                        <a aria-hidden="true" class="thumbnail" href="@Url.Action("Csv", "Roatp", new {filename = Model.Filename}, null)"><img alt="" src="~/Content/dist/images/pub-cover-csv.png"></a>
                     </div>
                     <div class="attachment-details">
                         <h2 class="title">
                             ESFA register of apprenticeship training providers
                         </h2>
-                        <span class="type">@Html.ActionLink("Download CSV", "Csv", "Download", new { filename = Model.Filename }, null)</span>
+                        <span class="type">@Html.ActionLink("Download CSV", "Csv", "Roatp", new { filename = Model.Filename }, null)</span>
                     </div>
                 </section>
                 <dl class="meta">

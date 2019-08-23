@@ -131,7 +131,7 @@ namespace SFA.DAS.DownloadService.Web
                 routes.MapRoute(
                     name: "default",
                     template: "{controller}/{action}/{id?}",
-                    defaults: new { controller = "Download", action = "Index" });
+                    defaults: new { controller = "Roatp", action = "Index" });
             });
         }
 

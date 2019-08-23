@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.DownloadService.Web.Models
 {
-    public class DownloadViewModel
+    public class RoatpDownloadViewModel
     {
         public string Filename { get; set; }
         public DateTime LastUpdated { get; set; }

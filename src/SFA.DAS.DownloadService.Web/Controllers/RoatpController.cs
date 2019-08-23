@@ -16,14 +16,14 @@ using SFA.DAS.Roatp.Api.Client.Interfaces;
 
 namespace SFA.DAS.DownloadService.Web.Controllers
 {
-    public class DownloadController : Controller
+    public class RoatpController : Controller
     {
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly IRoatpMapper _mapper;
         private readonly IRetryService _retryService;
-        private readonly ILogger<DownloadController> _logger;
+        private readonly ILogger<RoatpController> _logger;
 
-        public DownloadController(IRoatpApiClient roatpApiClient, IRoatpMapper mapper, IRetryService retryService, ILogger<DownloadController> logger)
+        public RoatpController(IRoatpApiClient roatpApiClient, IRoatpMapper mapper, IRetryService retryService, ILogger<RoatpController> logger)
         {
             _roatpApiClient = roatpApiClient;
             _mapper = mapper;
@@ -45,7 +45,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
                 date = DateTime.Now;
             }
 
-            var viewModel = new DownloadViewModel { Filename = GenerateFilename(date.Value), LastUpdated = date.Value };
+            var viewModel = new RoatpDownloadViewModel { Filename = GenerateFilename(date.Value), LastUpdated = date.Value };
             return View(viewModel);
         }
 
