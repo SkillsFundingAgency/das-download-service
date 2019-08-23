@@ -56,12 +56,17 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             var providers = new List<CsvProvider>();
             try
             {
-                var roatpResults = _roatpApiClient.GetRoatpSummary().Result.Where(x => x.IsDateValid(DateTime.Now));
-                providers = _mapper.MapCsv(roatpResults.ToList());
+                _logger.LogDebug("Getting results from GetRoatpSummary");
+                var roatpResults = _roatpApiClient.GetRoatpSummary().Result;
+                _logger.LogDebug($@"{roatpResults.Count()} results from GetRoatpSummary");
+                var roatpResultsFiltered = roatpResults.Where(x => x.IsDateValid(DateTime.Now));
+                _logger.LogDebug($@"{roatpResultsFiltered.Count()} results filtered from GetRoatpSummary");
+        
+                providers = _mapper.MapCsv(roatpResultsFiltered.ToList());
             }
             catch (Exception ex)
             {
-                _logger.LogError("Unable to retrieve results for getting all roatp details", ex);
+                _logger.LogError($@"Unable to retrieve results for getting all roatp details, message: [{ex.Message}]", ex);
             }
 
                var date = _roatpApiClient.GetLatestNonOnboardingOrganisationChangeDate().Result;
