@@ -53,10 +53,18 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         [ResponseCache(Duration = 600)]
         public ActionResult Csv()
         {
+            var providers = new List<CsvProvider>();
+            try
+            {
+                var roatpResults = _roatpApiClient.GetRoatpSummary().Result.Where(x => x.IsDateValid(DateTime.Now));
+                providers = _mapper.MapCsv(roatpResults.ToList());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Unable to retrieve results for getting all roatp details", ex);
+            }
 
-            var roatpResults = _roatpApiClient.GetRoatpSummary().Result.Where(x => x.IsDateValid(DateTime.Now));
-            var providers = _mapper.MapCsv(roatpResults.ToList());
-            var date = _roatpApiClient.GetLatestNonOnboardingOrganisationChangeDate().Result;
+               var date = _roatpApiClient.GetLatestNonOnboardingOrganisationChangeDate().Result;
             if (date == null)
                 date = DateTime.Now;
 

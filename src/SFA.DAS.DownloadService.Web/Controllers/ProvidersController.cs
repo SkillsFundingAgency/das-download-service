@@ -116,7 +116,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
                 
                 try
                 {
-                    var result = _retryService.RetryPolicy("<roatpService>//api/v1/download/roatp-summary").ExecuteAsync(context => _apiClient.GetRoatpSummary(), new Context());
+                    var result = _retryService.RetryPolicy("<roatpService>/api/v1/download/roatp-summary").ExecuteAsync(context => _apiClient.GetRoatpSummary(), new Context());
                     results = result.Result.Where(x => x.IsDateValid(DateTime.UtcNow));
                 }
                 catch (Exception ex)
