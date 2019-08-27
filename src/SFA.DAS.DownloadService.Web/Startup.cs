@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
@@ -14,9 +15,9 @@ using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Services;
 using SFA.DAS.DownloadService.Services.Services.Roatp;
 using SFA.DAS.DownloadService.Settings;
+using SFA.DAS.DownloadService.Web.Extensions;
 using SFA.DAS.Roatp.Api.Client;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
-using StructureMap;
 using Swashbuckle.AspNetCore.Examples;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -39,7 +40,7 @@ namespace SFA.DAS.DownloadService.Web
 
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -75,29 +76,28 @@ namespace SFA.DAS.DownloadService.Web
             services.AddHealthChecks();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            var configResult = ConfigureIoC(services);
+            ConfigureDependencyInjection(services);
 
-            return configResult;
         }
 
-        private IServiceProvider ConfigureIoC(IServiceCollection services)
+        private void  ConfigureDependencyInjection(IServiceCollection services)
         {
-            var container = new Container();
-            container.Configure(config =>
-            {
-                config.Scan(_ =>
-                {
-                    _.AssemblyContainingType(typeof(Startup));
-                    _.WithDefaultConventions();
-                });
-                config.For<IRoatpMapper>().Use<RoatpMapper>();
-                config.For<IRoatpApiClient>().Use<RoatpApiClient>();
-                config.For<ITokenService>().Use<TokenService>();
-                config.For<IRetryService>().Use<RetryService>();
-                config.For<IWebConfiguration>().Use(ApplicationConfiguration);
-                config.Populate(services);
-            });
-            return container.GetInstance<IServiceProvider>();
+            //ApplicationConfiguration = new WebConfiguration
+            //{
+            //    RoatpApiClientBaseUrl = "",
+            //    RoatpApiAuthentication = new ClientApiAuthentication()
+
+            //};
+
+            //ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+
+            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();  //???? from applyService example
+
+            services.AddTransient<IRoatpMapper,RoatpMapper>();
+            services.AddTransient<IRoatpApiClient,RoatpApiClient>();
+            services.AddTransient<ITokenService,TokenService>();
+            services.AddTransient<IRetryService,RetryService>();
+            services.AddTransient(x=>ApplicationConfiguration); 
         }
 
 
