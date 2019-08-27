@@ -63,6 +63,8 @@ namespace SFA.DAS.DownloadService.Web.Controllers
                 _logger.LogDebug($@"{roatpResultsFiltered.Count()} results filtered from GetRoatpSummary");
         
                 providers = _mapper.MapCsv(roatpResultsFiltered.ToList());
+                _logger.LogDebug($@"{providers.Count()} providers mapped to CSV-ready state");
+
             }
             catch (Exception ex)
             {
