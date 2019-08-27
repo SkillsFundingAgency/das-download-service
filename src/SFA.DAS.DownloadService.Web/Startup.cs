@@ -72,6 +72,7 @@ namespace SFA.DAS.DownloadService.Web
             });
 
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
+            services.AddHealthChecks();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             var configResult = ConfigureIoC(services);
@@ -116,6 +117,7 @@ namespace SFA.DAS.DownloadService.Web
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseSession();
+            app.UseHealthChecks("/health");
             app.UseRequestLocalization();
 
 
