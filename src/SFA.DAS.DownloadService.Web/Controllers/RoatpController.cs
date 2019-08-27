@@ -16,14 +16,14 @@ using SFA.DAS.Roatp.Api.Client.Interfaces;
 
 namespace SFA.DAS.DownloadService.Web.Controllers
 {
-    public class DownloadController : Controller
+    public class RoatpController : Controller
     {
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly IRoatpMapper _mapper;
         private readonly IRetryService _retryService;
-        private readonly ILogger<DownloadController> _logger;
+        private readonly ILogger<RoatpController> _logger;
 
-        public DownloadController(IRoatpApiClient roatpApiClient, IRoatpMapper mapper, IRetryService retryService, ILogger<DownloadController> logger)
+        public RoatpController(IRoatpApiClient roatpApiClient, IRoatpMapper mapper, IRetryService retryService, ILogger<RoatpController> logger)
         {
             _roatpApiClient = roatpApiClient;
             _mapper = mapper;
@@ -45,7 +45,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
                 date = DateTime.Now;
             }
 
-            var viewModel = new DownloadViewModel { Filename = GenerateFilename(date.Value), LastUpdated = date.Value };
+            var viewModel = new RoatpDownloadViewModel { Filename = GenerateFilename(date.Value), LastUpdated = date.Value };
             return View(viewModel);
         }
 
@@ -53,10 +53,25 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         [ResponseCache(Duration = 600)]
         public ActionResult Csv()
         {
+            var providers = new List<CsvProvider>();
+            try
+            {
+                _logger.LogDebug("Getting results from GetRoatpSummary");
+                var roatpResults = _roatpApiClient.GetRoatpSummary().Result;
+                _logger.LogDebug($@"{roatpResults.Count()} results from GetRoatpSummary");
+                var roatpResultsFiltered = roatpResults.Where(x => x.IsDateValid(DateTime.Now));
+                _logger.LogDebug($@"{roatpResultsFiltered.Count()} results filtered from GetRoatpSummary");
+        
+                providers = _mapper.MapCsv(roatpResultsFiltered.ToList());
+                _logger.LogDebug($@"{providers.Count()} providers mapped to CSV-ready state");
 
-            var roatpResults = _roatpApiClient.GetRoatpSummary().Result.Where(x => x.IsDateValid(DateTime.Now));
-            var providers = _mapper.MapCsv(roatpResults.ToList());
-            var date = _roatpApiClient.GetLatestNonOnboardingOrganisationChangeDate().Result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Unable to retrieve results for getting all roatp details, message: [{ex.Message}]", ex);
+            }
+
+               var date = _roatpApiClient.GetLatestNonOnboardingOrganisationChangeDate().Result;
             if (date == null)
                 date = DateTime.Now;
 
