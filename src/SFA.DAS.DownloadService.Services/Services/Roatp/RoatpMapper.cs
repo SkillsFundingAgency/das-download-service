@@ -17,6 +17,9 @@ namespace SFA.DAS.DownloadService.Services.Services.Roatp
                 return null;
             }
 
+            if (roatpResult.EndDate != null && roatpResult.EndDate <= DateTime.Today)
+                return null;
+
             return new Provider
             {
                 Ukprn = ukprn,

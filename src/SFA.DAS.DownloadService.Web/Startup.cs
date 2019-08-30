@@ -82,17 +82,6 @@ namespace SFA.DAS.DownloadService.Web
 
         private void  ConfigureDependencyInjection(IServiceCollection services)
         {
-            //ApplicationConfiguration = new WebConfiguration
-            //{
-            //    RoatpApiClientBaseUrl = "",
-            //    RoatpApiAuthentication = new ClientApiAuthentication()
-
-            //};
-
-            //ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
-
-            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();  //???? from applyService example
-
             services.AddTransient<IRoatpMapper,RoatpMapper>();
             services.AddTransient<IRoatpApiClient,RoatpApiClient>();
             services.AddTransient<ITokenService,TokenService>();

@@ -36,7 +36,17 @@ namespace SFA.DAS.DownloadService.Api.Types.Roatp
 
         public bool IsDateValid(DateTime currentDate)
         {
-            return StartDate.HasValue && StartDate.Value.Date <= currentDate.Date;
+            if (StartDate == null)
+            {
+                return false;
+            }
+
+            if (StartDate.Value.Date <= currentDate.Date && currentDate.Date <= EndDate)
+            {
+                return true;
+            }
+
+            return StartDate.Value.Date <= currentDate.Date && EndDate == null;
         }
     }
 }
