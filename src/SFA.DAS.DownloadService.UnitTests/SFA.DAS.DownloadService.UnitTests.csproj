@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SFA.DAS.DownloadService.Api\SFA.DAS.DownloadService.Api.csproj" />
     <ProjectReference Include="..\SFA.DAS.DownloadService.Web\SFA.DAS.DownloadService.Web.csproj" />
   </ItemGroup>
 

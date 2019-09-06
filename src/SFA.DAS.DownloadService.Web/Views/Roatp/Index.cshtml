@@ -22,18 +22,19 @@
             <div class="signed-agreement">
                 <section class="attachment embedded">
                     <div class="attachment-thumb">
-                        <a aria-hidden="true" class="thumbnail" href="@Url.Action("Csv", "Roatp", new {filename = Model.Filename}, null)"><img alt="" src="~/Content/dist/images/pub-cover-csv.png"></a>
+                        @*<a aria-hidden="true" class="thumbnail" href="@Url.Action("Csv", "Roatp", new {filename = Model.Filename}, null)"><img alt="" src="~/Content/dist/images/pub-cover-csv.png"></a>*@
                     </div>
                     <div class="attachment-details">
                         <h2 class="title">
                             ESFA register of apprenticeship training providers
                         </h2>
-                        <span class="type">@Html.ActionLink("Download CSV", "Csv", "Roatp", new { filename = Model.Filename }, null)</span>
+                        @*<span class="type">@Html.ActionLink("Download CSV", "Csv", "Roatp", new { filename = Model.Filename }, null)</span>*@
+                        Download CSV ***
                     </div>
                 </section>
                 <dl class="meta">
                     <dt>Last Updated:</dt>
-                    <dd>@Model.LastUpdated.ToGdsFormatWithSeconds()</dd>
+                    <dd>@*@Model.LastUpdated.ToGdsFormatWithSeconds()*@ Timestamp goes here</dd>
 
                 </dl>
             </div>
