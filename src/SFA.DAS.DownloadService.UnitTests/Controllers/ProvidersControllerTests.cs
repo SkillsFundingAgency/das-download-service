@@ -28,8 +28,6 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
         private Mock<IRoatpApiClient> _mockClient;
         private IRoatpMapper _mapper;
         private Mock<IHostingEnvironment> _mockEnv;
-        // private Mock<IRetryService> _mockRetryService;
-        private IRetryService retryService;
 
         private Mock<ILogger<RetryService>> _mockRetryServiceLogger;
 
@@ -48,7 +46,6 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
             _mockEnv = new Mock<IHostingEnvironment>();
             _mockRetryServiceLogger = new Mock<ILogger<RetryService>>();
             retryService = new RetryService(_mockRetryServiceLogger.Object);
-            //_mockRetryService = new Mock<IRetryService>();
             _mapper = new RoatpMapper();
             _mockClient.Setup(z => z.GetRoatpSummaryByUkprn(It.IsAny<int>())).ReturnsAsync((IEnumerable<RoatpResult>)null);
             _mockClient.Setup(z => z.GetRoatpSummary()).ReturnsAsync((IEnumerable<RoatpResult>)null);
