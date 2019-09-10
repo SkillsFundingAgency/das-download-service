@@ -90,12 +90,12 @@ namespace SFA.DAS.DownloadService.Services.Services.Roatp
             {
                 Ukprn = result.Ukprn,
                 Name = result.Name,
-                ProviderType = result?.ProviderType.ToString(),
-                NewOrganisationWithoutFinancialTrackRecord = !result.NewOrganisationWithoutFinancialTrackRecord,
+                ProviderType = Enumerations.GetEnumDescription(result.ProviderType),
+                NewOrganisationWithoutFinancialTrackRecord = result.NewOrganisationWithoutFinancialTrackRecord,
                 ParentCompanyGuarantee = result.ParentCompanyGuarantee,
-                StartDate = FormatDate(result?.StartDate),
-                ProviderNotCurrentlyStartingNewApprentices = result.CurrentlyNotStartingNewApprentices ? "TRUE":"FALSE",
-                ApplicationDeterminedDate = FormatDate(result?.ApplicationDeterminedDate)
+                StartDate = FormatDate(result.StartDate),
+                ProviderNotCurrentlyStartingNewApprentices = result.CurrentlyNotStartingNewApprentices ? "TRUE":string.Empty,
+                ApplicationDeterminedDate = FormatDate(result.ApplicationDeterminedDate)
             };
 
             return csvProvider;

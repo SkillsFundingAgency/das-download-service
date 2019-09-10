@@ -64,8 +64,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
                 var roatpResultsFiltered = roatpResults.Where(x => x.IsDateValid(DateTime.Now));
                 _logger.LogDebug($@"{roatpResultsFiltered.Count()} results filtered from GetRoatpSummary");
 
-                //
-                //providers = _mapper.MapCsv(roatpResultsFiltered.ToList());
+ 
                 providers = _mapper.MapProvidersToCsvProviders(roatpResultsFiltered.ToList());
                 _logger.LogDebug($@"{providers.Count()} providers mapped to CSV-ready state");
 
