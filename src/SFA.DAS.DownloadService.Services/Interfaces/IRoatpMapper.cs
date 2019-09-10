@@ -10,12 +10,11 @@ namespace SFA.DAS.DownloadService.Services.Interfaces
         List<Provider> Map(List<RoatpResult> roatpResults);
 
         CsvProvider MapCsv(RoatpResult results);
-
+        List<CsvProvider> MapCsv(List<RoatpResult> roatpResults);
 
         CsvProvider MapProviderToCsvProvider(Provider provider);
         List<CsvProvider> MapProvidersToCsvProviders(List<Provider> providers);
 
-        List<CsvProvider> MapCsv(List<RoatpResult> roatpResults);
 
     }
 }

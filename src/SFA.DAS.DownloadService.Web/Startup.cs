@@ -109,14 +109,6 @@ namespace SFA.DAS.DownloadService.Web
             app.UseHealthChecks("/health");
             app.UseRequestLocalization();
 
-
-            //app.UseSwagger()
-            //    .UseSwaggerUI(c =>
-            //    {
-            //        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Download Service API v1");
-            //    });
-
-
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
