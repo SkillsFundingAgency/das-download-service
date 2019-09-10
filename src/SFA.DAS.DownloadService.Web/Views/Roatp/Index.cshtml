@@ -28,13 +28,12 @@
                         <h2 class="title">
                             ESFA register of apprenticeship training providers
                         </h2>
-                        @*<span class="type">@Html.ActionLink("Download CSV", "Csv", "Roatp", new { filename = Model.Filename }, null)</span>*@
-                        Download CSV ***
+                        <span class="type">@Html.ActionLink("Download CSV", "Csv", "Roatp", new { filename = Model.Filename }, null)</span>
                     </div>
                 </section>
                 <dl class="meta">
                     <dt>Last Updated:</dt>
-                    <dd>@*@Model.LastUpdated.ToGdsFormatWithSeconds()*@ Timestamp goes here</dd>
+                    <dd>@Model.LastUpdated.ToGdsFormatWithSeconds() </dd>
 
                 </dl>
             </div>

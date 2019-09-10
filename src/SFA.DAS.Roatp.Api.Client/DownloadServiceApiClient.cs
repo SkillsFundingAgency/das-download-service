@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -13,42 +12,42 @@ using SFA.DAS.DownloadService.Services.Interfaces;
 
 namespace SFA.DAS.Roatp.Api.Client
 {
-    public class RoatpApiClient : IRoatpApiClient
+    public class DownloadServiceApiClient : IDownloadServiceApiClient
     {
 
         private readonly HttpClient _client;
-        private readonly ILogger<RoatpApiClient> _logger;
+        private readonly ILogger<DownloadServiceApiClient> _logger;
         private readonly ITokenService _tokenService;
         private readonly string _baseUrl;
-        public RoatpApiClient(ILogger<RoatpApiClient> logger, ITokenService tokenService, IWebConfiguration configuration)
+        public DownloadServiceApiClient( ILogger<DownloadServiceApiClient> logger, ITokenService tokenService, IWebConfiguration configuration)
         {
             _logger = logger;
             _tokenService = tokenService;
-            _baseUrl = configuration.RoatpApiClientBaseUrl;
+            _baseUrl = configuration.DownloadServiceApiClientBaseUrl;
             _client = new HttpClient { BaseAddress = new Uri($"{_baseUrl}") };
         }
 
-        public async Task<IEnumerable<RoatpResult>> GetRoatpSummary()
+        public async Task<IEnumerable<Provider>> GetRoatpSummary()
         {
-            var url = $"{_baseUrl}/api/v1/download/roatp-summary";
+            var url = $"{_baseUrl}/api/providers";
             _logger.LogInformation($"Retrieving RoATP summary data from {url}");
-            return await Get<IEnumerable<RoatpResult>>($"{url}");
+            return await Get<IEnumerable<Provider>>($"{url}");
         }
 
-        public async Task<IEnumerable<RoatpResult>> GetRoatpSummaryByUkprn(int ukprn)
+        public async Task<IEnumerable<Provider>> GetRoatpSummaryByUkprn(int ukprn)
         {
-            var url = $"{_baseUrl}/api/v1/download/roatp-summary/{ukprn}";
+            var url = $"{_baseUrl}/api/providers/{ukprn}";
             _logger.LogInformation($"Retrieving RoATP summary data from {url}");
-            return await Get<IEnumerable<RoatpResult>>($"{url}");
+            return await Get<IEnumerable<Provider>>($"{url}");
         }
 
-        public async Task<DateTime?> GetLatestNonOnboardingOrganisationChangeDate()
+        public async  Task<DateTime?> GetLatestNonOnboardingOrganisationChangeDate()
         {
-            var url = $"{_baseUrl}/api/v1/download/roatp-summary/most-recent";
+            var url = $"{_baseUrl}/api/GetLatestTime";
             _logger.LogInformation($"Retrieving RoATP most recent change from {url}");
             return await Get<DateTime>($"{url}");
         }
-
+       
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =

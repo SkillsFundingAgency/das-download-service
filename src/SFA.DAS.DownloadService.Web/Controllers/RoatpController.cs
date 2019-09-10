@@ -18,14 +18,14 @@ namespace SFA.DAS.DownloadService.Web.Controllers
 {
     public class RoatpController : Controller
     {
-        private readonly IRoatpApiClient _roatpApiClient;
+        private readonly IDownloadServiceApiClient _apiClient;
         private readonly IRoatpMapper _mapper;
         private readonly IRetryService _retryService;
         private readonly ILogger<RoatpController> _logger;
 
-        public RoatpController(IRoatpApiClient roatpApiClient, IRoatpMapper mapper, IRetryService retryService, ILogger<RoatpController> logger)
+        public RoatpController(IDownloadServiceApiClient apiClient, IRoatpMapper mapper, IRetryService retryService, ILogger<RoatpController> logger)
         {
-            _roatpApiClient = roatpApiClient;
+            _apiClient = apiClient;
             _mapper = mapper;
             _retryService = retryService;
             _logger = logger;
@@ -34,18 +34,18 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         [ResponseCache(Duration = 600)]
         public ActionResult Index()
         {
-            //MFCMFC temporary workaround
+            
             DateTime? date =DateTime.Now;
-            //try
-            //{
-            //    var result = _retryService.RetryPolicy("<roatpService>/api/v1/download/roatp-summary/most-recent").ExecuteAsync(context => _roatpApiClient.GetLatestNonOnboardingOrganisationChangeDate(), new Context());
-            //    date = result.Result;
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError("Unable to retrieve results for latest non-onboarding organisation change", ex);
-            //    date = DateTime.Now;
-            //}
+            try
+            {
+                var result = _retryService.RetryPolicy("<roatpService>/api/v1/download/roatp-summary/most-recent").ExecuteAsync(context => _apiClient.GetLatestNonOnboardingOrganisationChangeDate(), new Context());
+                date = result.Result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Unable to retrieve results for latest non-onboarding organisation change", ex);
+                date = DateTime.Now;
+            }
 
             var viewModel = new RoatpDownloadViewModel { Filename = GenerateFilename(date.Value), LastUpdated = date.Value };
             return View(viewModel);
@@ -59,12 +59,14 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             try
             {
                 _logger.LogDebug("Getting results from GetRoatpSummary");
-                var roatpResults = _roatpApiClient.GetRoatpSummary().Result;
+                var roatpResults = _apiClient.GetRoatpSummary().Result;
                 _logger.LogDebug($@"{roatpResults.Count()} results from GetRoatpSummary");
                 var roatpResultsFiltered = roatpResults.Where(x => x.IsDateValid(DateTime.Now));
                 _logger.LogDebug($@"{roatpResultsFiltered.Count()} results filtered from GetRoatpSummary");
 
-                providers = _mapper.MapCsv(roatpResultsFiltered.ToList());
+                //
+                //providers = _mapper.MapCsv(roatpResultsFiltered.ToList());
+                providers = _mapper.MapProvidersToCsvProviders(roatpResultsFiltered.ToList());
                 _logger.LogDebug($@"{providers.Count()} providers mapped to CSV-ready state");
 
             }
@@ -73,7 +75,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
                 _logger.LogError($@"Unable to retrieve results for getting all roatp details, message: [{ex.Message}]", ex);
             }
 
-            var date = _roatpApiClient.GetLatestNonOnboardingOrganisationChangeDate().Result;
+            var date = _apiClient.GetLatestNonOnboardingOrganisationChangeDate().Result;
             if (date == null)
                 date = DateTime.Now;
 

@@ -83,7 +83,7 @@ namespace SFA.DAS.DownloadService.Web
         private void  ConfigureDependencyInjection(IServiceCollection services)
         {
             services.AddTransient<IRoatpMapper,RoatpMapper>();
-            services.AddTransient<IRoatpApiClient,RoatpApiClient>();
+            services.AddTransient<IDownloadServiceApiClient,DownloadServiceApiClient>();
             services.AddTransient<ITokenService,TokenService>();
             services.AddTransient<IRetryService,RetryService>();
             services.AddTransient(x=>ApplicationConfiguration); 
@@ -110,11 +110,11 @@ namespace SFA.DAS.DownloadService.Web
             app.UseRequestLocalization();
 
 
-            app.UseSwagger()
-                .UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Download Service API v1");
-                });
+            //app.UseSwagger()
+            //    .UseSwaggerUI(c =>
+            //    {
+            //        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Download Service API v1");
+            //    });
 
 
             app.UseMvc(routes =>

@@ -19,6 +19,7 @@ using SFA.DAS.Roatp.Api.Client;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
 using Swashbuckle.AspNetCore.Examples;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace SFA.DAS.DownloadService.Api
 {
@@ -112,17 +113,9 @@ namespace SFA.DAS.DownloadService.Api
             app.UseSwagger()
                 .UseSwaggerUI(c =>
                 {
+                    c.RoutePrefix = "api";
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Download Service API v1");
                 });
-
-
-            //app.UseMvc(routes =>
-            //{
-            //    routes.MapRoute(
-            //        name: "default",
-            //        template: "{controller}/{action}/{id?}",
-            //        defaults: new { controller = "Home", action = "Index" });
-            //});
 
             app.UseMvc();
 
