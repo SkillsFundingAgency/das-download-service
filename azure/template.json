@@ -105,7 +105,7 @@
   "variables": {
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
     "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
-    "uiAppServiceName": "[concat(variables('resourceNamePrefix'), 'ui-as')]",
+    "uiAppServiceName": "[concat(variables('resourceNamePrefix'), '-as')]",
     "apiAppServiceName": "[concat(variables('resourceNamePrefix'), 'api-as')]"
   },
   "resources": [
