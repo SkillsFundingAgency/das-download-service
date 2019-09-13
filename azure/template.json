@@ -214,7 +214,7 @@
         },
         "parameters": {
           "appServiceName": {
-            "value": "[variables('uiAppServiceName')]"
+            "value": "[variables('apiAppServiceName')]"
           },
           "appServicePlanName": {
             "value": "[parameters('sharedBackEndAppServicePlan')]"
@@ -263,7 +263,7 @@
             "value": "[parameters('apiCustomHostName')]"
           },
           "certificateThumbprint": {
-            "value": "[if(greater(length(parameters('uiCustomHostname')), 0), reference('api-app-service-certificate', '2018-11-01').outputs.certificateThumbprint.value, '')]"
+            "value": "[if(greater(length(parameters('apiCustomHostname')), 0), reference('api-app-service-certificate', '2018-11-01').outputs.certificateThumbprint.value, '')]"
           },
           "ipSecurityRestrictions": {
             "value": "[parameters('appServiceAllowedIPs')]"
