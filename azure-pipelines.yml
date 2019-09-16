@@ -45,7 +45,16 @@ steps:
   displayName: 'Publish Website'
   inputs:
     command: publish
-    publishWebProjects: true
+    publishWebProjects: false
+    projects: 'src/SFA.DAS.DownloadService.Web/SFA.DAS.DownloadService.Web.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish API'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: 'src/SFA.DAS.DownloadService.Api/SFA.DAS.DownloadService.Api.csproj'
     arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
 
 - task: CopyFiles@2

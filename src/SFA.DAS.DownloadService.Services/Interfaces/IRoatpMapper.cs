@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.DownloadService.Api.Types.Roatp;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.DownloadService.Services.Interfaces
 {
@@ -10,6 +11,10 @@ namespace SFA.DAS.DownloadService.Services.Interfaces
 
         CsvProvider MapCsv(RoatpResult results);
         List<CsvProvider> MapCsv(List<RoatpResult> roatpResults);
+
+        CsvProvider MapProviderToCsvProvider(Provider provider);
+        List<CsvProvider> MapProvidersToCsvProviders(List<Provider> providers);
+
 
     }
 }

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using Swashbuckle.AspNetCore.Examples;
 
-namespace SFA.DAS.DownloadService.Web.SwaggerHelpers.Examples
+namespace SFA.DAS.DownloadService.Api.Roatp.SwaggerHelpers.Examples
 {
     public class ProvidersExample : IExamplesProvider
     {

@@ -13,7 +13,7 @@ using SFA.DAS.Roatp.Api.Client.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Examples;
 
-namespace SFA.DAS.DownloadService.Web.Controllers
+namespace SFA.DAS.DownloadService.Api.Roatp.Controllers
 {
     [Route("api")]
     [ApiController]
@@ -25,7 +25,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         private readonly IHostingEnvironment _hostingEnv = null;
         private readonly IRetryService _retryService;
 
-        public ProvidersController(ILogger<ProvidersController> log, IRoatpApiClient apiClient, IRoatpMapper mapper, IHostingEnvironment hostingEnv,  IRetryService retryService) 
+        public ProvidersController(ILogger<ProvidersController> log, IRoatpApiClient apiClient, IRoatpMapper mapper, IHostingEnvironment hostingEnv, IRetryService retryService)
         {
             _log = log;
             _apiClient = apiClient;
@@ -95,6 +95,28 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             return Ok(provider);
         }
 
+        [SwaggerOperation("GetLatestTime")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [HttpGet("getLatestTime")]
+        public async Task<IActionResult> GetLatestTime()
+        {
+            _log.LogDebug($"Fetching GET latest change date");
+
+            DateTime? latestChange = DateTime.UtcNow;
+            try
+            {
+                var result = _retryService.RetryPolicy($"<roatpService>/api/v1/download/roatp-summary/most-recent").ExecuteAsync(context => _apiClient.GetLatestNonOnboardingOrganisationChangeDate(), new Context());
+                if (result.Result!=null)
+                    latestChange = result.Result;
+            }
+            catch (Exception ex)
+            {
+                _log.LogError($"Unable to retrieve latest change date", ex);
+
+            }
+
+            return Ok(latestChange);
+        }
 
 
         /// <summary>
@@ -113,7 +135,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
                 _log.LogDebug($"Fetching GET ALL for ukprns");
 
                 IEnumerable<RoatpResult> results;
-                
+
                 try
                 {
                     var result = _retryService.RetryPolicy("<roatpService>/api/v1/download/roatp-summary").ExecuteAsync(context => _apiClient.GetRoatpSummary(), new Context());

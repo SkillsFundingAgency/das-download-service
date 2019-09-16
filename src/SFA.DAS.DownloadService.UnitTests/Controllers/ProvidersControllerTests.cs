@@ -9,11 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.DownloadService.Api.Roatp.Controllers;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Services;
 using SFA.DAS.DownloadService.Services.Services.Roatp;
-using SFA.DAS.DownloadService.Web.Controllers;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
 
 namespace SFA.DAS.DownloadService.UnitTests.Controllers
@@ -28,8 +28,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
         private Mock<IRoatpApiClient> _mockClient;
         private IRoatpMapper _mapper;
         private Mock<IHostingEnvironment> _mockEnv;
-       // private Mock<IRetryService> _mockRetryService;
-        private IRetryService retryService;
+        private IRetryService _retryService;
 
         private Mock<ILogger<RetryService>> _mockRetryServiceLogger;
 
@@ -44,14 +43,14 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
             _ukprn = 12345678;
             _mockLogger = new Mock<ILogger<ProvidersController>>();
             _mockClient = new Mock<IRoatpApiClient>();
-           
+
             _mockEnv = new Mock<IHostingEnvironment>();
             _mockRetryServiceLogger = new Mock<ILogger<RetryService>>();
-            retryService = new RetryService(_mockRetryServiceLogger.Object);
-            //_mockRetryService = new Mock<IRetryService>();
+            _retryService = new RetryService(_mockRetryServiceLogger.Object);
+
             _mapper = new RoatpMapper();
             _mockClient.Setup(z => z.GetRoatpSummaryByUkprn(It.IsAny<int>())).ReturnsAsync((IEnumerable<RoatpResult>)null);
-            _mockClient.Setup(z => z.GetRoatpSummary()).ReturnsAsync((IEnumerable<RoatpResult>) null);
+            _mockClient.Setup(z => z.GetRoatpSummary()).ReturnsAsync((IEnumerable<RoatpResult>)null);
 
             HttpContextRequest = new Mock<HttpRequest>();
             HttpContextRequest.Setup(r => r.Method).Returns("GET");
@@ -60,7 +59,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
             HttpContext.Setup(x => x.Request.Host).Returns(new HostString("localhost"));
 
             _controller = new ProvidersController(_mockLogger.Object, _mockClient.Object, _mapper,
-               _mockEnv.Object, retryService);
+               _mockEnv.Object, _retryService);
 
             _controller.ControllerContext = new ControllerContext();
             _controller.ControllerContext.HttpContext = HttpContext.Object;
@@ -112,8 +111,8 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
                 StartDate = startDateToUse
             };
 
-            if (ukprnType !="absentUkprn")
-            _mockClient.Setup(z => z.GetRoatpSummaryByUkprn(_ukprn)).ReturnsAsync(new List<RoatpResult>{roatpResult});
+            if (ukprnType != "absentUkprn")
+                _mockClient.Setup(z => z.GetRoatpSummaryByUkprn(_ukprn)).ReturnsAsync(new List<RoatpResult> { roatpResult });
 
             var resultFromGet = _controller.Get(_ukprn).Result;
 
@@ -189,12 +188,12 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
             }
         }
 
-        [TestCase( "today", 2)]
-        [TestCase( "tomorrow", 1)]
-        [TestCase( "yesterday", 2)]
+        [TestCase("today", 2)]
+        [TestCase("tomorrow", 1)]
+        [TestCase("yesterday", 2)]
 
 
-        public void ShouldReturnExpectedNumberOfRecordsFromGetAll( string startDate, int expectedCount)
+        public void ShouldReturnExpectedNumberOfRecordsFromGetAll(string startDate, int expectedCount)
         {
             var roatpResults = new List<RoatpResult>
             {
@@ -214,7 +213,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
                     startDateToUse = DateTime.Today;
                     break;
             }
-           
+
             var roatpResult2 = new RoatpResult { Ukprn = "22222222", StartDate = startDateToUse };
 
             roatpResults.Add(roatpResult2);

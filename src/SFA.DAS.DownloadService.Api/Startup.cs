@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -15,13 +15,13 @@ using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Services;
 using SFA.DAS.DownloadService.Services.Services.Roatp;
 using SFA.DAS.DownloadService.Settings;
-using SFA.DAS.DownloadService.Web.Extensions;
 using SFA.DAS.Roatp.Api.Client;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
 using Swashbuckle.AspNetCore.Examples;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
-namespace SFA.DAS.DownloadService.Web
+namespace SFA.DAS.DownloadService.Api
 {
     public class Startup
     {
@@ -52,8 +52,8 @@ namespace SFA.DAS.DownloadService.Web
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = $"Download Service API {Configuration["InstanceName"]}", Version = "v1" });
-                c.EnableAnnotations();               
-                c.OperationFilter<ExamplesOperationFilter>();     
+                c.EnableAnnotations();
+                c.OperationFilter<ExamplesOperationFilter>();
             });
 
             ApplicationConfiguration = new WebConfiguration
@@ -80,13 +80,13 @@ namespace SFA.DAS.DownloadService.Web
 
         }
 
-        private void  ConfigureDependencyInjection(IServiceCollection services)
+        private void ConfigureDependencyInjection(IServiceCollection services)
         {
-            services.AddTransient<IRoatpMapper,RoatpMapper>();
-            services.AddTransient<IDownloadServiceApiClient,DownloadServiceApiClient>();
-            services.AddTransient<ITokenService,TokenService>();
-            services.AddTransient<IRetryService,RetryService>();
-            services.AddTransient(x=>ApplicationConfiguration); 
+            services.AddTransient<IRoatpMapper, RoatpMapper>();
+            services.AddTransient<IRoatpApiClient, RoatpApiClient>();
+            services.AddTransient<ITokenService, TokenService>();
+            services.AddTransient<IRetryService, RetryService>();
+            services.AddTransient(x => ApplicationConfiguration);
         }
 
 
@@ -109,13 +109,16 @@ namespace SFA.DAS.DownloadService.Web
             app.UseHealthChecks("/health");
             app.UseRequestLocalization();
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller}/{action}/{id?}",
-                    defaults: new { controller = "Roatp", action = "Index" });
-            });
+
+            app.UseSwagger()
+                .UseSwaggerUI(c =>
+                {
+                    c.RoutePrefix = "api";
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Download Service API v1");
+                });
+
+            app.UseMvc();
+
         }
 
 

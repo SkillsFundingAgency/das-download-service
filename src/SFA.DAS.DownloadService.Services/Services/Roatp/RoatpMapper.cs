@@ -84,6 +84,35 @@ namespace SFA.DAS.DownloadService.Services.Services.Roatp
             return csvProvider;
         }
 
+        public CsvProvider MapProviderToCsvProvider(Provider result)
+        {
+            var csvProvider = new CsvProvider
+            {
+                Ukprn = result.Ukprn,
+                Name = result.Name,
+                ProviderType = Enumerations.GetEnumDescription(result.ProviderType),
+                NewOrganisationWithoutFinancialTrackRecord = result.NewOrganisationWithoutFinancialTrackRecord,
+                ParentCompanyGuarantee = result.ParentCompanyGuarantee,
+                StartDate = FormatDate(result.StartDate),
+                ProviderNotCurrentlyStartingNewApprentices = result.CurrentlyNotStartingNewApprentices ? "TRUE":string.Empty,
+                ApplicationDeterminedDate = FormatDate(result.ApplicationDeterminedDate)
+            };
+
+            return csvProvider;
+        }
+
+        public List<CsvProvider> MapProvidersToCsvProviders(List<Provider> providers)
+        {
+            var csvProviders = new List<CsvProvider>();
+            foreach (var provider in providers)
+            {
+                csvProviders.Add(MapProviderToCsvProvider(provider));
+
+            }
+
+            return csvProviders;
+        }
+
         public List<CsvProvider> MapCsv(List<RoatpResult> roatpResults)
         {
             return roatpResults.Select(MapCsv).ToList();

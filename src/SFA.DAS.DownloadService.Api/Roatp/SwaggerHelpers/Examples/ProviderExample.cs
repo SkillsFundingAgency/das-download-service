@@ -2,7 +2,7 @@
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using Swashbuckle.AspNetCore.Examples;
 
-namespace SFA.DAS.DownloadService.Web.SwaggerHelpers.Examples
+namespace SFA.DAS.DownloadService.Api.Roatp.SwaggerHelpers.Examples
 {
     public class ProviderExample : IExamplesProvider
     {
