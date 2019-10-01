@@ -15,36 +15,34 @@ namespace SFA.DAS.Roatp.Api.Client
 {
     public class RoatpApiClient : IRoatpApiClient
     {
-
         private readonly HttpClient _client;
         private readonly ILogger<RoatpApiClient> _logger;
         private readonly ITokenService _tokenService;
-        private readonly string _baseUrl;
-        public RoatpApiClient(ILogger<RoatpApiClient> logger, ITokenService tokenService, IWebConfiguration configuration)
+
+        public RoatpApiClient(HttpClient client,ILogger<RoatpApiClient> logger, ITokenService tokenService)
         {
             _logger = logger;
             _tokenService = tokenService;
-            _baseUrl = configuration.RoatpApiClientBaseUrl;
-            _client = new HttpClient { BaseAddress = new Uri($"{_baseUrl}") };
+            _client = client;
         }
 
         public async Task<IEnumerable<RoatpResult>> GetRoatpSummary()
         {
-            var url = $"{_baseUrl}/api/v1/download/roatp-summary";
+            var url = $"api/v1/download/roatp-summary";
             _logger.LogInformation($"Retrieving RoATP summary data from {url}");
             return await Get<IEnumerable<RoatpResult>>($"{url}");
         }
 
         public async Task<IEnumerable<RoatpResult>> GetRoatpSummaryByUkprn(int ukprn)
         {
-            var url = $"{_baseUrl}/api/v1/download/roatp-summary/{ukprn}";
+            var url = $"api/v1/download/roatp-summary/{ukprn}";
             _logger.LogInformation($"Retrieving RoATP summary data from {url}");
             return await Get<IEnumerable<RoatpResult>>($"{url}");
         }
 
         public async Task<DateTime?> GetLatestNonOnboardingOrganisationChangeDate()
         {
-            var url = $"{_baseUrl}/api/v1/download/roatp-summary/most-recent";
+            var url = $"api/v1/download/roatp-summary/most-recent";
             _logger.LogInformation($"Retrieving RoATP most recent change from {url}");
             return await Get<DateTime>($"{url}");
         }
@@ -54,7 +52,7 @@ namespace SFA.DAS.Roatp.Api.Client
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Absolute)))
+            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
             {
                 var serializedObject = await response.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<T>(serializedObject);

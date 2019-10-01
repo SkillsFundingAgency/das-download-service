@@ -72,6 +72,14 @@ namespace SFA.DAS.DownloadService.Web
                 options.RequestCultureProviders.Clear();
             });
 
+            services.AddHttpClient<DownloadServiceApiClient>("DownloadServiceApiClient", config =>
+                {
+                    config.BaseAddress = new Uri(ApplicationConfiguration.DownloadServiceApiClientBaseUrl);
+                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
+
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

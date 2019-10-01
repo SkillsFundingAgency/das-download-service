@@ -72,6 +72,20 @@ namespace SFA.DAS.DownloadService.Api
                 options.RequestCultureProviders.Clear();
             });
 
+            services.AddHttpClient<RoatpApiClient>("RoatpApiClient", config =>
+                {
+                    config.BaseAddress = new Uri(ApplicationConfiguration.RoatpApiClientBaseUrl);
+                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
+            services.AddHttpClient<DownloadServiceApiClient>("DownloadServiceApiClient", config =>
+                {
+                    config.BaseAddress = new Uri(ApplicationConfiguration.DownloadServiceApiClientBaseUrl);
+                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -82,11 +96,17 @@ namespace SFA.DAS.DownloadService.Api
 
         private void ConfigureDependencyInjection(IServiceCollection services)
         {
+       
+
             services.AddTransient<IRoatpMapper, RoatpMapper>();
             services.AddTransient<IRoatpApiClient, RoatpApiClient>();
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IRetryService, RetryService>();
             services.AddTransient(x => ApplicationConfiguration);
+
+           
+
+
         }
 
 

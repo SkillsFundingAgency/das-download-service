@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Polly;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Services.Interfaces;
+using SFA.DAS.Roatp.Api.Client;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Examples;
@@ -19,13 +20,13 @@ namespace SFA.DAS.DownloadService.Api.Roatp.Controllers
     [ApiController]
     public class ProvidersController : Controller
     {
-        private readonly IRoatpApiClient _apiClient;
+        private readonly RoatpApiClient _apiClient;
         private readonly ILogger<ProvidersController> _log;
         private readonly IRoatpMapper _mapper;
         private readonly IHostingEnvironment _hostingEnv = null;
         private readonly IRetryService _retryService;
 
-        public ProvidersController(ILogger<ProvidersController> log, IRoatpApiClient apiClient, IRoatpMapper mapper, IHostingEnvironment hostingEnv, IRetryService retryService)
+        public ProvidersController(ILogger<ProvidersController> log, RoatpApiClient apiClient, IRoatpMapper mapper, IHostingEnvironment hostingEnv, IRetryService retryService)
         {
             _log = log;
             _apiClient = apiClient;
