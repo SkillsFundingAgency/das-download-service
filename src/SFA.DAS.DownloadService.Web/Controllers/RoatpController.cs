@@ -19,12 +19,12 @@ namespace SFA.DAS.DownloadService.Web.Controllers
 {
     public class RoatpController : Controller
     {
-        private readonly DownloadServiceApiClient _apiClient;
+        private readonly IDownloadServiceApiClient _apiClient;
         private readonly IRoatpMapper _mapper;
         private readonly IRetryService _retryService;
         private readonly ILogger<RoatpController> _logger;
 
-        public RoatpController(DownloadServiceApiClient apiClient, IRoatpMapper mapper, IRetryService retryService, ILogger<RoatpController> logger)
+        public RoatpController(IDownloadServiceApiClient apiClient, IRoatpMapper mapper, IRetryService retryService, ILogger<RoatpController> logger)
         {
             _apiClient = apiClient;
             _mapper = mapper;

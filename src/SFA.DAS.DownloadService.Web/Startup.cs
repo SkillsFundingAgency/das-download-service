@@ -72,7 +72,7 @@ namespace SFA.DAS.DownloadService.Web
                 options.RequestCultureProviders.Clear();
             });
 
-            services.AddHttpClient<DownloadServiceApiClient>("DownloadServiceApiClient", config =>
+            services.AddHttpClient<IDownloadServiceApiClient, DownloadServiceApiClient>(config =>
                 {
                     config.BaseAddress = new Uri(ApplicationConfiguration.DownloadServiceApiClientBaseUrl);
                     config.DefaultRequestHeaders.Add("Accept", "Application/json");
@@ -91,7 +91,6 @@ namespace SFA.DAS.DownloadService.Web
         private void  ConfigureDependencyInjection(IServiceCollection services)
         {
             services.AddTransient<IRoatpMapper,RoatpMapper>();
-            services.AddTransient<IDownloadServiceApiClient,DownloadServiceApiClient>();
             services.AddTransient<ITokenService,TokenService>();
             services.AddTransient<IRetryService,RetryService>();
             services.AddTransient(x=>ApplicationConfiguration); 

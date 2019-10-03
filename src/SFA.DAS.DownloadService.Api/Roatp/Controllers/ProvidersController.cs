@@ -20,13 +20,13 @@ namespace SFA.DAS.DownloadService.Api.Roatp.Controllers
     [ApiController]
     public class ProvidersController : Controller
     {
-        private readonly RoatpApiClient _apiClient;
+        private readonly IRoatpApiClient _apiClient;
         private readonly ILogger<ProvidersController> _log;
         private readonly IRoatpMapper _mapper;
         private readonly IHostingEnvironment _hostingEnv = null;
         private readonly IRetryService _retryService;
 
-        public ProvidersController(ILogger<ProvidersController> log, RoatpApiClient apiClient, IRoatpMapper mapper, IHostingEnvironment hostingEnv, IRetryService retryService)
+        public ProvidersController(ILogger<ProvidersController> log, IRoatpApiClient apiClient, IRoatpMapper mapper, IHostingEnvironment hostingEnv, IRetryService retryService)
         {
             _log = log;
             _apiClient = apiClient;
