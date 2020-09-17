@@ -32,10 +32,10 @@
         "description": "The name of the shared front end App Service Plan."
       }
     },
-    "sharedFrontEndAppServicePlanResourceGroupName": {
+    "sharedFrontEndSubnetResourceId": {
       "type": "string",
       "metadata": {
-        "description": "The name of the resource group where the shared front end App Service Plan is located."
+        "description": "The resource id of the shared front end subnet."
       }
     },
     "sharedBackEndAppServicePlan": {
@@ -44,10 +44,16 @@
         "description": "The name of the shared back end App Service Plan."
       }
     },
-    "sharedBackEndAppServicePlanResourceGroupName": {
+    "sharedBackEndSubnetResourceId": {
       "type": "string",
       "metadata": {
-        "description": "The name of the resource group where the shared back end App Service Plan is located."
+        "description": "The resource id of the shared back end subnet."
+      }
+    },
+    "sharedAppServicePlanResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the resource group where the shared App Service Plans are located."
       }
     },
     "appServiceAllowedIPs": {
@@ -113,7 +119,7 @@
       "condition": "[greater(length(parameters('apiCustomHostName')), 0)]",
       "apiVersion": "2017-05-10",
       "name": "api-app-service-certificate",
-      "resourceGroup": "[parameters('sharedBackEndAppServicePlanResourceGroupName')]",
+      "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -138,7 +144,7 @@
       "condition": "[greater(length(parameters('uiCustomHostName')), 0)]",
       "apiVersion": "2017-05-10",
       "name": "ui-app-service-certificate",
-      "resourceGroup": "[parameters('sharedFrontEndAppServicePlanResourceGroupName')]",
+      "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -220,7 +226,10 @@
             "value": "[parameters('sharedBackEndAppServicePlan')]"
           },
           "appServicePlanResourceGroup": {
-            "value": "[parameters('sharedBackEndAppServicePlanResourceGroupName')]"
+            "value": "[parameters('sharedAppServicePlanResourceGroup')]"
+          },
+          "subnetResourceId": {
+            "value": "[parameters('sharedBackEndSubnetResourceId')]"
           },
           "appServiceAppSettings": {
             "value": [
@@ -292,7 +301,10 @@
             "value": "[parameters('sharedFrontEndAppServicePlan')]"
           },
           "appServicePlanResourceGroup": {
-            "value": "[parameters('sharedFrontEndAppServicePlanResourceGroupName')]"
+            "value": "[parameters('sharedAppServicePlanResourceGroup')]"
+          },
+          "subnetResourceId": {
+            "value": "[parameters('sharedFrontEndSubnetResourceId')]"
           },
           "appServiceAppSettings": {
             "value": [
