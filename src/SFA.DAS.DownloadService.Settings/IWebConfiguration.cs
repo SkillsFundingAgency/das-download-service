@@ -7,6 +7,9 @@ namespace SFA.DAS.DownloadService.Settings
         string RoatpApiClientBaseUrl { get; set; }
         string DownloadServiceApiClientBaseUrl { get; set; }
         ClientApiAuthentication RoatpApiAuthentication { get; set; }
+
+        string RedisConnectionString { get; set; }
+        string DataProtectionKeysDatabase { get; set; }
     }
 
     public class WebConfiguration : IWebConfiguration
@@ -15,5 +18,8 @@ namespace SFA.DAS.DownloadService.Settings
         [JsonRequired] public ClientApiAuthentication RoatpApiAuthentication { get; set; }
 
         [JsonRequired] public string DownloadServiceApiClientBaseUrl { get; set; }
+
+        [JsonRequired] public string RedisConnectionString { get; set; }
+        [JsonRequired] public string DataProtectionKeysDatabase { get; set; }
     }
 }

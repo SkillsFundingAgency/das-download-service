@@ -16,6 +16,7 @@ using SFA.DAS.DownloadService.Services.Services;
 using SFA.DAS.DownloadService.Services.Services.Roatp;
 using SFA.DAS.DownloadService.Settings;
 using SFA.DAS.DownloadService.Web.Extensions;
+using SFA.DAS.DownloadService.Web.Infrastructure;
 using SFA.DAS.Roatp.Api.Client;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
 using Swashbuckle.AspNetCore.Examples;
@@ -75,6 +76,7 @@ namespace SFA.DAS.DownloadService.Web
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddDataProtection(ApplicationConfiguration, _env);
 
             ConfigureDependencyInjection(services);
 
