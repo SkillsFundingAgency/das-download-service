@@ -1,4 +1,5 @@
-.grid-row:after, .govuk-grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after, .form-group:after, .form-block:after, .breadcrumbs ol:after, .data-wrap:after, .account-information:after, .header-organisation ul:after {
+.grid-row:after, .govuk-grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
+.form-group:after, .breadcrumbs ol:after, .data-wrap:after, .account-information:after, .header-organisation ul:after {
   content: "";
   display: block;
   clear: both; }
@@ -13,17 +14,20 @@
 .grid-row, .govuk-grid-row {
   margin: 0 -15px; }
 
-.grid-row:after, .govuk-grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after, .form-group:after, .form-block:after, .breadcrumbs ol:after, .data-wrap:after, .account-information:after, .header-organisation ul:after {
+.grid-row:after, .govuk-grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
+.form-group:after, .breadcrumbs ol:after, .data-wrap:after, .account-information:after, .header-organisation ul:after {
   content: "";
   display: block;
   clear: both; }
 
-.grid-row:after, .govuk-grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after, .form-group:after, .form-block:after, .breadcrumbs ol:after, .data-wrap:after, .account-information:after, .header-organisation ul:after {
+.grid-row:after, .govuk-grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
+.form-group:after, .breadcrumbs ol:after, .data-wrap:after, .account-information:after, .header-organisation ul:after {
   content: "";
   display: block;
   clear: both; }
 
-.grid-row:after, .govuk-grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after, .form-group:after, .form-block:after, .breadcrumbs ol:after, .data-wrap:after, .account-information:after, .header-organisation ul:after {
+.grid-row:after, .govuk-grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
+.form-group:after, .breadcrumbs ol:after, .data-wrap:after, .account-information:after, .header-organisation ul:after {
   content: "";
   display: block;
   clear: both; }
@@ -38,12 +42,14 @@
 .grid-row, .govuk-grid-row {
   margin: 0 -15px; }
 
-.grid-row:after, .govuk-grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after, .form-group:after, .form-block:after, .breadcrumbs ol:after, .data-wrap:after, .account-information:after, .header-organisation ul:after {
+.grid-row:after, .govuk-grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
+.form-group:after, .breadcrumbs ol:after, .data-wrap:after, .account-information:after, .header-organisation ul:after {
   content: "";
   display: block;
   clear: both; }
 
-.grid-row:after, .govuk-grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after, .form-group:after, .form-block:after, .breadcrumbs ol:after, .data-wrap:after, .account-information:after, .header-organisation ul:after {
+.grid-row:after, .govuk-grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
+.form-group:after, .breadcrumbs ol:after, .data-wrap:after, .account-information:after, .header-organisation ul:after {
   content: "";
   display: block;
   clear: both; }
@@ -1012,25 +1018,27 @@ details {
 
 fieldset {
   width: 100%; }
+  fieldset.after-error-summary {
+    margin-top: -15px;
+    margin-top: -30px; }
+
+legend {
+  overflow: hidden; }
 
 textarea {
   display: block; }
 
-.form-section {
+.form-section,
+.form-group {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  float: left;
-  width: 100%;
+  box-sizing: border-box; }
+
+.form-section {
   margin-bottom: 30px;
   margin-bottom: 60px; }
 
 .form-group {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  float: left;
-  width: 100%;
   margin-bottom: 15px;
   margin-bottom: 30px; }
 
@@ -1067,7 +1075,7 @@ textarea {
 
 .form-block {
   float: left;
-  width: 100%;
+  clear: left;
   margin-top: -5px;
   margin-bottom: 5px;
   margin-top: 0;
@@ -1113,19 +1121,9 @@ textarea.form-control {
   -webkit-appearance: none;
   border-radius: 0; }
 
-.form-radio {
-  display: block;
-  margin: 10px 0; }
-  .form-radio input {
-    vertical-align: middle;
-    margin: -4px 5px 0 0; }
-
-.form-checkbox {
-  display: block;
-  margin: 15px 0; }
-  .form-checkbox input {
-    vertical-align: middle;
-    margin: -2px 5px 0 0; }
+textarea.form-control {
+  opacity: 1;
+  background-image: none; }
 
 .form-control-3-4 {
   width: 100%;
@@ -1151,27 +1149,38 @@ textarea.form-control {
   width: 100%;
   width: 12.5%; }
 
-.block-label, .org-type-search section {
+option:active,
+option:checked,
+select:focus::-ms-value {
+  color: #fff;
+  background-color: #005ea5; }
+
+.multiple-choice {
   display: block;
   float: none;
   clear: left;
   position: relative;
-  padding: 8px 10px 9px 50px;
+  padding: 0 0 0 38px;
   margin-bottom: 10px;
-  cursor: pointer;
-  -ms-touch-action: manipulation;
-  touch-action: manipulation;
-  float: left;
-  padding-top: 7px;
-  padding-bottom: 7px; }
-  .block-label input, .org-type-search section input {
+  float: left; }
+  .multiple-choice input {
     position: absolute;
     cursor: pointer;
     left: 0;
     top: 0;
     width: 38px;
-    height: 38px; }
-  .js-enabled .block-label.selection-button-radio::before, .js-enabled .org-type-search section.selection-button-radio::before, .org-type-search .js-enabled section.selection-button-radio::before {
+    height: 38px;
+    z-index: 1; }
+  .multiple-choice label {
+    cursor: pointer;
+    padding: 8px 10px 9px 12px;
+    display: block;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    float: left;
+    padding-top: 7px;
+    padding-bottom: 7px; }
+  .multiple-choice [type=radio] + label::before {
     content: "";
     border: 2px solid;
     background: transparent;
@@ -1183,7 +1192,7 @@ textarea.form-control {
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
     border-radius: 50%; }
-  .js-enabled .block-label.selection-button-radio::after, .js-enabled .org-type-search section.selection-button-radio::after, .org-type-search .js-enabled section.selection-button-radio::after {
+  .multiple-choice [type=radio] + label::after {
     content: "";
     border: 10px solid;
     width: 0;
@@ -1197,7 +1206,7 @@ textarea.form-control {
     zoom: 1;
     filter: alpha(opacity=0);
     opacity: 0; }
-  .js-enabled .block-label.selection-button-checkbox::before, .js-enabled .org-type-search section.selection-button-checkbox::before, .org-type-search .js-enabled section.selection-button-checkbox::before {
+  .multiple-choice [type=checkbox] + label::before {
     content: "";
     border: 2px solid;
     background: transparent;
@@ -1206,11 +1215,12 @@ textarea.form-control {
     position: absolute;
     top: 0;
     left: 0; }
-  .js-enabled .block-label.selection-button-checkbox::after, .js-enabled .org-type-search section.selection-button-checkbox::after, .org-type-search .js-enabled section.selection-button-checkbox::after {
+  .multiple-choice [type=checkbox] + label::after {
     content: "";
     border: solid;
     border-width: 0 0 5px 5px;
     background: transparent;
+    border-top-color: transparent;
     width: 17px;
     height: 7px;
     position: absolute;
@@ -1224,22 +1234,29 @@ textarea.form-control {
     zoom: 1;
     filter: alpha(opacity=0);
     opacity: 0; }
-  .js-enabled .block-label.selection-button-radio.focused::before, .js-enabled .org-type-search section.selection-button-radio.focused::before, .org-type-search .js-enabled section.selection-button-radio.focused::before, .js-enabled .block-label.selection-button-checkbox.focused::before, .js-enabled .org-type-search section.selection-button-checkbox.focused::before, .org-type-search .js-enabled section.selection-button-checkbox.focused::before {
-    -webkit-box-shadow: 0 0 0 5px #ffbf47;
-    -moz-box-shadow: 0 0 0 5px #ffbf47;
-    box-shadow: 0 0 0 5px #ffbf47; }
-  .js-enabled .block-label.selection-button-radio.focused, .js-enabled .org-type-search section.selection-button-radio.focused, .org-type-search .js-enabled section.selection-button-radio.focused, .js-enabled .block-label.selection-button-checkbox.focused, .js-enabled .org-type-search section.selection-button-checkbox.focused, .org-type-search .js-enabled section.selection-button-checkbox.focused {
-    outline: 3px solid #ffbf47; }
-    .js-enabled .block-label.selection-button-radio.focused input:focus, .js-enabled .org-type-search section.selection-button-radio.focused input:focus, .org-type-search .js-enabled section.selection-button-radio.focused input:focus, .js-enabled .block-label.selection-button-checkbox.focused input:focus, .js-enabled .org-type-search section.selection-button-checkbox.focused input:focus, .org-type-search .js-enabled section.selection-button-checkbox.focused input:focus {
-      outline: none; }
-  .js-enabled .block-label.selection-button-radio.selected::after, .js-enabled .org-type-search section.selection-button-radio.selected::after, .org-type-search .js-enabled section.selection-button-radio.selected::after, .js-enabled .block-label.selection-button-checkbox.selected::after, .js-enabled .org-type-search section.selection-button-checkbox.selected::after, .org-type-search .js-enabled section.selection-button-checkbox.selected::after {
+  .multiple-choice [type=radio]:focus + label::before {
+    -webkit-box-shadow: 0 0 0 4px #ffbf47;
+    -moz-box-shadow: 0 0 0 4px #ffbf47;
+    box-shadow: 0 0 0 4px #ffbf47; }
+  .multiple-choice [type=checkbox]:focus + label::before {
+    -webkit-box-shadow: 0 0 0 3px #ffbf47;
+    -moz-box-shadow: 0 0 0 3px #ffbf47;
+    box-shadow: 0 0 0 3px #ffbf47; }
+  .multiple-choice input:checked + label::after {
     zoom: 1;
     filter: alpha(opacity=100);
     opacity: 1; }
-  .block-label:last-child, .org-type-search section:last-child, .block-label:last-of-type, .org-type-search section:last-of-type {
+  .multiple-choice input:disabled {
+    cursor: default; }
+  .multiple-choice input:disabled + label {
+    zoom: 1;
+    filter: alpha(opacity=50);
+    opacity: 0.5;
+    cursor: default; }
+  .multiple-choice:last-child, .multiple-choice:last-of-type {
     margin-bottom: 0; }
 
-.inline .block-label, .inline .org-type-search section, .org-type-search .inline section {
+.inline .multiple-choice {
   clear: none;
   margin-bottom: 0;
   margin-right: 30px; }
@@ -3172,6 +3189,17 @@ h3.heading-small {
 h3.heading-small + p {
   margin-top: 0; }
 
+.das-notification {
+  margin: 50px 0;
+  padding: 20px;
+  border: 5px solid #4c2c92; }
+
+.das-notification__body:last-child {
+  margin-bottom: -2px; }
+
+.das-notification--success {
+  border-color: #28a197; }
+
 .govuk-width-container {
   max-width: 960px;
   margin-right: 15px;
@@ -3272,3 +3300,14 @@ h3.heading-small + p {
     color: #2b8cc4;
     background: #ffbf47;
     outline: 3px solid #ffbf47; }
+
+.das-cookie-settings__confirmation {
+  display: none; }
+
+.das-js-show {
+  display: none; }
+  .js-enabled .das-js-show {
+    display: block; }
+
+.js-enabled .das-js-hide {
+  display: none; }
