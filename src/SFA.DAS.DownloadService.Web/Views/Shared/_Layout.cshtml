@@ -83,6 +83,9 @@
 </head>
 
 <body>
+    <script>
+        document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
+    </script>
 <!-- Google Tag Manager (noscript) -->
 <noscript>
     <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KVSLVQ9"
@@ -90,6 +93,7 @@
 </noscript>
 <!-- End Google Tag Manager (noscript) -->
 
+@Html.Partial("_CookieConsentPartial")
 @Html.Partial("_Header")
 
 @RenderBody()
@@ -97,6 +101,8 @@
 @Html.Partial("_Footer")
 
 @RenderSection("footerJS", false)
+
+<script src="~/Content/dist/js/cookiebanner.js" type="text/javascript"></script>
 
 </body>
 </html>

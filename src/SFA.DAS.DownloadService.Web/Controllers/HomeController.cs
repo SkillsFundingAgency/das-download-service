@@ -9,7 +9,18 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         {
             return RedirectToAction("Index", "Roatp");
         }
-        
+
+        [Route("cookie-details")]
+        public IActionResult CookieDetails()
+        {
+            return View();
+        }
+
+        [Route("cookie-settings")]
+        public IActionResult CookieSettings()
+        {
+            return View();
+        }
 
         public ActionResult Api()
         {
