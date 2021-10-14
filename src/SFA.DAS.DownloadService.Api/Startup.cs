@@ -108,7 +108,7 @@ namespace SFA.DAS.DownloadService.Api
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseSession();
-            app.UseHealthChecks("/health");
+            app.UseHealthChecks("/ping");
             app.UseRequestLocalization();
 
 
