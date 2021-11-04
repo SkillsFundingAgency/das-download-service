@@ -22,7 +22,7 @@ resources:
   - repository: das-platform-building-blocks
     type: github
     name: SkillsFundingAgency/das-platform-building-blocks
-    ref: refs/tags/0.4.10
+    ref: refs/tags/0.4.17
     endpoint: SkillsFundingAgency
 
 steps:
