@@ -28,7 +28,7 @@ namespace SFA.DAS.DownloadService.Services.Services
                     TimeSpan.FromSeconds(4)
                 }, (exception, timeSpan, retryCount, context) =>
                 {
-                    _logger.LogWarning($"Error retrieving response from API [{apiEndpointDescription}] Reason: {exception.Message}. Retrying in {timeSpan.Seconds} secs...attempt: {retryCount}");
+                    _logger.LogWarning(exception,$"Error retrieving response from API [{apiEndpointDescription}] Reason: {exception.Message}. Retrying in {timeSpan.Seconds} secs...attempt: {retryCount}");
                 });
         }
     }

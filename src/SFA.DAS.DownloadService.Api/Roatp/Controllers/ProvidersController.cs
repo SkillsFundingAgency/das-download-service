@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Polly;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Services.Interfaces;
+using SFA.DAS.Roatp.Api.Client;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Examples;
@@ -75,8 +76,8 @@ namespace SFA.DAS.DownloadService.Api.Roatp.Controllers
 
             try
             {
-                var result = _retryService.RetryPolicy($"<roatpService>//api/v1/download/roatp-summary/{ukprn}").ExecuteAsync(context => _apiClient.GetRoatpSummaryByUkprn(ukprn), new Context());
-                roatpResults = result.Result;
+                roatpResults = await _retryService.RetryPolicy($"<roatpService>//api/v1/download/roatp-summary/{ukprn}")
+                    .ExecuteAsync(context => _apiClient.GetRoatpSummaryByUkprn(ukprn), new Context());
             }
             catch (Exception ex)
             {
@@ -105,9 +106,11 @@ namespace SFA.DAS.DownloadService.Api.Roatp.Controllers
             DateTime? latestChange = DateTime.UtcNow;
             try
             {
-                var result = _retryService.RetryPolicy($"<roatpService>/api/v1/download/roatp-summary/most-recent").ExecuteAsync(context => _apiClient.GetLatestNonOnboardingOrganisationChangeDate(), new Context());
-                if (result.Result!=null)
-                    latestChange = result.Result;
+                var result = await _retryService.RetryPolicy($"<roatpService>/api/v1/download/roatp-summary/most-recent")
+                    .ExecuteAsync(context => _apiClient.GetLatestNonOnboardingOrganisationChangeDate(), new Context());
+
+                if (result.HasValue)
+                    latestChange = result;
             }
             catch (Exception ex)
             {
@@ -138,8 +141,10 @@ namespace SFA.DAS.DownloadService.Api.Roatp.Controllers
 
                 try
                 {
-                    var result = _retryService.RetryPolicy("<roatpService>/api/v1/download/roatp-summary").ExecuteAsync(context => _apiClient.GetRoatpSummary(), new Context());
-                    results = result.Result.Where(x => x.IsDateValid(DateTime.UtcNow));
+                    var roatpSummaries = await _retryService.RetryPolicy("<roatpService>/api/v1/download/roatp-summary")
+                        .ExecuteAsync(context => _apiClient.GetRoatpSummary(), new Context());
+
+                    results = roatpSummaries.Where(x => x.IsDateValid(DateTime.UtcNow));
                 }
                 catch (Exception ex)
                 {
