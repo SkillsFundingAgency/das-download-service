@@ -59,7 +59,13 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             try
             {
                 _logger.LogDebug("Getting results from GetRoatpSummary");
-                var roatpResults = _apiClient.GetRoatpSummary().Result;
+
+                var roatpResults = _apiClient.GetRoatpSummary().Result; 
+                if (!roatpResults.Any())
+                {
+                    _logger.LogError($@"No results from GetRoatpSummary");
+                    return RedirectToAction("ServiceUnavailable");
+                }
                 _logger.LogDebug($@"{roatpResults.Count()} results from GetRoatpSummary");
                 var roatpResultsFiltered = roatpResults.Where(x => x.IsDateValid(DateTime.Now));
                 _logger.LogDebug($@"{roatpResultsFiltered.Count()} results filtered from GetRoatpSummary");
@@ -97,6 +103,12 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         private static string GenerateFilename(DateTime date)
         {
             return $"roatp-{date.ToSeoFormat()}.csv";
+        }
+
+        [Route("/service-unavailable")]
+        public IActionResult ServiceUnavailable()
+        {
+            return View("ServiceUnavailable");
         }
     }
 }
