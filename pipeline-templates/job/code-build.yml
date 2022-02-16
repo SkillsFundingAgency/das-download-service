@@ -6,6 +6,8 @@ jobs:
     workspace:
       clean: all
   variables:
+  - name: BuildConfiguration
+    value: release
   - group: BUILD Management Resources
   steps:
   - template: azure-pipelines-templates/build/step/gitversion.yml@das-platform-building-blocks
