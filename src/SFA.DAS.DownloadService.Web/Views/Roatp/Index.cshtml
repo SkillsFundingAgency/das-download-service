@@ -9,62 +9,40 @@
          <dl class="das-definition-list das-definition-list--meta">
             <dt class="das-definition-list__title">From</dt>
             <dd class="das-definition-list__definition">
-               <a href="https://www.gov.uk/government/organisations/education-and-skills-funding-agency" target="_blank" class="govuk-link">Education &amp; Skills Funding Agency</a>
+               <a href="https://www.gov.uk/government/organisations/education-and-skills-funding-agency" target="_blank" class="govuk-link  govuk-link--no-visited-state">Education &amp; Skills Funding Agency</a>
             </dd>
          </dl>
-         <div class="das-highlight">
-            <p class="govuk-!-margin-bottom-0">
-               The register of apprenticeship training providers closed for new applications from midnight on Wednesday 15 April 2020. 
-               To gain access to RoATP now, you must do so via <a href="https://www.gov.uk/government/publications/applying-to-the-register-of-apprenticeship-training-providers-roatp" target="_blank" class="govuk-link">the exceptions process for critical worker - linked provisions</a>      
-            </p>
-         </div>
          <h2 class="govuk-heading-m">Document</h2>
-         <div class="signed-agreement">
-            <section class="attachment embedded">
-               <div class="attachment-thumb">
-                  <a aria-hidden="true" class="app-thumbnail__link" href="@Url.Action("Csv", "Roatp", new {filename = Model.Filename}, null)">
-                  <img alt="" src="~/Content/dist/images/pub-cover-csv.png" class="app-thumbnail__image" />
-                  </a>
-               </div>
-               <div class="attachment-details">
-                  <h2 class="govuk-heading-m">
-                     ESFA register of apprenticeship training providers
-                  </h2>
-                  <span class="type">@Html.ActionLink("Download CSV", "Csv", "Roatp", new { filename = Model.Filename }, null)</span>
-               </div>
-            </section>
-            <dl class="das-definition-list das-definition-list--meta">
-               <dt class="das-definition-list__title">Last updated</dt>
-               <dd class="das-definition-list__definition">@Model.LastUpdated.ToGdsFormatWithSeconds() </dd>
-            </dl>
+         <div class="app-attachment">
+            <h2 class="govuk-heading-m app-attachment__heading">ESFA register of apprenticeship training providers </h2>
+            <span class="app-attachment__link-wrap">@Html.ActionLink("Download CSV", "Csv", "Roatp", new { filename = Model.Filename }, new { @class = "govuk-link"})</span>
+            <span class="app-attachment__icon"></span>
          </div>
+         <dl class="das-definition-list das-definition-list--meta">
+            <dt class="das-definition-list__title">Last updated</dt>
+            <dd class="das-definition-list__definition">@Model.LastUpdated.ToGdsFormatWithSeconds() </dd>
+         </dl>
          <h3 class="govuk-heading-m">What is in the register of apprenticeship training providers (RoATP)?</h3>
          <p>The register of apprenticeship training providers is a list of organisations that are eligible to receive government funding to train apprentices.</p>
-         <p><a href="https://www.gov.uk/guidance/register-of-apprenticeship-training-providers" target="_blank" class="govuk-link">Learn more about the register of apprenticeship training providers</a> on GOV.UK</p>
-         <h3 class="govuk-heading-s">UKPRN</h3>
-         <p>
-            This is the organisation's UK Provider Reference Number (UKPRN) as given by the UK Register of Learning Providers (<a href="https://www.ukrlp.co.uk" target="_blank" class="govuk-link">UKRLP</a>).
-         </p>
-         <h3 class="govuk-heading-s">Organisation Name</h3>
-         <p>
-            This is the organisation's legal name from the <a href="https://www.ukrlp.co.uk" target="_blank" class="govuk-link">UKRLP</a>. We also list trading names for sole traders and partnerships.
-         </p>
-         <p>
-            We source organisation names displayed in the apprenticeship service from <a href="https://www.ukrlp.co.uk" target="_blank" class="govuk-link">UKRLP</a>.
-         </p>
-         <h3 class="govuk-heading-s">Provider Type</h3>
+         <p><a href="https://www.gov.uk/guidance/register-of-apprenticeship-training-providers" target="_blank" class="govuk-link  govuk-link--no-visited-state">Learn more about the register of apprenticeship training providers</a> on GOV.UK</p>
+         <h3 class="govuk-heading-s govuk-!-margin-bottom-1">UKPRN</h3>
+         <p>This is the organisation's UK Provider Reference Number (UKPRN) as given by the UK Register of Learning Providers (<a href="https://www.ukrlp.co.uk" target="_blank" class="govuk-link  govuk-link--no-visited-state">UKRLP</a>).</p>
+         <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Organisation Name</h3>
+         <p>This is the organisation's legal name from the <a href="https://www.ukrlp.co.uk" target="_blank" class="govuk-link  govuk-link--no-visited-state">UKRLP</a>. We also list trading names for sole traders and partnerships.</p>
+         <p>We source organisation names displayed in the apprenticeship service from <a href="https://www.ukrlp.co.uk" target="_blank" class="govuk-link  govuk-link--no-visited-state">UKRLP</a>.</p>
+         <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Provider Type</h3>
          <p>Providers choose the application route that is relevant to them.</p>
-         <h3 class="govuk-heading-s">Parent Company Guarantee</h3>
+         <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Parent Company Guarantee</h3>
          <p>If this field is set to 'TRUE', then the Education and Skills Funding Agency (ESFA) moderated the financial health outcome for this organisation to a pass due to the submission of a parent company guarantee.</p>
-         <h3 class="govuk-heading-s">New Organisation Without Financial Track Record</h3>
+         <h3 class="govuk-heading-s govuk-!-margin-bottom-1">New Organisation Without Financial Track Record</h3>
          <p>If this field is set to 'TRUE', then the organisation has not been trading for a sufficient period to provide a complete set of financial statements. ESFA based a financial health judgement on management accounts and forecasts (where applicable).</p>
-         <h3 class="govuk-heading-s">Start Date</h3>
+         <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Start Date</h3>
          <p>This is the date that ESFA added the organisation to the RoATP.</p>
-         <h3 class="govuk-heading-s">Provider not currently starting new apprentices</h3>
+         <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Provider not currently starting new apprentices</h3>
          <p>If this field is set to 'TRUE', then the organisation is not allowed to recruit new apprentices.</p>
-         <h3 class="govuk-heading-s">Application determined date</h3>
+         <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Application determined date</h3>
          <p>This is the date that ESFA completed processing a provider's application to join the new RoATP. It will be updated when a provider re-applies to join the RoATP in the future.</p>
-         <p><a href="https://www.gov.uk/guidance/register-of-apprenticeship-training-providers" target="_blank" class="govuk-link">Learn more about the register of apprenticeship training providers</a> on GOV.UK</p>
+         <p><a href="https://www.gov.uk/guidance/register-of-apprenticeship-training-providers" target="_blank" class="govuk-link  govuk-link--no-visited-state">Learn more about the register of apprenticeship training providers</a> on GOV.UK</p>
       </div>
    </div>
 </main>
