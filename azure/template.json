@@ -108,7 +108,10 @@
       }
     },
     "cdnUrl": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "The cdn url for the UI app service"
+      }
     }
   },
   "variables": {
