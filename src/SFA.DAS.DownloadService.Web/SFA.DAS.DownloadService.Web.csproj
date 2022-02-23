@@ -41,4 +41,10 @@
     <ProjectReference Include="..\SFA.DAS.Roatp.Api.Client\SFA.DAS.Roatp.Api.Client.csproj" />
   </ItemGroup>
 
+    <ItemGroup>
+    <Content Update="appsettings*.json">
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
