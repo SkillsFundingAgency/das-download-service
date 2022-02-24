@@ -1,6 +1,6 @@
-<main id="content" role="main">
-    <div class="grid-row">
-        <div class="column-two-thirds">
+<main class="govuk-main-wrapper" id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
             <div class="das-cookie-settings">
                 <div class="das-cookie-settings__inner-wrap">
                     <div class="das-notification das-notification--success das-cookie-settings__confirmation" data-cookie-confirmation="true" tabindex="0">
@@ -9,31 +9,29 @@
                             <p class="das-notification__body"><a class="govuk-link govuk-link--no-visited-state cookie-settings__prev-page" href="#" data-module="track-click">Go back to the page you were looking at</a></p>
                         </section>
                     </div>
-                    <h1 class="heading-xlarge">Cookies on this service</h1>
+                    <h1 class="govuk-heading-xl">Cookies on this service</h1>
                     <p>Cookies are files saved on your phone, tablet or computer when you visit a service.</p>
                     <p>We use cookies to store information about how you use this service, such as the pages you visit.</p>
                     
                     <div class="das-js-hide">
                         <p>We use Javascript to set most of our cookies. Unfortunately Javascript is not running on your browser, so you cannot change your settings. You can try:</p>
-                        <ul class="list list-bullet">
+                        <ul class="govuk-list govuk-list--bullet">
                             <li>reloading the page</li>
                             <li>turning on Javascript in your browser</li>
                         </ul>
                     </div>
 
                     <div class="das-js-show das-cookie-settings__form-wrapper">
-                        <h2 class="heading-large">Cookie settings</h2>
+                        <h2 class="govuk-heading-l">Cookie settings</h2>
                         <p>We use 1 type of cookie. You can choose whether you’re happy for us to use them.</p>
                         <form data-module="cookie-settings">
-                            <div class="form-group">
-                            <fieldset aria-describedby="hint-cookie-1">
-                                <legend>
-                                    <h2 class="heading-medium">Cookies that measure service use</h2>
-                                </legend>
+                            <div class="govuk-form-group">
+                            <fieldset aria-describedby="hint-cookie-1" class="govuk-fieldset">
+                                <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">Cookies that measure website use</legend>
                                 <div id="hint-cookie-1">
                                     <p>We use Google Analytics to measure how you use this service so we can improve it based on user needs. We do not allow Google to use or share the data about how you use this service.</p>
                                     <p>Google Analytics sets cookies that store anonymised information about:</p>
-                                    <ul class="list list-bullet">
+                                    <ul class="govuk-list govuk-list--bullet">
                                         <li>how you got to this service</li>
                                         <li>the pages you visit on GOV.UK and government digital services, and how long you spend on each page</li>
                                         <li>what you click on while you’re visiting this service</li>
@@ -41,21 +39,21 @@
                                     <p>Cookies may be set by other third-party services to do things like measure how you view YouTube videos that are on this service.</p>
                                     <p>If you have an account with other Education and Skills Funding Agency services, the information collected using analytics cookies will link to your account. This will help us make this service work better for you.</p>
                                 </div>
-                                <div class="radios">
-                                    <div class="multiple-choice">
-                                        <input type="radio" name="cookies-AnalyticsConsent" id="radio-cookie-analytics-0" value="on">
-                                        <label for="radio-cookie-analytics-0">Use cookies that measure my service use</label>
+                                <div class="govuk-radios">
+                                    <div class="govuk-radios__item">
+                                        <input type="radio" name="cookies-AnalyticsConsent" id="radio-cookie-analytics-0" value="on" class="govuk-radios__input">
+                                        <label for="radio-cookie-analytics-0" class="govuk-label govuk-radios__label">Use cookies that measure my service use</label>
                                     </div>
-                                    <div class="multiple-choice">
-                                        <input type="radio" name="cookies-AnalyticsConsent" id="radio-cookie-analytics-1" value="off">
-                                        <label for="radio-cookie-analytics-1">Do not use cookies that measure my service use</label>
+                                    <div class="govuk-radios__item">
+                                        <input type="radio" name="cookies-AnalyticsConsent" id="radio-cookie-analytics-1" value="off" class="govuk-radios__input">
+                                        <label for="radio-cookie-analytics-1" class="govuk-label govuk-radios__label">Do not use cookies that measure my service use</label>
                                     </div>
                                 </div>
                             </fieldset>
                             </div>
                
                             <p>Find out more about <a class="govuk-link govuk-link--no-visited-state" asp-controller="Home" asp-action="CookieDetails">cookies on this service</a>.</p>
-                            <button class="button" type="submit">Save changes</button>
+                            <button class="govuk-button" type="submit">Save changes</button>
                         </form>
                     </div>
                 </div>
