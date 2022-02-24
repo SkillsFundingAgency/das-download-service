@@ -71,7 +71,6 @@ namespace SFA.DAS.DownloadService.Web.Controllers
                 {
                     _logger.LogError(ex, $@"Error trying to retrieve data from <roatpService>/api/v1/download/roatp-summary");
                     return RedirectToAction("ServiceUnavailable");
-
                 }
                 if (roatpResults == null || !roatpResults.Any())
                 {

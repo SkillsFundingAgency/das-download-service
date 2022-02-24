@@ -45,7 +45,6 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
             HttpContext.Setup(x => x.Request.Scheme).Returns("http");
             HttpContext.Setup(x => x.Request.Host).Returns(new HostString("localhost"));
 
-
             _controller = new RoatpController(_mockClient.Object, _mapper, _retryService, _mockLogger.Object);
             _controller.ControllerContext = new ControllerContext();
             _controller.ControllerContext.HttpContext = HttpContext.Object;
