@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
@@ -15,7 +14,6 @@ using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Services;
 using SFA.DAS.DownloadService.Services.Services.Roatp;
 using SFA.DAS.DownloadService.Settings;
-using SFA.DAS.DownloadService.Web.Extensions;
 using SFA.DAS.DownloadService.Web.Infrastructure;
 using SFA.DAS.Roatp.Api.Client;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
@@ -73,6 +71,13 @@ namespace SFA.DAS.DownloadService.Web
                 options.RequestCultureProviders.Clear();
             });
 
+            services.AddHttpClient<IDownloadServiceApiClient, DownloadServiceApiClient>(config =>
+                {
+                    config.BaseAddress = new Uri(ApplicationConfiguration.DownloadServiceApiClientBaseUrl);
+                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -85,7 +90,6 @@ namespace SFA.DAS.DownloadService.Web
         private void  ConfigureDependencyInjection(IServiceCollection services)
         {
             services.AddTransient<IRoatpMapper,RoatpMapper>();
-            services.AddTransient<IDownloadServiceApiClient,DownloadServiceApiClient>();
             services.AddTransient<ITokenService,TokenService>();
             services.AddTransient<IRetryService,RetryService>();
             services.AddTransient(x=>ApplicationConfiguration); 

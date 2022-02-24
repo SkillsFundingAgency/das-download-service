@@ -1,0 +1,4 @@
+# CODEOWNERS file for das-download-service.
+# The following users will be automatically added as Reviewers to all PRs.
+
+* * @MarkFCain @MAli99 @DevenKShah @raviudari01

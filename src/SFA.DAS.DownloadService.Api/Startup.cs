@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
-using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +19,6 @@ using SFA.DAS.Roatp.Api.Client;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
 using Swashbuckle.AspNetCore.Examples;
 using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace SFA.DAS.DownloadService.Api
 {
@@ -73,6 +71,20 @@ namespace SFA.DAS.DownloadService.Api
                 options.RequestCultureProviders.Clear();
             });
 
+            services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
+                {
+                    config.BaseAddress = new Uri(ApplicationConfiguration.RoatpApiClientBaseUrl);
+                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
+            services.AddHttpClient<IDownloadServiceApiClient, DownloadServiceApiClient>(config =>
+                {
+                    config.BaseAddress = new Uri(ApplicationConfiguration.DownloadServiceApiClientBaseUrl);
+                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -85,7 +97,6 @@ namespace SFA.DAS.DownloadService.Api
         private void ConfigureDependencyInjection(IServiceCollection services)
         {
             services.AddTransient<IRoatpMapper, RoatpMapper>();
-            services.AddTransient<IRoatpApiClient, RoatpApiClient>();
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IRetryService, RetryService>();
             services.AddTransient(x => ApplicationConfiguration);

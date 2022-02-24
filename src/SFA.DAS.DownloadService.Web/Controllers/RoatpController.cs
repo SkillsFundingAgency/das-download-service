@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Polly;
-using Polly.Retry;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Utility;
 using SFA.DAS.DownloadService.Web.Models;
-using SFA.DAS.Roatp.Api.Client;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
 
 namespace SFA.DAS.DownloadService.Web.Controllers
@@ -32,14 +31,14 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         }
 
         [ResponseCache(Duration = 600)]
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
             
             DateTime? date =DateTime.Now;
             try
             {
-                var result = _retryService.RetryPolicy("<roatpService>/api/v1/download/roatp-summary/most-recent").ExecuteAsync(context => _apiClient.GetLatestNonOnboardingOrganisationChangeDate(), new Context());
-                date = result.Result;
+                date = await _retryService.RetryPolicy("<roatpService>/api/v1/download/roatp-summary/most-recent")
+                    .ExecuteAsync(context => _apiClient.GetLatestNonOnboardingOrganisationChangeDate(), new Context());
             }
             catch (Exception ex)
             {
@@ -53,19 +52,33 @@ namespace SFA.DAS.DownloadService.Web.Controllers
 
 
         [ResponseCache(Duration = 600)]
-        public ActionResult Csv()
+        public async Task<ActionResult> Csv()
         {
             var providers = new List<CsvProvider>();
             try
             {
                 _logger.LogDebug("Getting results from GetRoatpSummary");
 
-                var roatpResults = _apiClient.GetRoatpSummary().Result; 
-                if (!roatpResults.Any())
+                IEnumerable<Provider> roatpResults;
+
+                try
+                {
+                    var results = await _retryService.RetryPolicy("<roatpService>/api/v1/download/roatp-summary")
+                        .ExecuteAsync(context => _apiClient.GetRoatpSummary(), new Context());
+                    roatpResults = results?.ToList();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $@"Error trying to retrieve data from <roatpService>/api/v1/download/roatp-summary");
+                    return RedirectToAction("ServiceUnavailable");
+
+                }
+                if (roatpResults == null || !roatpResults.Any())
                 {
                     _logger.LogError($@"No results from GetRoatpSummary");
                     return RedirectToAction("ServiceUnavailable");
                 }
+               
                 _logger.LogDebug($@"{roatpResults.Count()} results from GetRoatpSummary");
                 var roatpResultsFiltered = roatpResults.Where(x => x.IsDateValid(DateTime.Now));
                 _logger.LogDebug($@"{roatpResultsFiltered.Count()} results filtered from GetRoatpSummary");
@@ -80,7 +93,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
                 _logger.LogError($@"Unable to retrieve results for getting all roatp details, message: [{ex.Message}]", ex);
             }
 
-            var date = _apiClient.GetLatestNonOnboardingOrganisationChangeDate().Result;
+            var date = await _apiClient.GetLatestNonOnboardingOrganisationChangeDate();
             if (date == null)
                 date = DateTime.Now;
 
