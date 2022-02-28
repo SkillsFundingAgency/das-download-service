@@ -27,6 +27,30 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             return View();
         }
 
+        [Route("terms")]
+        public IActionResult Terms()
+        {
+            return View();
+        }
+
+        [Route("privacy")]
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [Route("contact")]
+        public IActionResult Contact()
+        {
+            return View();
+        }
+
+        [Route("accessibility-statement")]
+        public IActionResult Accessibility()
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 86400)]
         public ContentResult RobotsText()
         {
