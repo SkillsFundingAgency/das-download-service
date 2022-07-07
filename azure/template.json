@@ -117,6 +117,10 @@
       "metadata": {
         "description": "The cdn url for the UI app service"
       }
+    },
+    "utcValue": {
+      "type": "string",
+      "defaultValue": "[utcNow()]"
     }
   },
   "variables": {
@@ -129,7 +133,7 @@
     {
       "condition": "[greater(length(parameters('apiCustomHostName')), 0)]",
       "apiVersion": "2017-05-10",
-      "name": "api-app-service-certificate",
+      "name": "[concat('api-app-service-certificate-', parameters('utcValue'))]",
       "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -154,7 +158,7 @@
     {
       "condition": "[greater(length(parameters('uiCustomHostName')), 0)]",
       "apiVersion": "2017-05-10",
-      "name": "ui-app-service-certificate",
+      "name": "[concat('ui-app-service-certificate-', parameters('utcValue'))]",
       "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -176,12 +180,12 @@
         }
       },
       "dependsOn": [
-        "api-app-service-certificate"
+        "[concat('api-app-service-certificate-', parameters('utcValue'))]"
       ]
     },
     {
       "apiVersion": "2017-05-10",
-      "name": "api-application-insights",
+      "name": "[concat('api-application-insights-', parameters('utcValue'))]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -201,7 +205,7 @@
     },
     {
       "apiVersion": "2017-05-10",
-      "name": "ui-application-insights",
+      "name": "[concat('ui-application-insights-', parameters('utcValue'))]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -221,7 +225,7 @@
     },
     {
       "apiVersion": "2017-05-10",
-      "name": "api-app-service",
+      "name": "[concat('api-app-service-', parameters('utcValue'))]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -255,7 +259,7 @@
                 },
                 {
                   "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference('api-application-insights').outputs.InstrumentationKey.value]"
+                  "value": "[reference(concat('api-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                 },
                 {
                   "name": "ASPNETCORE_ENVIRONMENT",
@@ -279,7 +283,7 @@
             "value": "[parameters('apiCustomHostName')]"
           },
           "certificateThumbprint": {
-            "value": "[if(greater(length(parameters('apiCustomHostname')), 0), reference('api-app-service-certificate', '2018-11-01').outputs.certificateThumbprint.value, '')]"
+            "value": "[if(greater(length(parameters('apiCustomHostname')), 0), reference(concat('api-app-service-certificate-', parameters('utcValue')), '2018-11-01').outputs.certificateThumbprint.value, '')]"
           },
           "ipSecurityRestrictions": {
             "value": "[parameters('backEndAccessRestrictions')]"
@@ -287,12 +291,12 @@
         }
       },
       "dependsOn": [
-        "api-app-service-certificate"
+        "[concat('api-app-service-certificate-', parameters('utcValue'))]"
       ]
     },
     {
       "apiVersion": "2017-05-10",
-      "name": "ui-app-service",
+      "name": "[concat('ui-app-service-', parameters('utcValue'))]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -326,7 +330,7 @@
                 },
                 {
                   "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference('ui-application-insights').outputs.InstrumentationKey.value]"
+                  "value": "[reference(concat('ui-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                 },
                 {
                   "name": "ASPNETCORE_ENVIRONMENT",
@@ -362,7 +366,7 @@
             "value": "[parameters('uiCustomHostName')]"
           },
           "certificateThumbprint": {
-            "value": "[if(greater(length(parameters('uiCustomHostname')), 0), reference('ui-app-service-certificate', '2018-11-01').outputs.certificateThumbprint.value, '')]"
+            "value": "[if(greater(length(parameters('uiCustomHostname')), 0), reference(concat('ui-app-service-certificate-', parameters('utcValue')), '2018-11-01').outputs.certificateThumbprint.value, '')]"
           },
           "ipSecurityRestrictions": {
             "value": "[parameters('frontEndAccessRestrictions')]"
@@ -370,7 +374,7 @@
         }
       },
       "dependsOn": [
-        "ui-app-service-certificate"
+        "[concat('ui-app-service-certificate-', parameters('utcValue'))]"
       ]
     }
   ],
