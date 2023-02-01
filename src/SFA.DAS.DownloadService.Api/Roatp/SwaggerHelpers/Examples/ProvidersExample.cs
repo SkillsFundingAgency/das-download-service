@@ -15,9 +15,7 @@ namespace SFA.DAS.DownloadService.Api.Roatp.SwaggerHelpers.Examples
                 {
                     Ukprn = 12345678,
                     Name = "AtoA Trainers Ltd",
-                    ProviderType = ProviderType.MainProvider,
-                    ParentCompanyGuarantee = true,
-                    NewOrganisationWithoutFinancialTrackRecord = false,
+                    ApplicationType = ApplicationType.MainProvider,
                     StartDate = new DateTime(DateTime.Now.Year - 1, 05, 17),
                     ApplicationDeterminedDate = null
                 },
@@ -25,9 +23,7 @@ namespace SFA.DAS.DownloadService.Api.Roatp.SwaggerHelpers.Examples
                 {
                     Ukprn = 87654321,
                     Name = "AotA Trainers Ltd",
-                    ProviderType = ProviderType.EmployerProvider,
-                    ParentCompanyGuarantee = false,
-                    NewOrganisationWithoutFinancialTrackRecord = true,
+                    ApplicationType = ApplicationType.EmployerProvider,
                     StartDate = new DateTime(DateTime.Now.Year - 1, 01, 04),
                     ApplicationDeterminedDate = DateTime.Today
                 }

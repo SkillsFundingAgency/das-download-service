@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Services.Services.Roatp;
@@ -57,48 +56,10 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
             var roatpResult = new RoatpResult();
             roatpResult.Ukprn = "12345678";
             roatpResult.OrganisationName = "org name";
-            roatpResult.ProviderType = providerType;
+            roatpResult.ApplicationType = providerType;
             var mappedResult = _mapper.MapCsv(roatpResult);
-            Assert.AreEqual(expectedProviderType, mappedResult.ProviderType);
+            Assert.AreEqual(expectedProviderType, mappedResult.ApplicationType);
         }
-
-
-        [TestCase(null, false)]
-        [TestCase("n", false)]
-        [TestCase("", false)]
-        [TestCase("anything", false)]
-        [TestCase("y", true)]
-        [TestCase("Y", true)]
-        public void ShouldMapRoatpResultNewOrganisationToCSVProviderNewOrganisation(string newOrganisationWithoutFinancialTrackRecord, bool expectedMapping)
-        {
-            var roatpResult = new RoatpResult();
-            roatpResult.Ukprn = "12345678";
-            roatpResult.OrganisationName = "org name";
-            roatpResult.ProviderType = "main provider";
-            roatpResult.NewOrganisationWithoutFinancialTrackRecord = newOrganisationWithoutFinancialTrackRecord;
-            var mappedResult = _mapper.MapCsv(roatpResult);
-            Assert.AreEqual(expectedMapping, mappedResult.NewOrganisationWithoutFinancialTrackRecord);
-        }
-
-
-        [TestCase(null, false)]
-        [TestCase("n", false)]
-        [TestCase("", false)]
-        [TestCase("anything", false)]
-        [TestCase("y", true)]
-        [TestCase("Y", true)]
-        public void ShouldMapRoatpResultParentCompanyGuaranteeToCSVProviderParentCompanyGuarantee(string parentCompanyGuarantee, bool expectedMapping)
-        {
-            var roatpResult = new RoatpResult();
-            roatpResult.Ukprn = "12345678";
-            roatpResult.OrganisationName = "org name";
-            roatpResult.ProviderType = "main provider";
-            roatpResult.NewOrganisationWithoutFinancialTrackRecord = "Y";
-            roatpResult.ParentCompanyGuarantee = parentCompanyGuarantee;
-            var mappedResult = _mapper.MapCsv(roatpResult);
-            Assert.AreEqual(expectedMapping, mappedResult.ParentCompanyGuarantee);
-        }
-
 
         [TestCase(null, "")]
         [TestCase("2019-08-05", "05/08/2019")]
@@ -108,9 +69,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
             var roatpResult = new RoatpResult();
             roatpResult.Ukprn = "12345678";
             roatpResult.OrganisationName = "org name";
-            roatpResult.ProviderType = "main provider";
-            roatpResult.NewOrganisationWithoutFinancialTrackRecord = "Y";
-            roatpResult.ParentCompanyGuarantee = "N";
+            roatpResult.ApplicationType = "main provider";
             roatpResult.StartDate = startDate;
             var mappedResult = _mapper.MapCsv(roatpResult);
             Assert.AreEqual(expectedMapping, mappedResult.StartDate);
@@ -125,9 +84,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
             var roatpResult = new RoatpResult();
             roatpResult.Ukprn = "12345678";
             roatpResult.OrganisationName = "org name";
-            roatpResult.ProviderType = "main provider";
-            roatpResult.NewOrganisationWithoutFinancialTrackRecord = "Y";
-            roatpResult.ParentCompanyGuarantee = "N";
+            roatpResult.ApplicationType = "main provider";
             roatpResult.StartDate = DateTime.Today;
             roatpResult.ApplicationDeterminedDate = applicationDeterminedDate;
             var mappedResult = _mapper.MapCsv(roatpResult);
@@ -136,20 +93,18 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
 
 
         [TestCase(null, "")]
-        [TestCase("2019-08-04", "TRUE")]
+        [TestCase("2019-08-04", "Not Currently Starting New Apprentices")]
         public void ShouldMapRoatpResultCurrentlyNotStartingToProviderCurrentlyNotStarting(DateTime? providerNotCurrentlyStartingNewApprentices, string expectedMapping)
         {
             var roatpResult = new RoatpResult();
             roatpResult.Ukprn = "12345678";
             roatpResult.OrganisationName = "org name";
-            roatpResult.ProviderType = "main provider";
-            roatpResult.NewOrganisationWithoutFinancialTrackRecord = "Y";
-            roatpResult.ParentCompanyGuarantee = "Y";
+            roatpResult.ApplicationType = "main provider";
             roatpResult.StartDate = DateTime.Today;
             roatpResult.ApplicationDeterminedDate = DateTime.Today;
             roatpResult.ProviderNotCurrentlyStartingNewApprentices = providerNotCurrentlyStartingNewApprentices;
             var mappedResult = _mapper.MapCsv(roatpResult);
-            Assert.AreEqual(expectedMapping, mappedResult.ProviderNotCurrentlyStartingNewApprentices);
+            Assert.AreEqual(expectedMapping, mappedResult.Status);
         }
 
 
@@ -170,7 +125,6 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
                     Ukprn = ukprn2
                 }
             };
-
 
             var mappedResults = _mapper.MapCsv(roatpResultstoMap);
             Assert.AreEqual(mappedResults.Count, roatpResultstoMap.Count);

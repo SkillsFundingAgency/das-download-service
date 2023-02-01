@@ -24,32 +24,30 @@ namespace SFA.DAS.DownloadService.Services.Services.Roatp
             {
                 Ukprn = ukprn,
                 Name = roatpResult.OrganisationName,
-                ProviderType = MapProviderType(roatpResult?.ProviderType),
-                NewOrganisationWithoutFinancialTrackRecord = !string.IsNullOrEmpty(roatpResult.NewOrganisationWithoutFinancialTrackRecord) && roatpResult.NewOrganisationWithoutFinancialTrackRecord.ToUpper() == "Y",
-                ParentCompanyGuarantee = roatpResult.ParentCompanyGuarantee != null && roatpResult.ParentCompanyGuarantee.ToUpper() == "Y",
+                ApplicationType = MapProviderType(roatpResult?.ApplicationType),
+                OrganisationType = roatpResult?.OrganisationType,
                 StartDate = roatpResult?.StartDate,
                 ApplicationDeterminedDate = roatpResult?.ApplicationDeterminedDate,
                 CurrentlyNotStartingNewApprentices = roatpResult.ProviderNotCurrentlyStartingNewApprentices != null,
-
             };
         }
 
-        private static ProviderType MapProviderType(string providerType)
+        private static ApplicationType MapProviderType(string providerType)
         {
-            ProviderType returnedProviderType;
+            ApplicationType returnedProviderType;
             switch (providerType?.ToLower())
             {
                 case "main provider":
-                    returnedProviderType = ProviderType.MainProvider;
+                    returnedProviderType = ApplicationType.MainProvider;
                     break;
                 case "employer provider":
-                    returnedProviderType = ProviderType.EmployerProvider;
+                    returnedProviderType = ApplicationType.EmployerProvider;
                     break;
                 case "supporting provider":
-                    returnedProviderType = ProviderType.SupportingProvider;
+                    returnedProviderType = ApplicationType.SupportingProvider;
                     break;
                 default:
-                    returnedProviderType = ProviderType.Unknown;
+                    returnedProviderType = ApplicationType.Unknown;
                     break;
             }
             return returnedProviderType;
@@ -71,13 +69,10 @@ namespace SFA.DAS.DownloadService.Services.Services.Roatp
             {
                 Ukprn = ukprn,
                 Name = result.OrganisationName,
-                ProviderType = result?.ProviderType,
-                NewOrganisationWithoutFinancialTrackRecord = !string.IsNullOrEmpty(result.NewOrganisationWithoutFinancialTrackRecord) && result.NewOrganisationWithoutFinancialTrackRecord.ToUpper() == "Y",
-                ParentCompanyGuarantee = result.ParentCompanyGuarantee != null && result.ParentCompanyGuarantee.ToUpper() == "Y",
-
-
+                ApplicationType = result?.ApplicationType,
+                OrganisationType = result?.OrganisationType,
                 StartDate = FormatDate(result?.StartDate),
-                ProviderNotCurrentlyStartingNewApprentices = result.ProviderNotCurrentlyStartingNewApprentices != null ? "TRUE" : string.Empty,
+                Status = result.ProviderNotCurrentlyStartingNewApprentices != null ? "Not Currently Starting New Apprentices" : string.Empty,
                 ApplicationDeterminedDate = FormatDate(result?.ApplicationDeterminedDate)
             };
 
@@ -90,11 +85,10 @@ namespace SFA.DAS.DownloadService.Services.Services.Roatp
             {
                 Ukprn = result.Ukprn,
                 Name = result.Name,
-                ProviderType = Enumerations.GetEnumDescription(result.ProviderType),
-                NewOrganisationWithoutFinancialTrackRecord = result.NewOrganisationWithoutFinancialTrackRecord,
-                ParentCompanyGuarantee = result.ParentCompanyGuarantee,
+                ApplicationType = Enumerations.GetEnumDescription(result.ApplicationType),
+                OrganisationType = result.OrganisationType,
                 StartDate = FormatDate(result.StartDate),
-                ProviderNotCurrentlyStartingNewApprentices = result.CurrentlyNotStartingNewApprentices ? "TRUE":string.Empty,
+                Status = result.CurrentlyNotStartingNewApprentices ? "Not Currently Starting New Apprentices" : string.Empty,
                 ApplicationDeterminedDate = FormatDate(result.ApplicationDeterminedDate)
             };
 
