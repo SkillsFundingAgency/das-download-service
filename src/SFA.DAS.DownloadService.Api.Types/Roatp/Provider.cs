@@ -28,11 +28,6 @@ namespace SFA.DAS.DownloadService.Api.Types.Roatp
         public ApplicationType ApplicationType { get; set; }
 
         /// <summary>
-        /// The type of Organisation
-        /// </summary>
-        public string OrganisationType { get; set; }
-
-        /// <summary>
         /// The date this provider started on the register
         /// </summary>
         public DateTime? StartDate { get; set; }

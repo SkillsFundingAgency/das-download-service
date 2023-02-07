@@ -25,7 +25,6 @@ namespace SFA.DAS.DownloadService.Services.Services.Roatp
                 Ukprn = ukprn,
                 Name = roatpResult.OrganisationName,
                 ApplicationType = MapProviderType(roatpResult?.ApplicationType),
-                OrganisationType = roatpResult?.OrganisationType,
                 StartDate = roatpResult?.StartDate,
                 ApplicationDeterminedDate = roatpResult?.ApplicationDeterminedDate,
                 CurrentlyNotStartingNewApprentices = roatpResult.ProviderNotCurrentlyStartingNewApprentices != null,
@@ -70,7 +69,6 @@ namespace SFA.DAS.DownloadService.Services.Services.Roatp
                 Ukprn = ukprn,
                 Name = result.OrganisationName,
                 ApplicationType = result?.ApplicationType,
-                OrganisationType = result?.OrganisationType,
                 StartDate = FormatDate(result?.StartDate),
                 Status = result.ProviderNotCurrentlyStartingNewApprentices != null ? "Not Currently Starting New Apprentices" : string.Empty,
                 ApplicationDeterminedDate = FormatDate(result?.ApplicationDeterminedDate)
@@ -86,7 +84,6 @@ namespace SFA.DAS.DownloadService.Services.Services.Roatp
                 Ukprn = result.Ukprn,
                 Name = result.Name,
                 ApplicationType = Enumerations.GetEnumDescription(result.ApplicationType),
-                OrganisationType = result.OrganisationType,
                 StartDate = FormatDate(result.StartDate),
                 Status = result.CurrentlyNotStartingNewApprentices ? "Not Currently Starting New Apprentices" : string.Empty,
                 ApplicationDeterminedDate = FormatDate(result.ApplicationDeterminedDate)

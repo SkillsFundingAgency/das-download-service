@@ -11,9 +11,6 @@ namespace SFA.DAS.DownloadService.Api.Types.Roatp
         [JsonProperty("Application type")]
         public string ApplicationType { get; set; }
 
-        [JsonProperty("Organisation type")]
-        public string OrganisationType { get; set; }
-
         [JsonProperty("Start Date")]
         public string StartDate { get; set; }
 
