@@ -25,7 +25,7 @@ namespace SFA.DAS.DownloadService.Api.Types.Roatp
         /// </summary>
         [JsonRequired]
         [JsonConverter(typeof(StringEnumConverter))]
-        public ApplicationType ApplicationType { get; set; }
+        public ProviderType ApplicationType { get; set; }
 
         /// <summary>
         /// The date this provider started on the register

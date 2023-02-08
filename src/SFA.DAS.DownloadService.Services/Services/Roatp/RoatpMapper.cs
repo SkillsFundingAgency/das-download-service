@@ -31,22 +31,22 @@ namespace SFA.DAS.DownloadService.Services.Services.Roatp
             };
         }
 
-        private static ApplicationType MapProviderType(string providerType)
+        private static ProviderType MapProviderType(string providerType)
         {
-            ApplicationType returnedProviderType;
+            ProviderType returnedProviderType;
             switch (providerType?.ToLower())
             {
                 case "main provider":
-                    returnedProviderType = ApplicationType.MainProvider;
+                    returnedProviderType = ProviderType.MainProvider;
                     break;
                 case "employer provider":
-                    returnedProviderType = ApplicationType.EmployerProvider;
+                    returnedProviderType = ProviderType.EmployerProvider;
                     break;
                 case "supporting provider":
-                    returnedProviderType = ApplicationType.SupportingProvider;
+                    returnedProviderType = ProviderType.SupportingProvider;
                     break;
                 default:
-                    returnedProviderType = ApplicationType.Unknown;
+                    returnedProviderType = ProviderType.Unknown;
                     break;
             }
             return returnedProviderType;

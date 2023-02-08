@@ -53,11 +53,11 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
         [TestCase("SupportingProvider", "Supporting provider")]
         public void ShouldMapProviderTypeToCsvProviderProviderType(string providerTypeText, string expectedProviderType)
         {
-            var providerType = ApplicationType.MainProvider;
+            var providerType = ProviderType.MainProvider;
             if (providerTypeText == "EmployerProvider")
-                providerType = ApplicationType.EmployerProvider;
+                providerType = ProviderType.EmployerProvider;
             if (providerTypeText == "SupportingProvider")
-                providerType = ApplicationType.SupportingProvider;
+                providerType = ProviderType.SupportingProvider;
             var provider = new Provider
             {
                 Ukprn = 12345678,
@@ -78,7 +78,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
             {
                 Ukprn = 12345678,
                 Name = "org name",
-                ApplicationType = ApplicationType.MainProvider,
+                ApplicationType = ProviderType.MainProvider,
                 StartDate = startDate
             };
             var mappedResult = _mapper.MapProviderToCsvProvider(provider);
@@ -95,7 +95,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
             {
                 Ukprn = 12345678,
                 Name = "org name",
-                ApplicationType = ApplicationType.MainProvider,
+                ApplicationType = ProviderType.MainProvider,
                 StartDate = DateTime.Today,
                 ApplicationDeterminedDate = applicationDeterminedDate
             };
@@ -112,7 +112,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
             {
                 Ukprn = 12345678,
                 Name = "org name",
-                ApplicationType = ApplicationType.MainProvider,
+                ApplicationType = ProviderType.MainProvider,
                 StartDate = DateTime.Today,
                 ApplicationDeterminedDate = DateTime.Today
             };

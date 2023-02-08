@@ -11,7 +11,7 @@ namespace SFA.DAS.DownloadService.Api.Types.Roatp
         public string Name { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
-        public ApplicationType ProviderType { get; set; }
+        public ProviderType ProviderType { get; set; }
 
         public bool ContractedForNonLeviedEmployers { get; set; }
 

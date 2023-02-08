@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.DownloadService.Api.Types.Roatp
 {
-    public enum ApplicationType
+    public enum ProviderType
     {
         [Description("Unknown")]
         Unknown = 0,

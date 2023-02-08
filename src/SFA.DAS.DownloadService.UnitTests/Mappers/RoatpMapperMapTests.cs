@@ -77,23 +77,23 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
             Assert.AreEqual(roatpResult.OrganisationName, mappedResult.Name);   
         }
 
-        [TestCase(null, ApplicationType.Unknown)]
-        [TestCase("test words", ApplicationType.Unknown)]
-        [TestCase("mainprovider", ApplicationType.Unknown)]
-        [TestCase("main provider", ApplicationType.MainProvider)]
-        [TestCase("MAIN Provider", ApplicationType.MainProvider)]
-        [TestCase("employer provider", ApplicationType.EmployerProvider)]
-        [TestCase("EMPLOYER provider", ApplicationType.EmployerProvider)]
-        [TestCase("supporting provider", ApplicationType.SupportingProvider)]
-        [TestCase("SUpporting Provider", ApplicationType.SupportingProvider)]
-        public void ShouldMapRoatpResultProviderTypeToProviderProviderType(string providerType, ApplicationType expectedProviderType)
+        [TestCase(null, ProviderType.Unknown)]
+        [TestCase("test words", ProviderType.Unknown)]
+        [TestCase("mainprovider", ProviderType.Unknown)]
+        [TestCase("main provider", ProviderType.MainProvider)]
+        [TestCase("MAIN Provider", ProviderType.MainProvider)]
+        [TestCase("employer provider", ProviderType.EmployerProvider)]
+        [TestCase("EMPLOYER provider", ProviderType.EmployerProvider)]
+        [TestCase("supporting provider", ProviderType.SupportingProvider)]
+        [TestCase("SUpporting Provider", ProviderType.SupportingProvider)]
+        public void ShouldMapRoatpResultProviderTypeToProviderProviderType(string providerType, ProviderType expectedProviderType)
         {
             var roatpResult = new RoatpResult();
             roatpResult.Ukprn = "12345678";
             roatpResult.OrganisationName = "org name";
             roatpResult.ApplicationType = providerType;
             var mappedResult = _mapper.Map(roatpResult);
-            Assert.AreEqual(((ApplicationType)expectedProviderType).ToString(), mappedResult.ApplicationType.ToString());
+            Assert.AreEqual(((ProviderType)expectedProviderType).ToString(), mappedResult.ApplicationType.ToString());
         }
 
         [TestCase(null, null)]
