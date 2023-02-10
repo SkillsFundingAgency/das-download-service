@@ -8,7 +8,7 @@ namespace SFA.DAS.DownloadService.Api.Types.Roatp
 
         public string Name { get; set; }
 
-        [JsonProperty("Application type")]
+        [JsonProperty("Application Type")]
         public string ApplicationType { get; set; }
 
         [JsonProperty("Start Date")]
@@ -17,7 +17,7 @@ namespace SFA.DAS.DownloadService.Api.Types.Roatp
         [JsonProperty("Status")]
         public string Status { get; set; }
 
-        [JsonProperty("Application determined date")]
+        [JsonProperty("Application Determined Date")]
         public string ApplicationDeterminedDate { get; set; }
     }
 }

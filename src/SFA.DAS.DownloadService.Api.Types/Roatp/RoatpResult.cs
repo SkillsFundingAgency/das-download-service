@@ -7,25 +7,25 @@ namespace SFA.DAS.DownloadService.Api.Types.Roatp
     {
         public string Ukprn { get; set; }
 
-        [JsonProperty("Organisation name")]
+        [JsonProperty("Organisation Name")]
         public string OrganisationName { get; set; }
 
-        [JsonProperty("Application type")]
+        [JsonProperty("Application Type")]
         public string ApplicationType { get; set; }
 
         [JsonProperty("Contracted to deliver to non-levied employers")]
         public string ContractedToDeliverToNonLeviedEmployers { get; set; }
 
-        [JsonProperty("Start date")]
+        [JsonProperty("Start Date")]
         public DateTime? StartDate { get; set; }
 
-        [JsonProperty("End date")]
+        [JsonProperty("End Date")]
         public DateTime? EndDate { get; set; }
 
         [JsonProperty("Provider not currently starting new apprentices")]
         public DateTime? ProviderNotCurrentlyStartingNewApprentices { get; set; }
 
-        [JsonProperty("Application determined date")]
+        [JsonProperty("Application Determined Date")]
         public DateTime? ApplicationDeterminedDate { get; set; }
 
         public bool IsDateValid(DateTime currentDate)
