@@ -24,13 +24,10 @@ namespace SFA.DAS.DownloadService.Services.Services.Roatp
             {
                 Ukprn = ukprn,
                 Name = roatpResult.OrganisationName,
-                ProviderType = MapProviderType(roatpResult?.ProviderType),
-                NewOrganisationWithoutFinancialTrackRecord = !string.IsNullOrEmpty(roatpResult.NewOrganisationWithoutFinancialTrackRecord) && roatpResult.NewOrganisationWithoutFinancialTrackRecord.ToUpper() == "Y",
-                ParentCompanyGuarantee = roatpResult.ParentCompanyGuarantee != null && roatpResult.ParentCompanyGuarantee.ToUpper() == "Y",
+                ApplicationType = MapProviderType(roatpResult?.ApplicationType),
                 StartDate = roatpResult?.StartDate,
                 ApplicationDeterminedDate = roatpResult?.ApplicationDeterminedDate,
                 CurrentlyNotStartingNewApprentices = roatpResult.ProviderNotCurrentlyStartingNewApprentices != null,
-
             };
         }
 
@@ -71,13 +68,9 @@ namespace SFA.DAS.DownloadService.Services.Services.Roatp
             {
                 Ukprn = ukprn,
                 Name = result.OrganisationName,
-                ProviderType = result?.ProviderType,
-                NewOrganisationWithoutFinancialTrackRecord = !string.IsNullOrEmpty(result.NewOrganisationWithoutFinancialTrackRecord) && result.NewOrganisationWithoutFinancialTrackRecord.ToUpper() == "Y",
-                ParentCompanyGuarantee = result.ParentCompanyGuarantee != null && result.ParentCompanyGuarantee.ToUpper() == "Y",
-
-
+                ApplicationType = result?.ApplicationType,
                 StartDate = FormatDate(result?.StartDate),
-                ProviderNotCurrentlyStartingNewApprentices = result.ProviderNotCurrentlyStartingNewApprentices != null ? "TRUE" : string.Empty,
+                Status = result.ProviderNotCurrentlyStartingNewApprentices != null ? "Not Currently Starting New Apprentices" : string.Empty,
                 ApplicationDeterminedDate = FormatDate(result?.ApplicationDeterminedDate)
             };
 
@@ -90,11 +83,9 @@ namespace SFA.DAS.DownloadService.Services.Services.Roatp
             {
                 Ukprn = result.Ukprn,
                 Name = result.Name,
-                ProviderType = Enumerations.GetEnumDescription(result.ProviderType),
-                NewOrganisationWithoutFinancialTrackRecord = result.NewOrganisationWithoutFinancialTrackRecord,
-                ParentCompanyGuarantee = result.ParentCompanyGuarantee,
+                ApplicationType = Enumerations.GetEnumDescription(result.ApplicationType),
                 StartDate = FormatDate(result.StartDate),
-                ProviderNotCurrentlyStartingNewApprentices = result.CurrentlyNotStartingNewApprentices ? "TRUE":string.Empty,
+                Status = result.CurrentlyNotStartingNewApprentices ? "Not Currently Starting New Apprentices" : string.Empty,
                 ApplicationDeterminedDate = FormatDate(result.ApplicationDeterminedDate)
             };
 

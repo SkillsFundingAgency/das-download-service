@@ -1,14 +1,23 @@
-﻿namespace SFA.DAS.DownloadService.Api.Types.Roatp
+﻿using Newtonsoft.Json;
+
+namespace SFA.DAS.DownloadService.Api.Types.Roatp
 {
     public class CsvProvider
     {
         public long Ukprn { get; set; }
+
         public string Name { get; set; }
-        public string ProviderType { get; set; }
-        public bool ParentCompanyGuarantee { get; set; }
-        public bool NewOrganisationWithoutFinancialTrackRecord { get; set; }
+
+        [JsonProperty("Application Type")]
+        public string ApplicationType { get; set; }
+
+        [JsonProperty("Start Date")]
         public string StartDate { get; set; }
-        public string ProviderNotCurrentlyStartingNewApprentices { get; set; }
+
+        [JsonProperty("Status")]
+        public string Status { get; set; }
+
+        [JsonProperty("Application Determined Date")]
         public string ApplicationDeterminedDate { get; set; }
     }
 }

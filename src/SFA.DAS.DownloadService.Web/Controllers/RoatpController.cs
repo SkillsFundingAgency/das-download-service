@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Polly;
 using Polly.Retry;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
@@ -85,13 +87,20 @@ namespace SFA.DAS.DownloadService.Web.Controllers
                 date = DateTime.Now;
 
 
+            var jsonContent = JsonConvert.SerializeObject(providers);
+
+            var expandos = JsonConvert.DeserializeObject<ExpandoObject[]>(jsonContent);
+
             using (var memoryStream = new MemoryStream())
             {
                 using (var streamWriter = new StreamWriter(memoryStream))
                 {
                     using (var csvWriter = new CsvWriter(streamWriter))
                     {
-                        csvWriter.WriteRecords(providers);
+                        csvWriter.Configuration.Delimiter = ",";
+
+                        csvWriter.WriteRecords(expandos as IEnumerable<dynamic>);
+
                         streamWriter.Flush();
                         memoryStream.Position = 0;
                         return File(memoryStream.ToArray(), "text/csv", GenerateFilename(date.Value));

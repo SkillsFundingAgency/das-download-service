@@ -62,40 +62,10 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
             {
                 Ukprn = 12345678,
                 Name = "org name",
-                ProviderType = providerType
+                ApplicationType = providerType
             };
             var mappedResult = _mapper.MapProviderToCsvProvider(provider);
-            Assert.AreEqual(expectedProviderType, mappedResult.ProviderType);
-        }
-
-
-        [TestCase(true)]
-        [TestCase(false)]
-        public void ShouldMapProviderNewOrganisationToCsvProviderNewOrganisation(bool newOrganisationWithoutFinancialTrackRecord)
-        {
-            var provider = new Provider
-            {
-                Ukprn = 12345678,
-                Name = "org name",
-                ProviderType = ProviderType.MainProvider,
-                NewOrganisationWithoutFinancialTrackRecord = newOrganisationWithoutFinancialTrackRecord
-            };
-            var mappedResult = _mapper.MapProviderToCsvProvider(provider);
-            Assert.AreEqual(newOrganisationWithoutFinancialTrackRecord, mappedResult.NewOrganisationWithoutFinancialTrackRecord);
-        }
-
-        [TestCase(true)]
-        [TestCase(false)]
-        public void ShouldMapProviderParentCompanyGuaranteeToCsvProviderParentCompanyGuarantee(bool parentCompanyGuarantee)
-        {
-            var provider = new Provider();
-            provider.Ukprn = 12345678;
-            provider.Name = "org name";
-            provider.ProviderType = ProviderType.MainProvider;
-            provider.NewOrganisationWithoutFinancialTrackRecord = true;
-            provider.ParentCompanyGuarantee = parentCompanyGuarantee;
-            var mappedResult = _mapper.MapProviderToCsvProvider(provider);
-            Assert.AreEqual(parentCompanyGuarantee, mappedResult.ParentCompanyGuarantee);
+            Assert.AreEqual(expectedProviderType, mappedResult.ApplicationType);
         }
 
 
@@ -108,9 +78,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
             {
                 Ukprn = 12345678,
                 Name = "org name",
-                ProviderType = ProviderType.MainProvider,
-                NewOrganisationWithoutFinancialTrackRecord = true,
-                ParentCompanyGuarantee = false,
+                ApplicationType = ProviderType.MainProvider,
                 StartDate = startDate
             };
             var mappedResult = _mapper.MapProviderToCsvProvider(provider);
@@ -127,9 +95,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
             {
                 Ukprn = 12345678,
                 Name = "org name",
-                ProviderType = ProviderType.MainProvider,
-                NewOrganisationWithoutFinancialTrackRecord = true,
-                ParentCompanyGuarantee = true,
+                ApplicationType = ProviderType.MainProvider,
                 StartDate = DateTime.Today,
                 ApplicationDeterminedDate = applicationDeterminedDate
             };
@@ -139,22 +105,20 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
 
 
         [TestCase(false, "")]
-        [TestCase(true, "TRUE")]
+        [TestCase(true, "Not Currently Starting New Apprentices")]
         public void ShouldMapProviderCurrentlyNotStartingToProviderCurrentlyNotStarting(bool providerNotCurrentlyStartingNewApprentices, string expectedMapping)
         {
             var provider = new Provider
             {
                 Ukprn = 12345678,
                 Name = "org name",
-                ProviderType = ProviderType.MainProvider,
-                NewOrganisationWithoutFinancialTrackRecord = true,
-                ParentCompanyGuarantee = true,
+                ApplicationType = ProviderType.MainProvider,
                 StartDate = DateTime.Today,
                 ApplicationDeterminedDate = DateTime.Today
             };
             provider.CurrentlyNotStartingNewApprentices = providerNotCurrentlyStartingNewApprentices;
             var mappedResult = _mapper.MapProviderToCsvProvider(provider);
-            Assert.AreEqual(expectedMapping, mappedResult.ProviderNotCurrentlyStartingNewApprentices);
+            Assert.AreEqual(expectedMapping, mappedResult.Status);
         }
 
 

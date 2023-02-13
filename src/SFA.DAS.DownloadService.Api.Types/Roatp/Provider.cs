@@ -21,25 +21,11 @@ namespace SFA.DAS.DownloadService.Api.Types.Roatp
         public string Uri { get; set; }
 
         /// <summary>
-        /// The type of provider
+        /// The type of application
         /// </summary>
         [JsonRequired]
         [JsonConverter(typeof(StringEnumConverter))]
-        public ProviderType ProviderType { get; set; }
-
-        //public bool ContractedForNonLeviedEmployers { get; set; }
-
-        /// <summary>
-        /// if a parent company has issued a guarantee in support of this provider
-        /// </summary>
-        [JsonRequired]
-        public bool ParentCompanyGuarantee { get; set; }
-
-        /// <summary>
-        /// If the organisation is new and has yet to file financials
-        /// </summary>
-        [JsonRequired]
-        public bool NewOrganisationWithoutFinancialTrackRecord { get; set; }
+        public ProviderType ApplicationType { get; set; }
 
         /// <summary>
         /// The date this provider started on the register

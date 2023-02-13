@@ -10,17 +10,11 @@ namespace SFA.DAS.DownloadService.Api.Types.Roatp
         [JsonProperty("Organisation Name")]
         public string OrganisationName { get; set; }
 
-        [JsonProperty("Provider type")]
-        public string ProviderType { get; set; }
+        [JsonProperty("Application Type")]
+        public string ApplicationType { get; set; }
 
         [JsonProperty("Contracted to deliver to non-levied employers")]
         public string ContractedToDeliverToNonLeviedEmployers { get; set; }
-
-        [JsonProperty("Parent company guarantee")]
-        public string ParentCompanyGuarantee { get; set; }
-
-        [JsonProperty("New Organisation without financial track record")]
-        public string NewOrganisationWithoutFinancialTrackRecord { get; set; }
 
         [JsonProperty("Start Date")]
         public DateTime? StartDate { get; set; }
