@@ -1,5 +1,5 @@
 ﻿@using SFA.DAS.DownloadService.Services.Utility
-@model SFA.DAS.DownloadService.Web.Models.RoatpDownloadViewModel
+@model SFA.DAS.DownloadService.Web.Models.AparDownloadViewModel
 @{
     ViewBag.Title = "Download the Register of Apprenticeship Training Providers (RoATP)";
 }
@@ -13,7 +13,7 @@
             <h2 class="govuk-heading-m">Document</h2>
             <div class="app-attachment">
                 <h2 class="govuk-heading-m app-attachment__heading">DfE register of apprenticeship training providers </h2>
-                <span class="app-attachment__link-wrap">@Html.ActionLink("Download CSV", "Csv", "Roatp", new { filename = Model.Filename }, new { @class = "govuk-link" })</span>
+                <span class="app-attachment__link-wrap">@Html.ActionLink("Download CSV", "DownloadCsv", "Apar", new { filename = Model.Filename }, new { @class = "govuk-link" })</span>
                 <span class="app-attachment__icon"></span>
             </div>
             <dl class="das-definition-list das-definition-list--meta">

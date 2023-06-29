@@ -1,20 +1,17 @@
-﻿
-
-using System;
-using System.Collections.Generic;
-using System.Net;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.DownloadService.Api.Roatp.Controllers;
+using SFA.DAS.DownloadService.Api.Controllers;
+using SFA.DAS.DownloadService.Api.Types;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Services;
-using SFA.DAS.DownloadService.Services.Services.Roatp;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Net;
 
 namespace SFA.DAS.DownloadService.UnitTests.Controllers
 {
@@ -23,14 +20,11 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
     {
 
 
-        private ProvidersController _controller;
-        private Moq.Mock<ILogger<ProvidersController>> _mockLogger;
-        private Mock<IRoatpApiClient> _mockClient;
-        private IRoatpMapper _mapper;
-        private Mock<IHostingEnvironment> _mockEnv;
-        private IRetryService _retryService;
-
-        private Mock<ILogger<RetryService>> _mockRetryServiceLogger;
+        private AparController _controller;
+        private Moq.Mock<ILogger<AparController>> _mockLogger;
+        private Mock<IRoatpApiClient> _mockRoatpApiClient;
+        private Mock<IAssessorApiClient> _mockAssessorApiClient;
+        private IAparMapper _mapper;
 
         protected Mock<HttpContext> HttpContext;
         protected Mock<HttpRequest> HttpContextRequest;
@@ -41,16 +35,13 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
         public void Init()
         {
             _ukprn = 12345678;
-            _mockLogger = new Mock<ILogger<ProvidersController>>();
-            _mockClient = new Mock<IRoatpApiClient>();
-
-            _mockEnv = new Mock<IHostingEnvironment>();
-            _mockRetryServiceLogger = new Mock<ILogger<RetryService>>();
-            _retryService = new RetryService(_mockRetryServiceLogger.Object);
-
-            _mapper = new RoatpMapper();
-            _mockClient.Setup(z => z.GetRoatpSummaryByUkprn(It.IsAny<int>())).ReturnsAsync((IEnumerable<RoatpResult>)null);
-            _mockClient.Setup(z => z.GetRoatpSummary()).ReturnsAsync((IEnumerable<RoatpResult>)null);
+            _mockLogger = new Mock<ILogger<AparController>>();
+            _mockRoatpApiClient = new Mock<IRoatpApiClient>();
+            _mockAssessorApiClient = new Mock<IAssessorApiClient>();
+            
+            _mapper = new AparMapper();
+            _mockRoatpApiClient.Setup(z => z.GetRoatpSummaryByUkprn(It.IsAny<int>())).ReturnsAsync((IEnumerable<RoatpResult>)null);
+            _mockRoatpApiClient.Setup(z => z.GetRoatpSummary()).ReturnsAsync((IEnumerable<RoatpResult>)null);
 
             HttpContextRequest = new Mock<HttpRequest>();
             HttpContextRequest.Setup(r => r.Method).Returns("GET");
@@ -58,12 +49,10 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
             HttpContext.Setup(x => x.Request.Scheme).Returns("http");
             HttpContext.Setup(x => x.Request.Host).Returns(new HostString("localhost"));
 
-            _controller = new ProvidersController(_mockLogger.Object, _mockClient.Object, _mapper,
-               _mockEnv.Object, _retryService);
+            _controller = new AparController(_mockLogger.Object, _mockRoatpApiClient.Object, _mockAssessorApiClient.Object, _mapper);
 
             _controller.ControllerContext = new ControllerContext();
             _controller.ControllerContext.HttpContext = HttpContext.Object;
-
         }
 
         [TestCase(1)]
@@ -112,7 +101,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
             };
 
             if (ukprnType != "absentUkprn")
-                _mockClient.Setup(z => z.GetRoatpSummaryByUkprn(_ukprn)).ReturnsAsync(new List<RoatpResult> { roatpResult });
+                _mockRoatpApiClient.Setup(z => z.GetRoatpSummaryByUkprn(_ukprn)).ReturnsAsync(new List<RoatpResult> { roatpResult });
 
             var resultFromGet = _controller.Get(_ukprn).Result;
 
@@ -120,7 +109,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
 
             if (httpStatusCode == (int)HttpStatusCode.OK)
             {
-                var returnedProvider = (Provider)((ObjectResult)resultFromGet).Value;
+                var returnedProvider = (AparEntry)((ObjectResult)resultFromGet).Value;
                 Assert.AreEqual(_ukprn, returnedProvider.Ukprn);
             }
             else
@@ -163,7 +152,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
             };
 
             if (ukprnType != "absentUkprn")
-                _mockClient.Setup(z => z.GetRoatpSummaryByUkprn(_ukprn)).ReturnsAsync(new List<RoatpResult> { roatpResult });
+                _mockRoatpApiClient.Setup(z => z.GetRoatpSummaryByUkprn(_ukprn)).ReturnsAsync(new List<RoatpResult> { roatpResult });
 
             var resultFromGet = _controller.Head(_ukprn).Result;
 
@@ -178,7 +167,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
 
             if (httpStatusCode == (int)HttpStatusCode.OK)
             {
-                var returnedProvider = (Provider)((ObjectResult)resultFromGet).Value;
+                var returnedProvider = (AparEntry)((ObjectResult)resultFromGet).Value;
                 Assert.AreEqual(_ukprn, returnedProvider.Ukprn);
             }
             else if (httpStatusCode != (int)HttpStatusCode.NoContent)
@@ -218,10 +207,10 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
 
             roatpResults.Add(roatpResult2);
 
-            _mockClient.Setup(z => z.GetRoatpSummary()).ReturnsAsync(roatpResults);
+            _mockRoatpApiClient.Setup(z => z.GetRoatpSummary()).ReturnsAsync(roatpResults);
 
             var resultsFromGet = _controller.GetAll().Result;
-            var expectedProviders = (List<Provider>)((ObjectResult)resultsFromGet).Value;
+            var expectedProviders = (List<AparEntry>)((ObjectResult)resultsFromGet).Value;
 
             Assert.AreEqual(expectedCount, expectedProviders.Count);
         }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.Reflection;
-using System.Text;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +8,15 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Api.Infrastructure;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Services;
-using SFA.DAS.DownloadService.Services.Services.Roatp;
 using SFA.DAS.DownloadService.Settings;
 using SFA.DAS.Roatp.Api.Client;
+using SFA.DAS.Roatp.Api.Client.Clients;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
 using Swashbuckle.AspNetCore.Examples;
 using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.SwaggerUI;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace SFA.DAS.DownloadService.Api
 {
@@ -39,7 +35,6 @@ namespace SFA.DAS.DownloadService.Api
             Configuration = configuration;
         }
 
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -57,13 +52,6 @@ namespace SFA.DAS.DownloadService.Api
                 c.OperationFilter<ExamplesOperationFilter>();
             });
 
-            ApplicationConfiguration = new WebConfiguration
-            {
-                RoatpApiClientBaseUrl = "",
-                RoatpApiAuthentication = new ClientApiAuthentication()
-
-            };
-
             ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
             services.Configure<RequestLocalizationOptions>(options =>
@@ -73,24 +61,35 @@ namespace SFA.DAS.DownloadService.Api
                 options.RequestCultureProviders.Clear();
             });
 
+            services.AddHttpClient<IAssessorApiClient, AssessorApiClient>("AssessorApiClient", config =>
+            {
+                config.BaseAddress = new Uri(ApplicationConfiguration.AssessorApiAuthentication.ApiBaseAddress);
+            });
+
+            services.AddHttpClient<IRoatpApiClient, RoatpApiClient>("RoatpApiClient", config =>
+            {
+                config.BaseAddress = new Uri(ApplicationConfiguration.RoatpApiAuthentication.ApiBaseAddress);
+            });
+
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDataProtection(ApplicationConfiguration, _env);
 
             ConfigureDependencyInjection(services);
-
         }
 
         private void ConfigureDependencyInjection(IServiceCollection services)
         {
-            services.AddTransient<IRoatpMapper, RoatpMapper>();
-            services.AddTransient<IRoatpApiClient, RoatpApiClient>();
-            services.AddTransient<ITokenService, TokenService>();
-            services.AddTransient<IRetryService, RetryService>();
+            services.AddTransient<IAparMapper, AparMapper>();
             services.AddTransient(x => ApplicationConfiguration);
-        }
 
+            services.AddTransient<IAssessorTokenService, TokenService>(serviceProvider => 
+                new TokenService(ApplicationConfiguration.AssessorApiAuthentication));
+
+            services.AddTransient<IRoatpTokenService, TokenService>(serviceProvider =>
+                new TokenService(ApplicationConfiguration.RoatpApiAuthentication));
+        }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -111,7 +110,6 @@ namespace SFA.DAS.DownloadService.Api
             app.UseHealthChecks("/ping");
             app.UseRequestLocalization();
 
-
             app.UseSwagger()
                 .UseSwaggerUI(c =>
                 {
@@ -121,22 +119,6 @@ namespace SFA.DAS.DownloadService.Api
 
             app.UseMvc();
 
-        }
-
-
-        private IDictionary<string, object> GetProperties()
-        {
-            var properties = new Dictionary<string, object>();
-            properties.Add("Version", GetVersion());
-            return properties;
-        }
-
-
-        private string GetVersion()
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            return fileVersionInfo.ProductVersion;
         }
     }
 }

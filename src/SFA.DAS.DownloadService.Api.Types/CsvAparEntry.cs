@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace SFA.DAS.DownloadService.Api.Types.Roatp
+namespace SFA.DAS.DownloadService.Api.Types
 {
-    public class CsvProvider
+    public class CsvAparEntry
     {
         public long Ukprn { get; set; }
 

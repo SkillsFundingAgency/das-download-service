@@ -1,20 +1,20 @@
-﻿using System;
+﻿using NUnit.Framework;
+using SFA.DAS.DownloadService.Api.Types.Roatp;
+using SFA.DAS.DownloadService.Services.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
-using SFA.DAS.DownloadService.Api.Types.Roatp;
-using SFA.DAS.DownloadService.Services.Services.Roatp;
 
 namespace SFA.DAS.DownloadService.UnitTests.Mappers
 {
     [TestFixture]
     public class RoatpMapperMapCsvTests
     {
-        private RoatpMapper _mapper;
+        private AparMapper _mapper;
         [SetUp]
         public void Init()
         {
-            _mapper = new RoatpMapper();
+            _mapper = new AparMapper();
         }
 
         [Test]

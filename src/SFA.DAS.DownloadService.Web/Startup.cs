@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.Reflection;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,14 +7,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Services;
-using SFA.DAS.DownloadService.Services.Services.Roatp;
 using SFA.DAS.DownloadService.Settings;
-using SFA.DAS.DownloadService.Web.Extensions;
 using SFA.DAS.DownloadService.Web.Infrastructure;
 using SFA.DAS.Roatp.Api.Client;
+using SFA.DAS.Roatp.Api.Client.Clients;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
 using Swashbuckle.AspNetCore.Examples;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace SFA.DAS.DownloadService.Web
 {
@@ -53,16 +49,9 @@ namespace SFA.DAS.DownloadService.Web
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = $"Download Service API {Configuration["InstanceName"]}", Version = "v1" });
-                c.EnableAnnotations();               
-                c.OperationFilter<ExamplesOperationFilter>();     
+                c.EnableAnnotations();
+                c.OperationFilter<ExamplesOperationFilter>();
             });
-
-            ApplicationConfiguration = new WebConfiguration
-            {
-                RoatpApiClientBaseUrl = "",
-                RoatpApiAuthentication = new ClientApiAuthentication()
-
-            };
 
             ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
@@ -73,22 +62,25 @@ namespace SFA.DAS.DownloadService.Web
                 options.RequestCultureProviders.Clear();
             });
 
+            services.AddHttpClient<IDownloadServiceApiClient, DownloadServiceApiClient>("DownloadServiceApiClient", config =>
+            {
+                config.BaseAddress = new Uri(ApplicationConfiguration.DownloadServiceApiAuthentication.ApiBaseAddress);
+            });
+
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDataProtection(ApplicationConfiguration, _env);
 
             ConfigureDependencyInjection(services);
-
         }
 
         private void  ConfigureDependencyInjection(IServiceCollection services)
         {
-            services.AddTransient<IRoatpMapper,RoatpMapper>();
-            services.AddTransient<IDownloadServiceApiClient,DownloadServiceApiClient>();
-            services.AddTransient<ITokenService,TokenService>();
-            services.AddTransient<IRetryService,RetryService>();
-            services.AddTransient(x=>ApplicationConfiguration); 
+            services.AddTransient<IAparMapper,AparMapper>();
+            services.AddTransient(x => ApplicationConfiguration);
+            services.AddTransient<IDownloadServiceTokenService, TokenService>(serviceProvider =>
+                new TokenService(ApplicationConfiguration.DownloadServiceApiAuthentication));
         }
 
 
@@ -116,24 +108,8 @@ namespace SFA.DAS.DownloadService.Web
                 routes.MapRoute(
                     name: "default",
                     template: "{controller}/{action}/{id?}",
-                    defaults: new { controller = "Roatp", action = "Index" });
+                    defaults: new { controller = "Home", action = "Index" });
             });
-        }
-
-
-        private IDictionary<string, object> GetProperties()
-        {
-            var properties = new Dictionary<string, object>();
-            properties.Add("Version", GetVersion());
-            return properties;
-        }
-
-
-        private string GetVersion()
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            return fileVersionInfo.ProductVersion;
         }
     }
 }

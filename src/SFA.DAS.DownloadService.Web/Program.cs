@@ -30,6 +30,7 @@
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .UseApplicationInsights()
+                .UseUrls("https://localhost:5015")
                 .UseNLog();
     }
 }

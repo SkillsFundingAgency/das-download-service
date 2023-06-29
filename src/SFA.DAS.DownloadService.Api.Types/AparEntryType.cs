@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 
-namespace SFA.DAS.DownloadService.Api.Types.Roatp
+namespace SFA.DAS.DownloadService.Api.Types
 {
-    public enum ProviderType
+    public enum AparEntryType
     {
         [Description("Unknown")]
         Unknown = 0,
@@ -11,6 +11,8 @@ namespace SFA.DAS.DownloadService.Api.Types.Roatp
         [Description("Supporting provider")]
         SupportingProvider = 2,
         [Description("Employer provider")]
-        EmployerProvider = 3
+        EmployerProvider = 3,
+        [Description("EPAO")]
+        EPAO = 4
     }
 }
