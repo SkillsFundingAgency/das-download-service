@@ -31,7 +31,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
         public async Task Csv_NoRecordsReturnedFromApi_RedirectToServiceUnavailable()
         {
             _mockClient.Setup(x => x.GetAparSummary()).ReturnsAsync(new List<AparEntry>());
-            var result = await _controller.CsvAsync();
+            var result = await _controller.DownloadCsv();
             var redirectResult = result as RedirectToActionResult;
             Assert.AreEqual("ServiceUnavailable",redirectResult.ActionName);
             _mockClient.Verify(x=> x.GetAparSummary(),Times.Once);
@@ -43,7 +43,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Controllers
             var dateUpdated = DateTime.Now.AddDays(-1);
             _mockClient.Setup(x => x.GetAparSummary()).ReturnsAsync(new List<AparEntry> {new AparEntry()});
             _mockClient.Setup(x => x.GetLatestNonOnboardingOrganisationChangeDate()).ReturnsAsync(dateUpdated);
-            var result = await _controller.CsvAsync();
+            var result = await _controller.DownloadCsv();
             var fileDownloadResult = result as FileContentResult;
             var expectedFileName = $"roatp-{dateUpdated:yyyy-MM-dd-HH-mm-ss}.csv";
             Assert.AreEqual("text/csv", fileDownloadResult.ContentType);

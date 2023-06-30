@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using SFA.DAS.DownloadService.Api.Authentication;
+using SFA.DAS.DownloadService.Api.Authorization;
 using SFA.DAS.DownloadService.Api.Infrastructure;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Services;
@@ -22,17 +23,18 @@ namespace SFA.DAS.DownloadService.Api
 {
     public class Startup
     {
-        private readonly IHostingEnvironment _env;
-        private readonly ILogger<Startup> _logger;
         private const string ServiceName = "SFA.DAS.DownloadService";
         private const string Version = "1.0";
-        public IConfiguration Configuration { get; }
-        public IWebConfiguration ApplicationConfiguration { get; set; }
-        public Startup(IConfiguration configuration, IHostingEnvironment env, ILogger<Startup> logger)
+
+        private readonly IConfiguration Configuration;
+        private readonly IHostingEnvironment _hostingEnvironment;
+
+        private IWebConfiguration ApplicationConfiguration { get; set; }
+        
+        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
-            _env = env;
-            _logger = logger;
             Configuration = configuration;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -47,12 +49,15 @@ namespace SFA.DAS.DownloadService.Api
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = $"Download Service API {Configuration["InstanceName"]}", Version = "v1" });
+                c.SwaggerDoc("v2", new Info { Title = $"Download Service API {Configuration["InstanceName"]}", Version = "v2" });
                 c.EnableAnnotations();
                 c.OperationFilter<ExamplesOperationFilter>();
             });
 
             ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+
+            services.AddApiAuthorization(_hostingEnvironment);
+            services.AddApiAuthentication(ApplicationConfiguration.ApiAuthentication);
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -74,7 +79,7 @@ namespace SFA.DAS.DownloadService.Api
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddDataProtection(ApplicationConfiguration, _env);
+            services.AddDataProtection(ApplicationConfiguration, _hostingEnvironment);
 
             ConfigureDependencyInjection(services);
         }
@@ -114,11 +119,10 @@ namespace SFA.DAS.DownloadService.Api
                 .UseSwaggerUI(c =>
                 {
                     c.RoutePrefix = "api";
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Download Service API v1");
+                    c.SwaggerEndpoint("/swagger/v2/swagger.json", "Download Service API v2");
                 });
 
             app.UseMvc();
-
         }
     }
 }

@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.DownloadService.Api.Controllers
 {
-    [Route("api")]
+    [Route("api/v2")]
     [ApiController]
     public class AparController : Controller
     {
@@ -121,8 +121,9 @@ namespace SFA.DAS.DownloadService.Api.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError($"Unable to fetch latest change date", ex);
-                return StatusCode(500, $"Unable to fetch latest change date");
+                var message = "Unable to fetch latest roatp register change date";
+                _log.LogError(message, ex);
+                return StatusCode(500, message);
             }
 
             return Ok(latestChange);

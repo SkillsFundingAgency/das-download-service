@@ -4,6 +4,7 @@ namespace SFA.DAS.DownloadService.Settings
 {
     public interface IWebConfiguration
     {
+        ApiAuthentication ApiAuthentication { get; set; }
         ClientApiAuthentication RoatpApiAuthentication { get; set; }
         ManagedIdentityApiAuthentication AssessorApiAuthentication { get; set; }
         ManagedIdentityApiAuthentication DownloadServiceApiAuthentication { get; set; }
@@ -13,6 +14,7 @@ namespace SFA.DAS.DownloadService.Settings
 
     public class WebConfiguration : IWebConfiguration
     {
+        [JsonRequired] public ApiAuthentication ApiAuthentication { get; set; }
         [JsonRequired] public ClientApiAuthentication RoatpApiAuthentication { get; set; }
         [JsonRequired] public ManagedIdentityApiAuthentication AssessorApiAuthentication { get; set; }
         [JsonRequired] public ManagedIdentityApiAuthentication DownloadServiceApiAuthentication { get; set; }

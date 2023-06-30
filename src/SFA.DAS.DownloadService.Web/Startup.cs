@@ -12,8 +12,6 @@ using SFA.DAS.DownloadService.Web.Infrastructure;
 using SFA.DAS.Roatp.Api.Client;
 using SFA.DAS.Roatp.Api.Client.Clients;
 using SFA.DAS.Roatp.Api.Client.Interfaces;
-using Swashbuckle.AspNetCore.Examples;
-using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -22,19 +20,21 @@ namespace SFA.DAS.DownloadService.Web
 {
     public class Startup
     {
-        private readonly IHostingEnvironment _env;
-        private readonly ILogger<Startup> _logger;
         private const string ServiceName = "SFA.DAS.DownloadService";
         private const string Version = "1.0";
-        public IConfiguration Configuration { get; }
-        public IWebConfiguration ApplicationConfiguration { get; set; }
-        public Startup(IConfiguration configuration, IHostingEnvironment env, ILogger<Startup> logger)
-        {
-            _env = env;
-            _logger = logger;
-            Configuration = configuration;
-        }
 
+        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IConfiguration Configuration;
+        private readonly ILogger<Startup> _logger;
+        
+        private IWebConfiguration ApplicationConfiguration { get; set; }
+
+        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment, ILogger<Startup> logger)
+        {
+            Configuration = configuration;
+            _hostingEnvironment = hostingEnvironment;
+            _logger = logger;
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -44,13 +44,6 @@ namespace SFA.DAS.DownloadService.Web
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info { Title = $"Download Service API {Configuration["InstanceName"]}", Version = "v1" });
-                c.EnableAnnotations();
-                c.OperationFilter<ExamplesOperationFilter>();
             });
 
             ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
@@ -70,7 +63,7 @@ namespace SFA.DAS.DownloadService.Web
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddDataProtection(ApplicationConfiguration, _env);
+            services.AddDataProtection(ApplicationConfiguration, _hostingEnvironment);
 
             ConfigureDependencyInjection(services);
         }

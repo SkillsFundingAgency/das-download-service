@@ -10,14 +10,14 @@ namespace SFA.DAS.Roatp.Api.Client.Clients
 {
     public class DownloadServiceApiClient : ApiClientBase, IDownloadServiceApiClient
     {
-        public DownloadServiceApiClient(HttpClient httpClient, ILogger<ApiClientBase> logger)
-            : base(httpClient, null, logger)
+        public DownloadServiceApiClient(HttpClient httpClient, IDownloadServiceTokenService tokenService, ILogger<ApiClientBase> logger)
+            : base(httpClient, tokenService, logger)
         {
         }
 
         public async Task<IEnumerable<AparEntry>> GetAparSummary()
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/apar"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/v2/apar"))
             {
                 return await Get<IEnumerable<AparEntry>>(request, $"Could not retrieve apar summary data");
             }
@@ -25,7 +25,7 @@ namespace SFA.DAS.Roatp.Api.Client.Clients
 
         public async Task<IEnumerable<AparEntry>> GetAparSummaryByUkprn(int ukprn)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/apar/{ukprn}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/v2/apar/{ukprn}"))
             {
                 return await Get<IEnumerable<AparEntry>>(request, $"Could not retrieve apar summary data for {ukprn}");
             }
@@ -33,7 +33,7 @@ namespace SFA.DAS.Roatp.Api.Client.Clients
 
         public async Task<DateTime?> GetLatestNonOnboardingOrganisationChangeDate()
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/GetLatestTime"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/v2/getLatestTime"))
             {
                 return await Get<DateTime?>(request, $"Could not retrieve roatp most recent change");
             }
