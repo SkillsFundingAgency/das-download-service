@@ -18,7 +18,7 @@ namespace SFA.DAS.DownloadService.Services.Services
                 return null;
             }
 
-            if (roatpResult.EndDate != null && roatpResult.EndDate <= DateTime.Today)
+            if (roatpResult?.EndDate != null && roatpResult.EndDate <= DateTime.Today)
                 return null;
 
             return new AparEntry
@@ -35,11 +35,14 @@ namespace SFA.DAS.DownloadService.Services.Services
 
         public List<AparEntry> Map(List<RoatpResult> roatpResults, Func<long, string> uriResolver)
         {
-            return roatpResults.Select(roatpResult => Map(roatpResult, uriResolver)).ToList();
+            return roatpResults?.Select(roatpResult => Map(roatpResult, uriResolver)).ToList();
         }
 
         public AparEntry Map(EpaoResult epaoResult, Func<long, string> uriResolver)
         {
+            if (epaoResult == null)
+                return null;
+
             return new AparEntry
             {
                 Ukprn = epaoResult.Ukprn,
@@ -54,11 +57,14 @@ namespace SFA.DAS.DownloadService.Services.Services
 
         public List<AparEntry> Map(List<EpaoResult> epaoResults, Func<long, string> uriResolver)
         {
-            return epaoResults.Select(epaoResult => Map(epaoResult, uriResolver)).ToList();
+            return epaoResults?.Select(epaoResult => Map(epaoResult, uriResolver)).ToList();
         }
 
         public CsvAparEntry MapCsv(AparEntry aparEntry)
         {
+            if (aparEntry == null)
+                return null;
+
             var csvAparEntry = new CsvAparEntry
             {
                 Ukprn = aparEntry.Ukprn,
@@ -74,7 +80,7 @@ namespace SFA.DAS.DownloadService.Services.Services
 
         public List<CsvAparEntry> MapCsv(List<AparEntry> aparEntries)
         {
-            return aparEntries.Select(MapCsv).ToList();
+            return aparEntries?.Select(MapCsv).ToList();
         }
 
         public UkprnAparEntry Map(RoatpResult roatpResult, EpaoResult epaoResult, Func<long, string> uriResolver)
@@ -126,6 +132,9 @@ namespace SFA.DAS.DownloadService.Services.Services
 
         private static string FormatDate(DateTime? date)
         {
+            if (date == null)
+                return null;
+
             return date.ToMapperDateString();
         }
     }
