@@ -2,11 +2,11 @@
 using Azure.Identity;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using SFA.DAS.DownloadService.Settings;
-using SFA.DAS.Roatp.Api.Client.Interfaces;
+using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using System;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.Roatp.Api.Client
+namespace SFA.DAS.DownloadService.Api.Client
 {
     public class TokenService : IAssessorTokenService, IRoatpTokenService, IDownloadServiceTokenService
     {

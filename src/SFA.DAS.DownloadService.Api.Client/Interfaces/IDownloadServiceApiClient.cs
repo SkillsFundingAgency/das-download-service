@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.Roatp.Api.Client.Interfaces
+namespace SFA.DAS.DownloadService.Api.Client.Interfaces
 {
     public interface IDownloadServiceApiClient
     {

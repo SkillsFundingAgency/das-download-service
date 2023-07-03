@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Api.Types;
-using SFA.DAS.Roatp.Api.Client.Interfaces;
+using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.Roatp.Api.Client.Clients
+namespace SFA.DAS.DownloadService.Api.Client.Clients
 {
     public class DownloadServiceApiClient : ApiClientBase, IDownloadServiceApiClient
     {

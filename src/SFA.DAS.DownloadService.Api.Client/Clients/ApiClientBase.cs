@@ -3,14 +3,14 @@ using Newtonsoft.Json;
 using Polly;
 using Polly.Extensions.Http;
 using Polly.Retry;
-using SFA.DAS.Roatp.Api.Client.Interfaces;
+using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.Roatp.Api.Client.Clients
+namespace SFA.DAS.DownloadService.Api.Client.Clients
 {
     public class ApiClientBase
     {

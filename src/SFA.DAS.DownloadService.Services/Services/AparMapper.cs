@@ -57,31 +57,6 @@ namespace SFA.DAS.DownloadService.Services.Services
             return epaoResults.Select(epaoResult => Map(epaoResult, uriResolver)).ToList();
         }
 
-        public CsvAparEntry MapCsv(RoatpResult result)
-        {
-            if (!long.TryParse(result?.Ukprn, out long ukprn))
-            {
-                return null;
-            }
-
-            var csvApar = new CsvAparEntry
-            {
-                Ukprn = ukprn,
-                Name = result.OrganisationName,
-                ApplicationType = result?.ApplicationType,
-                StartDate = FormatDate(result?.StartDate),
-                Status = result.ProviderNotCurrentlyStartingNewApprentices != null ? "Not Currently Starting New Apprentices" : string.Empty,
-                ApplicationDeterminedDate = FormatDate(result?.ApplicationDeterminedDate)
-            };
-
-            return csvApar;
-        }
-
-        public List<CsvAparEntry> MapCsv(List<RoatpResult> roatpResults)
-        {
-            return roatpResults.Select(MapCsv).ToList();
-        }
-
         public CsvAparEntry MapCsv(AparEntry aparEntry)
         {
             var csvAparEntry = new CsvAparEntry

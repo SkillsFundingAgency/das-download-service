@@ -5,7 +5,7 @@ using SFA.DAS.DownloadService.Api.Types;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Utility;
 using SFA.DAS.DownloadService.Web.Models;
-using SFA.DAS.Roatp.Api.Client.Interfaces;
+using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;

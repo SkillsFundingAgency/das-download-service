@@ -9,12 +9,12 @@ using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Services;
 using SFA.DAS.DownloadService.Settings;
 using SFA.DAS.DownloadService.Web.Infrastructure;
-using SFA.DAS.Roatp.Api.Client;
-using SFA.DAS.Roatp.Api.Client.Clients;
-using SFA.DAS.Roatp.Api.Client.Interfaces;
+using SFA.DAS.DownloadService.Api.Client;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using SFA.DAS.DownloadService.Api.Client.Interfaces;
+using SFA.DAS.DownloadService.Api.Client.Clients;
 
 namespace SFA.DAS.DownloadService.Web
 {

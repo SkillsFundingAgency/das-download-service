@@ -13,9 +13,6 @@ namespace SFA.DAS.DownloadService.Services.Interfaces
         AparEntry Map(EpaoResult epaoResult, Func<long, string> uriResolver);
         List<AparEntry> Map(List<EpaoResult> epaoResults, Func<long, string> uriResolver);
 
-        CsvAparEntry MapCsv(RoatpResult results);
-        List<CsvAparEntry> MapCsv(List<RoatpResult> roatpResults);
-
         CsvAparEntry MapCsv(AparEntry aparEntry);
         List<CsvAparEntry> MapCsv(List<AparEntry> aparEntries);
 

@@ -1,10 +1,9 @@
-﻿using System;
+﻿using SFA.DAS.DownloadService.Api.Types.Roatp;
+using System;
 using System.Collections.Generic;
-using SFA.DAS.DownloadService.Api.Types.Roatp;
-using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.Roatp.Api.Client.Interfaces
+namespace SFA.DAS.DownloadService.Api.Client.Interfaces
 {
     public interface IRoatpApiClient
     {
