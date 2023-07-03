@@ -13,12 +13,15 @@ namespace SFA.DAS.DownloadService.Services.Services
     {
         public AparEntry Map(RoatpResult roatpResult, Func<long, string> uriResolver)
         {
-            if (!long.TryParse(roatpResult?.Ukprn, out long ukprn))
+            if (roatpResult == null)
+                return null;
+            
+            if (!long.TryParse(roatpResult.Ukprn, out long ukprn))
             {
                 return null;
             }
 
-            if (roatpResult?.EndDate != null && roatpResult.EndDate <= DateTime.Today)
+            if (roatpResult.EndDate != null && roatpResult.EndDate <= DateTime.Today)
                 return null;
 
             return new AparEntry
