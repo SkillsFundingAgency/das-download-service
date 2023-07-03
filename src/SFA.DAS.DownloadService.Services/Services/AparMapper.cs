@@ -63,29 +63,6 @@ namespace SFA.DAS.DownloadService.Services.Services
             return epaoResults?.Select(epaoResult => Map(epaoResult, uriResolver)).ToList();
         }
 
-        public CsvAparEntry MapCsv(AparEntry aparEntry)
-        {
-            if (aparEntry == null)
-                return null;
-
-            var csvAparEntry = new CsvAparEntry
-            {
-                Ukprn = aparEntry.Ukprn,
-                Name = aparEntry.Name,
-                ApplicationType = Enumerations.GetEnumDescription(aparEntry.ApplicationType),
-                StartDate = FormatDate(aparEntry.StartDate),
-                Status = aparEntry.CurrentlyNotStartingNewApprentices.GetValueOrDefault(false) ? "Not Currently Starting New Apprentices" : string.Empty,
-                ApplicationDeterminedDate = FormatDate(aparEntry.ApplicationDeterminedDate)
-            };
-
-            return csvAparEntry;
-        }
-
-        public List<CsvAparEntry> MapCsv(List<AparEntry> aparEntries)
-        {
-            return aparEntries?.Select(MapCsv).ToList();
-        }
-
         public UkprnAparEntry Map(RoatpResult roatpResult, EpaoResult epaoResult, Func<long, string> uriResolver)
         {
             UkprnAparEntry ukprnAparEntry = null;
@@ -110,6 +87,29 @@ namespace SFA.DAS.DownloadService.Services.Services
             }
 
             return ukprnAparEntry;
+        }
+
+        public CsvAparEntry MapCsv(AparEntry aparEntry)
+        {
+            if (aparEntry == null)
+                return null;
+
+            var csvAparEntry = new CsvAparEntry
+            {
+                Ukprn = aparEntry.Ukprn,
+                Name = aparEntry.Name,
+                ApplicationType = Enumerations.GetEnumDescription(aparEntry.ApplicationType),
+                StartDate = FormatDate(aparEntry.StartDate),
+                Status = aparEntry.CurrentlyNotStartingNewApprentices.GetValueOrDefault(false) ? "Not Currently Starting New Apprentices" : string.Empty,
+                ApplicationDeterminedDate = FormatDate(aparEntry.ApplicationDeterminedDate)
+            };
+
+            return csvAparEntry;
+        }
+
+        public List<CsvAparEntry> MapCsv(List<AparEntry> aparEntries)
+        {
+            return aparEntries?.Select(MapCsv).ToList();
         }
 
         private static AparEntryType MapAparEntryType(string aparEntryType)

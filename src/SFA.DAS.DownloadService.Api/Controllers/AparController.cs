@@ -51,6 +51,19 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         }
 
         /// <summary>
+        /// Check if you can get active APAR entries
+        /// </summary>
+        [SwaggerOperation("GetAllOk")]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [HttpHead("apar")]
+        public async Task<IActionResult> Head()
+        {
+            var resultFromGet = await GetAll();
+            return ((ObjectResult)resultFromGet).StatusCode == (int)HttpStatusCode.OK ? NoContent() : resultFromGet;
+        }
+
+        /// <summary>
         /// Get an APAR entry by UKPRN
         /// </summary>
         /// <param name="ukprn">The UKPRN to get from the APAR</param>
@@ -170,19 +183,6 @@ namespace SFA.DAS.DownloadService.Api.Controllers
             var apar = apprenticeshipProviders.Concat(assessmentOrganisations);
 
             return Ok(apar);
-        }
-
-        /// <summary>
-        /// Check if you can get active APAR entries
-        /// </summary>
-        [SwaggerOperation("GetAllOk")]
-        [SwaggerResponse((int)HttpStatusCode.NoContent)]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [HttpHead("apar")]
-        public async Task<IActionResult> Head()
-        {
-            var resultFromGet = await GetAll();
-            return ((ObjectResult)resultFromGet).StatusCode == (int)HttpStatusCode.OK ? NoContent() : resultFromGet;
         }
 
         private string Resolve(long ukprn)

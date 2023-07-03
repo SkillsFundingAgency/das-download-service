@@ -12,10 +12,9 @@ namespace SFA.DAS.DownloadService.Services.Interfaces
         List<AparEntry> Map(List<RoatpResult> roatpResults, Func<long, string> uriResolver);
         AparEntry Map(EpaoResult epaoResult, Func<long, string> uriResolver);
         List<AparEntry> Map(List<EpaoResult> epaoResults, Func<long, string> uriResolver);
+        UkprnAparEntry Map(RoatpResult roatpResult, EpaoResult epaoResult, Func<long, string> uriResolver);
 
         CsvAparEntry MapCsv(AparEntry aparEntry);
         List<CsvAparEntry> MapCsv(List<AparEntry> aparEntries);
-
-        UkprnAparEntry Map(RoatpResult roatpResult, EpaoResult epaoResult, Func<long, string> uriResolver);
     }
 }

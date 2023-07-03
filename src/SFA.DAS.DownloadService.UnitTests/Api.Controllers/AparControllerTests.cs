@@ -30,11 +30,9 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
         protected Mock<HttpRequest> HttpContextRequest;
         protected Mock<HttpResponse> HttpResponseMock;
 
-        private int _ukprn;
         [SetUp]
         public void Init()
         {
-            _ukprn = 12345678;
             _mockLogger = new Mock<ILogger<AparController>>();
             _mockRoatpApiClient = new Mock<IRoatpApiClient>();
             _mockAssessorApiClient = new Mock<IAssessorApiClient>();

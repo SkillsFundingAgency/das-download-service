@@ -72,7 +72,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
 
                 aparCsv = _mapper.MapCsv(aparFiltered.ToList());
 
-                _logger.LogDebug($"{aparCsv.Count()} apar entries mapped to CSV-ready state");
+                _logger.LogDebug($"{aparCsv.Count} apar entries mapped to CSV-ready state");
             }
             catch (Exception ex)
             {
