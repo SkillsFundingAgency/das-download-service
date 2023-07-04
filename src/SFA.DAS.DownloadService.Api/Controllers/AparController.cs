@@ -189,7 +189,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         {
             var scheme = ControllerContext.HttpContext.Request.Scheme;
             var path = ControllerContext.HttpContext.Request.Host.Value;
-            return $"{scheme}://{path}/api/apar/{ukprn}";
+            return $"{scheme}://{path}/api/v2/apar/{ukprn}";
         }
     }
 }
