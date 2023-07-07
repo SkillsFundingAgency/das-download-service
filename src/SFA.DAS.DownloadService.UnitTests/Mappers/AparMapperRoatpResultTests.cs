@@ -137,7 +137,6 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
                 Assert.AreEqual(applicationDeterminedDate.AddMonths(-2), results[0].ApplicationDeterminedDate);
                 Assert.IsFalse(results[0].CurrentlyNotStartingNewApprentices);
 
-                Assert.NotNull(results);
                 Assert.AreEqual(23456789, results[1].Ukprn);
                 Assert.AreEqual("Org2", results[1].Name);
                 Assert.AreEqual("http://example.com/23456789", results[1].Uri);
@@ -146,7 +145,6 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
                 Assert.AreEqual(applicationDeterminedDate.AddMonths(-3), results[1].ApplicationDeterminedDate);
                 Assert.IsTrue(results[1].CurrentlyNotStartingNewApprentices);
 
-                Assert.NotNull(results);
                 Assert.AreEqual(34567890, results[2].Ukprn);
                 Assert.AreEqual("Org3", results[2].Name);
                 Assert.AreEqual("http://example.com/34567890", results[2].Uri);
