@@ -27,6 +27,8 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             _logger = logger;
         }
 
+        [Route("roatp")]
+        [Route("apar")]
         [ResponseCache(Duration = 600)]
         public async Task<IActionResult> Index()
         {
@@ -47,6 +49,8 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         }
 
 
+        [Route("roatp/downloadcsv")]
+        [Route("apar/downloadcsv")]
         [ResponseCache(Duration = 600)]
         public async Task<ActionResult> DownloadCsv()
         {

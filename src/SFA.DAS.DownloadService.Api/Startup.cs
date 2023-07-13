@@ -2,22 +2,25 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SFA.DAS.DownloadService.Api.Authentication;
-using SFA.DAS.DownloadService.Api.Authorization;
+using Microsoft.Extensions.Options;
+using SFA.DAS.DownloadService.Api.Client;
+using SFA.DAS.DownloadService.Api.Client.Clients;
+using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Api.Infrastructure;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Services;
 using SFA.DAS.DownloadService.Settings;
-using SFA.DAS.DownloadService.Api.Client;
 using Swashbuckle.AspNetCore.Examples;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
-using SFA.DAS.DownloadService.Api.Client.Interfaces;
-using SFA.DAS.DownloadService.Api.Client.Clients;
+using System.Linq;
+using System.Reflection;
 
 namespace SFA.DAS.DownloadService.Api
 {
@@ -47,17 +50,38 @@ namespace SFA.DAS.DownloadService.Api
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(options =>
             {
-                c.SwaggerDoc("v2", new Info { Title = $"Download Service API {Configuration["InstanceName"]}", Version = "v2" });
-                c.EnableAnnotations();
-                c.OperationFilter<ExamplesOperationFilter>();
+                options.SwaggerDoc("v1", new Info { Title = $"Download Service API {Configuration["InstanceName"]}", Version = "v1" });
+                options.TagActionsBy(api =>
+                {
+                    if (api.GroupName != null)
+                    {
+                        return new[] { api.GroupName };
+                    }
+
+                    var controllerActionDescriptor = api.ActionDescriptor as ControllerActionDescriptor;
+                    if (controllerActionDescriptor != null)
+                    {
+                        return new[] { controllerActionDescriptor.ControllerName };
+                    }
+
+                    throw new InvalidOperationException("Unable to determine tag for endpoint.");
+                });
+                options.CustomSchemaIds(x => x.GetCustomAttributes(false).OfType<DisplayNameAttribute>().FirstOrDefault()?.DisplayName ?? x.Name);
+                options.DocInclusionPredicate((name, api) => true);
+                options.EnableAnnotations();
+                options.OperationFilter<ExamplesOperationFilter>();
             });
 
             ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
-            services.AddApiAuthorization(_hostingEnvironment);
-            services.AddApiAuthentication(ApplicationConfiguration.ApiAuthentication);
+            // The authentication of the API has been added but disabled as this is a public API which only
+            // exposes data which is already in the public domain, this does not follow the standard APIM
+            // pattern by design - following the standard pattern would be tech debt - when that is addressed
+            // the authentication below could be re-enabled to make this API a secured internal API
+            //services.AddApiAuthorization(_hostingEnvironment);
+            //services.AddApiAuthentication(ApplicationConfiguration.ApiAuthentication);
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -119,7 +143,7 @@ namespace SFA.DAS.DownloadService.Api
                 .UseSwaggerUI(c =>
                 {
                     c.RoutePrefix = "api";
-                    c.SwaggerEndpoint("/swagger/v2/swagger.json", "Download Service API v2");
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Download Service API v1");
                 });
 
             app.UseMvc();

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace SFA.DAS.DownloadService.Api.Types
 {
+    [DisplayName("Provider")]
     public class AparEntry
     {
         /// <summary>

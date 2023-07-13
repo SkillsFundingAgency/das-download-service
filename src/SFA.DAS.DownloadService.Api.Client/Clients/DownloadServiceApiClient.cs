@@ -17,7 +17,7 @@ namespace SFA.DAS.DownloadService.Api.Client.Clients
 
         public async Task<IEnumerable<AparEntry>> GetAparSummary()
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/v2/apar"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/providers"))
             {
                 return await Get<IEnumerable<AparEntry>>(request, $"Could not retrieve apar summary data");
             }
@@ -25,7 +25,7 @@ namespace SFA.DAS.DownloadService.Api.Client.Clients
 
         public async Task<IEnumerable<AparEntry>> GetAparSummaryByUkprn(int ukprn)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/v2/apar/{ukprn}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/providers/{ukprn}"))
             {
                 return await Get<IEnumerable<AparEntry>>(request, $"Could not retrieve apar summary data for {ukprn}");
             }
@@ -33,7 +33,7 @@ namespace SFA.DAS.DownloadService.Api.Client.Clients
 
         public async Task<DateTime?> GetLatestNonOnboardingOrganisationChangeDate()
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/v2/getLatestTime"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/getLatestTime"))
             {
                 return await Get<DateTime?>(request, $"Could not retrieve roatp most recent change");
             }

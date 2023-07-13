@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Api.Types;
 using SFA.DAS.DownloadService.Api.Types.Assessor;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Services.Interfaces;
-using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Examples;
 using System;
@@ -15,8 +15,9 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.DownloadService.Api.Controllers
 {
-    [Route("api/v2")]
+    [Route("api")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = @"Providers")]
     public class AparController : Controller
     {
         private readonly IRoatpApiClient _roatpApiClient;
@@ -42,7 +43,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, "Invalid UKPRN (should be 8 numbers long)")]
         [SwaggerOperation("GetOk", "Check a UKPRN exists in the APAR", Produces = new string[] { "application/json" })]
-        [HttpHead("apar/{ukprn}")]
+        [HttpHead("providers/{ukprn}")]
         public async Task<IActionResult> Head(int ukprn)
         {
             _log.LogDebug($"Fetching HEAD for UKPRN: [{ukprn}]");
@@ -56,7 +57,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         [SwaggerOperation("GetAllOk")]
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [ApiExplorerSettings(IgnoreApi = true)]
-        [HttpHead("apar")]
+        [HttpHead("providers")]
         public async Task<IActionResult> Head()
         {
             var resultFromGet = await GetAll();
@@ -71,9 +72,9 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         [SwaggerOperation("Get")]
         [SwaggerResponse((int)HttpStatusCode.OK, "OK", typeof(UkprnAparEntry))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, "APAR entry not found or start date in future")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Invalid UKPN (should be 8 numbers long)")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Invalid UKPRN (should be 8 numbers long)")]
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.UkpnrAparExample))]
-        [HttpGet("apar/{ukprn}")]
+        [HttpGet("providers/{ukprn}")]
         public async Task<IActionResult> Get(int ukprn)
         {
             _log.LogDebug($"Fetching APAR entries for UKPRN: [{ukprn}]");
@@ -149,7 +150,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         /// <returns></returns>
         [SwaggerOperation("GetAll")]
         [SwaggerResponse((int)HttpStatusCode.OK, "OK", typeof(IEnumerable<AparEntry>))]
-        [HttpGet("apar")]
+        [HttpGet("providers")]
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.AparExample))]
         public async Task<IActionResult> GetAll()
         {
@@ -189,7 +190,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         {
             var scheme = ControllerContext.HttpContext.Request.Scheme;
             var path = ControllerContext.HttpContext.Request.Host.Value;
-            return $"{scheme}://{path}/api/v2/apar/{ukprn}";
+            return $"{scheme}://{path}/api/providers/{ukprn}";
         }
     }
 }

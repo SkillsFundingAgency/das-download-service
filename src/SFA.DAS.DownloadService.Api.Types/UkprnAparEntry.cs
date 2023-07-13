@@ -1,7 +1,9 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace SFA.DAS.DownloadService.Api.Types
 {
+    [DisplayName("UkprnProvider")]
     public class UkprnAparEntry : AparEntry
     {
         public Epao Epao { get; set; }
