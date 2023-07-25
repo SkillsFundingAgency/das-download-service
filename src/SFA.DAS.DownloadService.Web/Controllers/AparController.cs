@@ -105,7 +105,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
 
         private static string GenerateFilename(DateTime date)
         {
-            return $"roatp-{date.ToSeoFormat()}.csv";
+            return $"apar-{date.ToSeoFormat()}.csv";
         }
 
         [Route("/service-unavailable")]

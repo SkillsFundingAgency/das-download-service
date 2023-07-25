@@ -1,18 +1,18 @@
 ﻿@using SFA.DAS.DownloadService.Services.Utility
 @model SFA.DAS.DownloadService.Web.Models.AparDownloadViewModel
 @{
-    ViewBag.Title = "Download the Register of Apprenticeship Training Providers (RoATP)";
+    ViewBag.Title = "Download the Apprenticeship provider and assessment register (APAR)";
 }
 <main class="govuk-main-wrapper" id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">
-                Download the Register of Apprenticeship Training Providers (RoATP)
+                Download the Apprenticeship provider and assessment register (APAR)
             </h1>
-            <p>The RoATP is a list of organisations that are eligible to receive government funding to train apprentices.</p>
+            <p>APAR lists training provider organisations who are eligible for government funding to train apprentices and end point assessment organisations.</p>
             <h2 class="govuk-heading-m">Document</h2>
             <div class="app-attachment">
-                <h2 class="govuk-heading-m app-attachment__heading">DfE register of apprenticeship training providers </h2>
+                <h2 class="govuk-heading-m app-attachment__heading">Apprenticeship provider and assessment register</h2>
                 <span class="app-attachment__link-wrap">@Html.ActionLink("Download CSV", "DownloadCsv", "Apar", new { filename = Model.Filename }, new { @class = "govuk-link" })</span>
                 <span class="app-attachment__icon"></span>
             </div>
@@ -20,7 +20,7 @@
                 <dt class="das-definition-list__title">Last updated</dt>
                 <dd class="das-definition-list__definition">@Model.LastUpdated.ToGdsFormatWithSeconds() </dd>
             </dl>
-            <p><a href="https://www.gov.uk/guidance/register-of-apprenticeship-training-providers" target="_blank" class="govuk-link  govuk-link--no-visited-state" rel="noopener">Learn more about the register of apprenticeship training providers</a> on GOV.UK</p>
+            <p>@*THIS LINK TO BE UPDATED, WAITING ON JAZZY*@<a href="https://www.gov.uk/guidance/register-of-apprenticeship-training-providers" target="_blank" class="govuk-link  govuk-link--no-visited-state" rel="noopener">Learn more about the Apprenticeship provider and assessment register</a> on GOV.UK</p>
 
             <h2 class="govuk-heading-m">What do the terms in the register mean?</h2>
 
@@ -31,12 +31,12 @@
             <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Application type</h3>
             <p>Providers choose the application route that is relevant to them.</p>
             <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Start date</h3>
-            <p>This is the date that the Department for Education (DfE) added the organisation to the RoATP.</p>
+            <p>For training providers this is the date that the Department for Education (DfE) added the organisation to APAR.</p>
+            <p>For EPAO's this is the date from which any of the standards the organisation assesses were valid from.</p>
             <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Status</h3>
             <p>Where this states 'not currently starting new apprentices', then that organisation is currently not permitted to recruit new apprentices.</p>
             <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Application determined date</h3>
-            <p>This is the date that the Department for Education (DfE) completed processing the training provider's application to join the register.</p>
-            <p><a href="https://www.gov.uk/guidance/register-of-apprenticeship-training-providers" target="_blank" class="govuk-link  govuk-link--no-visited-state" rel="noopener">Learn more about the register of apprenticeship training providers</a> on GOV.UK</p>
+            <p>This is the date that the training provider or EPAO was approved on the register.</p>
         </div>
     </div>
 </main>
