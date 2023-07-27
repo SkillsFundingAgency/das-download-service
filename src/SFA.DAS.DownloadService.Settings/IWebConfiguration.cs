@@ -4,21 +4,20 @@ namespace SFA.DAS.DownloadService.Settings
 {
     public interface IWebConfiguration
     {
-        string RoatpApiClientBaseUrl { get; set; }
-        string DownloadServiceApiClientBaseUrl { get; set; }
+        ApiAuthentication ApiAuthentication { get; set; }
         ClientApiAuthentication RoatpApiAuthentication { get; set; }
-
+        ManagedIdentityApiAuthentication AssessorApiAuthentication { get; set; }
+        ManagedIdentityApiAuthentication DownloadServiceApiAuthentication { get; set; }
         string RedisConnectionString { get; set; }
         string DataProtectionKeysDatabase { get; set; }
     }
 
     public class WebConfiguration : IWebConfiguration
     {
-        [JsonRequired] public string RoatpApiClientBaseUrl { get; set; }
+        [JsonRequired] public ApiAuthentication ApiAuthentication { get; set; }
         [JsonRequired] public ClientApiAuthentication RoatpApiAuthentication { get; set; }
-
-        [JsonRequired] public string DownloadServiceApiClientBaseUrl { get; set; }
-
+        [JsonRequired] public ManagedIdentityApiAuthentication AssessorApiAuthentication { get; set; }
+        [JsonRequired] public ManagedIdentityApiAuthentication DownloadServiceApiAuthentication { get; set; }
         [JsonRequired] public string RedisConnectionString { get; set; }
         [JsonRequired] public string DataProtectionKeysDatabase { get; set; }
     }

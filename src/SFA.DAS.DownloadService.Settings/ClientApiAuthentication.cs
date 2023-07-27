@@ -12,7 +12,7 @@ namespace SFA.DAS.DownloadService.Settings
 
         [JsonRequired] public string ClientSecret { get; set; }
 
-        [JsonRequired] public string ResourceId { get; set; }
+        [JsonRequired] public string Identifier { get; set; }
 
         [JsonRequired] public string ApiBaseAddress { get; set; }
     }

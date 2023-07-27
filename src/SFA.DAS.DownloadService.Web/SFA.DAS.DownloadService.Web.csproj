@@ -30,15 +30,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Roatp\" />
+    <Folder Include="Views\Apar\" />
     <Folder Include="Views\Shared\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SFA.DAS.DownloadService.Api.Client\SFA.DAS.DownloadService.Api.Client.csproj" />
     <ProjectReference Include="..\SFA.DAS.DownloadService.Services\SFA.DAS.DownloadService.Services.csproj" />
     <ProjectReference Include="..\SFA.DAS.DownloadService.Settings\SFA.DAS.DownloadService.Settings.csproj" />
-    <ProjectReference Include="..\SFA.DAS.Roatp.Api.Client\SFA.DAS.Roatp.Api.Client.csproj" />
   </ItemGroup>
 
     <ItemGroup>

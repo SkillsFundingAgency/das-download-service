@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.136
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.DownloadService.Web", "SFA.DAS.DownloadService.Web\SFA.DAS.DownloadService.Web.csproj", "{B765C7AE-4A27-45F1-84E4-B7507FE32AEA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{0FA8A37D-AB8B-4771-9B4F-0916E8DEB01D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{86EFCADE-1642-4DB1-8D9C-D221B2F2D6BE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Roatp.Api.Client", "SFA.DAS.Roatp.Api.Client\SFA.DAS.Roatp.Api.Client.csproj", "{A2A4C787-324A-45E1-A839-7A2CCA950248}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.DownloadService.Settings", "SFA.DAS.DownloadService.Settings\SFA.DAS.DownloadService.Settings.csproj", "{321ACEB6-36F2-4DF8-B4E3-C60DEB596896}"
 EndProject
@@ -23,7 +21,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{E2
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.DownloadService.Services", "SFA.DAS.DownloadService.Services\SFA.DAS.DownloadService.Services.csproj", "{9AB68A9C-9296-438D-B8A8-60EDC83B23BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.DownloadService.Api", "SFA.DAS.DownloadService.Api\SFA.DAS.DownloadService.Api.csproj", "{659C54E2-869C-4DB1-ADD9-58AB20B8746D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.DownloadService.Api", "SFA.DAS.DownloadService.Api\SFA.DAS.DownloadService.Api.csproj", "{659C54E2-869C-4DB1-ADD9-58AB20B8746D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.DownloadService.Api.Client", "SFA.DAS.DownloadService.Api.Client\SFA.DAS.DownloadService.Api.Client.csproj", "{3DFC86C5-5145-450A-BDA2-AD1B0473EDBD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,6 @@ Global
 		{B765C7AE-4A27-45F1-84E4-B7507FE32AEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B765C7AE-4A27-45F1-84E4-B7507FE32AEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B765C7AE-4A27-45F1-84E4-B7507FE32AEA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A2A4C787-324A-45E1-A839-7A2CCA950248}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A2A4C787-324A-45E1-A839-7A2CCA950248}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A2A4C787-324A-45E1-A839-7A2CCA950248}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A2A4C787-324A-45E1-A839-7A2CCA950248}.Release|Any CPU.Build.0 = Release|Any CPU
 		{321ACEB6-36F2-4DF8-B4E3-C60DEB596896}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{321ACEB6-36F2-4DF8-B4E3-C60DEB596896}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{321ACEB6-36F2-4DF8-B4E3-C60DEB596896}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -59,18 +55,22 @@ Global
 		{659C54E2-869C-4DB1-ADD9-58AB20B8746D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{659C54E2-869C-4DB1-ADD9-58AB20B8746D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{659C54E2-869C-4DB1-ADD9-58AB20B8746D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DFC86C5-5145-450A-BDA2-AD1B0473EDBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DFC86C5-5145-450A-BDA2-AD1B0473EDBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DFC86C5-5145-450A-BDA2-AD1B0473EDBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DFC86C5-5145-450A-BDA2-AD1B0473EDBD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B765C7AE-4A27-45F1-84E4-B7507FE32AEA} = {0FA8A37D-AB8B-4771-9B4F-0916E8DEB01D}
-		{A2A4C787-324A-45E1-A839-7A2CCA950248} = {86EFCADE-1642-4DB1-8D9C-D221B2F2D6BE}
 		{321ACEB6-36F2-4DF8-B4E3-C60DEB596896} = {0FA8A37D-AB8B-4771-9B4F-0916E8DEB01D}
 		{486E41C9-DE04-420C-89DE-5D3414B96030} = {86EFCADE-1642-4DB1-8D9C-D221B2F2D6BE}
 		{9E4090F1-4C1E-4452-B999-F153BC3F5CA5} = {EA0E791E-28E0-4124-A63F-B2999FAA525A}
 		{9AB68A9C-9296-438D-B8A8-60EDC83B23BA} = {E2321CC4-D70F-4910-BA10-C262E2BDB3E6}
 		{659C54E2-869C-4DB1-ADD9-58AB20B8746D} = {0FA8A37D-AB8B-4771-9B4F-0916E8DEB01D}
+		{3DFC86C5-5145-450A-BDA2-AD1B0473EDBD} = {86EFCADE-1642-4DB1-8D9C-D221B2F2D6BE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BF275729-EFB0-4987-8742-025B969AA13F}
