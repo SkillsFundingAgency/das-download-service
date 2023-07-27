@@ -45,7 +45,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Web.Controllers
             _mockClient.Setup(x => x.GetLatestNonOnboardingOrganisationChangeDate()).ReturnsAsync(dateUpdated);
             var result = await _controller.DownloadCsv();
             var fileDownloadResult = result as FileContentResult;
-            var expectedFileName = $"roatp-{dateUpdated:yyyy-MM-dd-HH-mm-ss}.csv";
+            var expectedFileName = $"apar-{dateUpdated:yyyy-MM-dd-HH-mm-ss}.csv";
             Assert.AreEqual("text/csv", fileDownloadResult.ContentType);
             Assert.AreEqual(expectedFileName,fileDownloadResult.FileDownloadName);
             _mockClient.Verify(x => x.GetAparSummary(), Times.Once);
