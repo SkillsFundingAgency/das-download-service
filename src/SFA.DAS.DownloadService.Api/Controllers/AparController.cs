@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
+using SFA.DAS.DownloadService.Api.Infrastructure;
 using SFA.DAS.DownloadService.Api.Types;
 using SFA.DAS.DownloadService.Api.Types.Assessor;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
@@ -26,12 +27,15 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         private readonly ILogger<AparController> _log;
         private readonly IAparMapper _mapper;
 
-        public AparController(ILogger<AparController> log, IRoatpApiClient roatpApiClient, IAssessorApiClient assessorApiClient, IAparMapper mapper)
+        private readonly IDateTimeProvider _dateTimeProvider;
+
+        public AparController(ILogger<AparController> log, IRoatpApiClient roatpApiClient, IAssessorApiClient assessorApiClient, IAparMapper mapper, IDateTimeProvider dateTimeProvider)
         {
             _log = log;
             _roatpApiClient = roatpApiClient;
             _assessorApiClient = assessorApiClient;
             _mapper = mapper;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         /// <summary>
@@ -126,12 +130,23 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         {
             _log.LogDebug($"Fetching GET latest change date");
 
-            DateTime? latestChange = DateTime.UtcNow;
+            DateTime? latestChange = _dateTimeProvider.GetCurrentDateTime();
             try
             {
-                var result = await _roatpApiClient.GetLatestNonOnboardingOrganisationChangeDate();
-                if (result != null)
-                    latestChange = result;
+                var roatpResult = await _roatpApiClient.GetLatestNonOnboardingOrganisationChangeDate();
+                var aparResult = await _assessorApiClient.GetAssessmentOrganisationLastUpdated();
+
+                if (roatpResult != null && aparResult != null)
+                {
+                    if (roatpResult > aparResult)
+                        latestChange = roatpResult;
+                    else
+                        latestChange = aparResult;
+                }
+                else if (roatpResult != null && aparResult == null)
+                    latestChange = roatpResult;
+                else if (roatpResult == null && aparResult != null)
+                    latestChange = aparResult;
             }
             catch (Exception ex)
             {

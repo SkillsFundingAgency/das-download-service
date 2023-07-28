@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Api.Types.Assessor;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -27,6 +28,14 @@ namespace SFA.DAS.DownloadService.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/ao/assessment-organisations/list/{ukprn}"))
             {
                 return await Get<EpaoResult>(request, $"Could not retrieve assessment organsisation for ukprn {ukprn}");
+            }
+        }
+
+        public async Task<DateTime?> GetAssessmentOrganisationLastUpdated()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/ao/assessment-organisations/apar-summary-last-updated"))
+            {
+                return await Get<DateTime?>(request, $"Could not retrieve last updated date from assessors api");
             }
         }
     }
