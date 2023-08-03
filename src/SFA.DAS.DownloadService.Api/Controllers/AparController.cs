@@ -95,7 +95,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
             try
             {
                 var roatpTask = _roatpApiClient.GetRoatpSummaryByUkprn(ukprn);
-                var epaoTask = _assessorApiClient.GetAssessmentOrganisationsListByUkprn(ukprn);
+                var epaoTask = _assessorApiClient.GetAparSummaryByUkprn(ukprn);
 
                 await Task.WhenAll(roatpTask, epaoTask);
 
@@ -134,7 +134,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
             try
             {
                 var roatpResult = await _roatpApiClient.GetLatestNonOnboardingOrganisationChangeDate();
-                var aparResult = await _assessorApiClient.GetAssessmentOrganisationLastUpdated();
+                var aparResult = await _assessorApiClient.GetAparSummaryLastUpdated();
 
                 if (roatpResult != null && aparResult != null)
                 {
@@ -150,7 +150,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
             }
             catch (Exception ex)
             {
-                var message = "Unable to fetch latest roatp register change date";
+                var message = "Unable to fetch latest APAR summary change date";
                 _log.LogError(message, ex);
                 return StatusCode(500, message);
             }
@@ -177,7 +177,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
             try
             {
                 var roatpTask = _roatpApiClient.GetRoatpSummary();
-                var epaoTask = _assessorApiClient.GetAssessmentOrganisationsList();
+                var epaoTask = _assessorApiClient.GetAparSummary();
 
                 await Task.WhenAll(roatpTask, epaoTask);
 

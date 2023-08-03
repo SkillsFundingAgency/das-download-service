@@ -83,7 +83,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
             // Set up the mocks to return no results
             _mockRoatpApiClient.Setup(x => x.GetRoatpSummaryByUkprn(It.IsAny<int>()))
                 .ReturnsAsync(new List<RoatpResult>());
-            _mockAssessorApiClient.Setup(x => x.GetAssessmentOrganisationsListByUkprn(It.IsAny<int>()))
+            _mockAssessorApiClient.Setup(x => x.GetAparSummaryByUkprn(It.IsAny<int>()))
                 .ReturnsAsync((EpaoResult)null);
 
             // Act
@@ -102,7 +102,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
             // Set up the mocks to return results
             _mockRoatpApiClient.Setup(x => x.GetRoatpSummaryByUkprn(It.IsAny<int>()))
                 .ReturnsAsync(new List<RoatpResult> { new RoatpResult() });
-            _mockAssessorApiClient.Setup(x => x.GetAssessmentOrganisationsListByUkprn(It.IsAny<int>()))
+            _mockAssessorApiClient.Setup(x => x.GetAparSummaryByUkprn(It.IsAny<int>()))
                 .ReturnsAsync(new EpaoResult());
             _mockMapper.Setup(x => x.Map(It.IsAny<RoatpResult>(), It.IsAny<EpaoResult>(), It.IsAny<Func<long, string>>()))
                 .Returns(new UkprnAparEntry());
@@ -122,7 +122,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
         public async Task GetLatestTime_ReturnsCorrectDateTime(DateTime? roatpDate, DateTime? aparDate, DateTime expected)
         {
             // Arrange
-            _mockAssessorApiClient.Setup(x => x.GetAssessmentOrganisationLastUpdated())
+            _mockAssessorApiClient.Setup(x => x.GetAparSummaryLastUpdated())
                 .ReturnsAsync(aparDate);
             _mockRoatpApiClient.Setup(x => x.GetLatestNonOnboardingOrganisationChangeDate())
                 .ReturnsAsync(roatpDate);

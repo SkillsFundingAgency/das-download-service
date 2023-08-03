@@ -7,8 +7,8 @@ namespace SFA.DAS.DownloadService.Api.Client.Interfaces
 {
     public interface IAssessorApiClient
     {
-        Task<List<EpaoResult>> GetAssessmentOrganisationsList();
-        Task<EpaoResult> GetAssessmentOrganisationsListByUkprn(int ukprn);
-        Task<DateTime?> GetAssessmentOrganisationLastUpdated();
+        Task<List<EpaoResult>> GetAparSummary();
+        Task<EpaoResult> GetAparSummaryByUkprn(int ukprn);
+        Task<DateTime?> GetAparSummaryLastUpdated();
     }
 }
