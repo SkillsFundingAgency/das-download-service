@@ -17,7 +17,7 @@ namespace SFA.DAS.DownloadService.Api.Client.Clients
 
         public async Task<List<EpaoResult>> GetAparSummary()
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/ao/assessment-organisations/list"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/ao/assessment-organisations/apar-summary"))
             {
                 return await Get<List<EpaoResult>>(request, $"Could not retrieve APAR summary");
             }
@@ -25,7 +25,7 @@ namespace SFA.DAS.DownloadService.Api.Client.Clients
 
         public async Task<EpaoResult> GetAparSummaryByUkprn(int ukprn)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/ao/assessment-organisations/list/{ukprn}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/ao/assessment-organisations/apar-summary/{ukprn}"))
             {
                 return await Get<EpaoResult>(request, $"Could not retrieve APAR summary for ukprn {ukprn}");
             }
@@ -35,7 +35,7 @@ namespace SFA.DAS.DownloadService.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/ao/assessment-organisations/apar-summary-last-updated"))
             {
-                return await Get<DateTime?>(request, $"Could not retrieve last updated date from assessors api");
+                return await Get<DateTime?>(request, $"Could not retrieve APAR summary last updated date from assessors api");
             }
         }
     }
