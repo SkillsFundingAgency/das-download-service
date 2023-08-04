@@ -7,7 +7,6 @@ using SFA.DAS.DownloadService.Api.Controllers;
 using SFA.DAS.DownloadService.Api.Types;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Services.Interfaces;
-using SFA.DAS.DownloadService.Services.Services;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using System;
 using System.Collections.Generic;

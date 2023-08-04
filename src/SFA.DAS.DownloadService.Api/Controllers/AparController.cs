@@ -136,17 +136,18 @@ namespace SFA.DAS.DownloadService.Api.Controllers
                 var roatpResult = await _roatpApiClient.GetLatestNonOnboardingOrganisationChangeDate();
                 var aparResult = await _assessorApiClient.GetAparSummaryLastUpdated();
 
-                if (roatpResult != null && aparResult != null)
+                if (roatpResult.HasValue && aparResult.HasValue)
                 {
-                    if (roatpResult > aparResult)
-                        latestChange = roatpResult;
-                    else
-                        latestChange = aparResult;
+                    latestChange = roatpResult > aparResult ? roatpResult : aparResult;
                 }
-                else if (roatpResult != null && aparResult == null)
+                else if (roatpResult.HasValue)
+                {
                     latestChange = roatpResult;
-                else if (roatpResult == null && aparResult != null)
+                }
+                else if (aparResult.HasValue)
+                {
                     latestChange = aparResult;
+                }
             }
             catch (Exception ex)
             {
