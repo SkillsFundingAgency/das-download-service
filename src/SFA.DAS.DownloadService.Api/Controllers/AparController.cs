@@ -172,9 +172,6 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         {
             _log.LogDebug($"Fetching APAR entries for all UKPRN's");
 
-            IEnumerable<RoatpResult> roatpResults;
-            IEnumerable<EpaoResult> epaoResults;
-
             try
             {
                 var roatpTask = _roatpApiClient.GetRoatpSummary();
@@ -182,13 +179,17 @@ namespace SFA.DAS.DownloadService.Api.Controllers
 
                 await Task.WhenAll(roatpTask, epaoTask);
 
-                roatpResults = (await roatpTask)
-                    .Where(x => x.IsDateValid(DateTime.UtcNow));
 
-                epaoResults = await epaoTask;
+                var roatpData = await roatpTask;
+                var roatpResults = roatpData == null
+                    ? Enumerable.Empty<RoatpResult>()
+                    : roatpData.Where(x => x.IsDateValid(DateTime.UtcNow));
 
-                var apprenticeshipProviders = roatpResults == null ? Enumerable.Empty<AparEntry>() : _mapper.Map(roatpResults.ToList(), Resolve).Where(p => p != null);
-                var assessmentOrganisations = epaoResults == null ? Enumerable.Empty<AparEntry>() : _mapper.Map(epaoResults.ToList(), Resolve);
+                var epaoData = await epaoTask;
+                var epaoResults = epaoData ?? Enumerable.Empty<EpaoResult>();
+
+                var apprenticeshipProviders = _mapper.Map(roatpResults.ToList(), Resolve).Where(p => p != null);
+                var assessmentOrganisations = _mapper.Map(epaoResults.ToList(), Resolve);
 
                 var apar = apprenticeshipProviders.Concat(assessmentOrganisations);
 

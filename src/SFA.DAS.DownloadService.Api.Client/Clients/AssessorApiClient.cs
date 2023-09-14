@@ -15,11 +15,11 @@ namespace SFA.DAS.DownloadService.Api.Client.Clients
         {
         }
 
-        public async Task<List<EpaoResult>> GetAparSummary()
+        public async Task<IEnumerable<EpaoResult>> GetAparSummary()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/ao/assessment-organisations/apar-summary"))
             {
-                return await Get<List<EpaoResult>>(request, $"Could not retrieve APAR summary");
+                return await Get<IEnumerable<EpaoResult>>(request, $"Could not retrieve APAR summary");
             }
         }
 

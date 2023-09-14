@@ -7,7 +7,7 @@ namespace SFA.DAS.DownloadService.Api.Client.Interfaces
 {
     public interface IAssessorApiClient
     {
-        Task<List<EpaoResult>> GetAparSummary();
+        Task<IEnumerable<EpaoResult>> GetAparSummary();
         Task<EpaoResult> GetAparSummaryByUkprn(int ukprn);
         Task<DateTime?> GetAparSummaryLastUpdated();
     }
