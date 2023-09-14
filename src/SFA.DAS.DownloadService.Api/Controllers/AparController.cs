@@ -186,6 +186,13 @@ namespace SFA.DAS.DownloadService.Api.Controllers
                     .Where(x => x.IsDateValid(DateTime.UtcNow));
 
                 epaoResults = await epaoTask;
+
+                var apprenticeshipProviders = roatpResults == null ? Enumerable.Empty<AparEntry>() : _mapper.Map(roatpResults.ToList(), Resolve).Where(p => p != null);
+                var assessmentOrganisations = epaoResults == null ? Enumerable.Empty<AparEntry>() : _mapper.Map(epaoResults.ToList(), Resolve);
+
+                var apar = apprenticeshipProviders.Concat(assessmentOrganisations);
+
+                return Ok(apar);
             }
             catch (Exception ex)
             {
@@ -193,13 +200,6 @@ namespace SFA.DAS.DownloadService.Api.Controllers
                 _log.LogError(message, ex);
                 return StatusCode(500, message);
             }
-
-            var apprenticeshipProviders = roatpResults == null ? Enumerable.Empty<AparEntry>() : _mapper.Map(roatpResults.ToList(), Resolve).Where(p => p != null);
-            var assessmentOrganisations = epaoResults == null ? Enumerable.Empty<AparEntry>() : _mapper.Map(epaoResults.ToList(), Resolve);
-
-            var apar = apprenticeshipProviders.Concat(assessmentOrganisations);
-
-            return Ok(apar);
         }
 
         private string Resolve(long ukprn)
