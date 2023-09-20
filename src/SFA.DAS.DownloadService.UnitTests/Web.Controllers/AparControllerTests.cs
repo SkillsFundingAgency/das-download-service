@@ -28,17 +28,33 @@ namespace SFA.DAS.DownloadService.UnitTests.Web.Controllers
         }
 
         [Test]
-        public async Task Csv_NoRecordsReturnedFromApi_RedirectToServiceUnavailable()
+        public async Task When_DownloadCsv_IsCalled_GetAparSummary_IsCalled()
+        {
+            _mockClient.Setup(x => x.GetAparSummary()).ReturnsAsync(new List<AparEntry>());
+            var result = await _controller.DownloadCsv();
+            _mockClient.Verify(x => x.GetAparSummary(), Times.Once);
+        }
+
+        [Test]
+        public async Task When_DownloadCsv_IsCalled_And_NoRecordsAreReturnedFromGetAparSummary_RedirectToServiceUnavailable()
         {
             _mockClient.Setup(x => x.GetAparSummary()).ReturnsAsync(new List<AparEntry>());
             var result = await _controller.DownloadCsv();
             var redirectResult = result as RedirectToActionResult;
             Assert.AreEqual("ServiceUnavailable", redirectResult.ActionName);
-            _mockClient.Verify(x => x.GetAparSummary(), Times.Once);
+        }
+
+        public async Task When_DownloadCsv_IsCalled_And_RecordsAreReturnedFromGetAparSummary_GetLatestNonOnboardingOrganisationChangeDate_IsCalled()
+        {
+            var dateUpdated = DateTime.Now.AddDays(-1);
+            _mockClient.Setup(x => x.GetAparSummary()).ReturnsAsync(new List<AparEntry> { new AparEntry() });
+            _mockClient.Setup(x => x.GetLatestNonOnboardingOrganisationChangeDate()).ReturnsAsync(dateUpdated);
+            var result = await _controller.DownloadCsv();
+            _mockClient.Verify(x => x.GetLatestNonOnboardingOrganisationChangeDate(), Times.Once);
         }
 
         [Test]
-        public async Task Csv_RecordsReturnedFromApi_ExpectedCSVDownloaded()
+        public async Task When_DownloadCsv_IsCalled_And_RecordsAreReturnedFromGetAparSummary_ExpectedCSVDownloaded()
         {
             var dateUpdated = DateTime.Now.AddDays(-1);
             _mockClient.Setup(x => x.GetAparSummary()).ReturnsAsync(new List<AparEntry> { new AparEntry() });
@@ -46,10 +62,12 @@ namespace SFA.DAS.DownloadService.UnitTests.Web.Controllers
             var result = await _controller.DownloadCsv();
             var fileDownloadResult = result as FileContentResult;
             var expectedFileName = $"apar-{dateUpdated:yyyy-MM-dd-HH-mm-ss}.csv";
-            Assert.AreEqual("text/csv", fileDownloadResult.ContentType);
-            Assert.AreEqual(expectedFileName, fileDownloadResult.FileDownloadName);
-            _mockClient.Verify(x => x.GetAparSummary(), Times.Once);
-            _mockClient.Verify(x => x.GetLatestNonOnboardingOrganisationChangeDate(), Times.Once);
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual("text/csv", fileDownloadResult.ContentType);
+                Assert.AreEqual(expectedFileName, fileDownloadResult.FileDownloadName);
+            });
         }
 
         [Test]
