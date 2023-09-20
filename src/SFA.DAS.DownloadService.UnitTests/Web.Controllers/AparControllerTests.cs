@@ -33,30 +33,30 @@ namespace SFA.DAS.DownloadService.UnitTests.Web.Controllers
             _mockClient.Setup(x => x.GetAparSummary()).ReturnsAsync(new List<AparEntry>());
             var result = await _controller.DownloadCsv();
             var redirectResult = result as RedirectToActionResult;
-            Assert.AreEqual("ServiceUnavailable",redirectResult.ActionName);
-            _mockClient.Verify(x=> x.GetAparSummary(),Times.Once);
+            Assert.AreEqual("ServiceUnavailable", redirectResult.ActionName);
+            _mockClient.Verify(x => x.GetAparSummary(), Times.Once);
         }
 
         [Test]
         public async Task Csv_RecordsReturnedFromApi_ExpectedCSVDownloaded()
         {
             var dateUpdated = DateTime.Now.AddDays(-1);
-            _mockClient.Setup(x => x.GetAparSummary()).ReturnsAsync(new List<AparEntry> {new AparEntry()});
+            _mockClient.Setup(x => x.GetAparSummary()).ReturnsAsync(new List<AparEntry> { new AparEntry() });
             _mockClient.Setup(x => x.GetLatestNonOnboardingOrganisationChangeDate()).ReturnsAsync(dateUpdated);
             var result = await _controller.DownloadCsv();
             var fileDownloadResult = result as FileContentResult;
             var expectedFileName = $"apar-{dateUpdated:yyyy-MM-dd-HH-mm-ss}.csv";
             Assert.AreEqual("text/csv", fileDownloadResult.ContentType);
-            Assert.AreEqual(expectedFileName,fileDownloadResult.FileDownloadName);
+            Assert.AreEqual(expectedFileName, fileDownloadResult.FileDownloadName);
             _mockClient.Verify(x => x.GetAparSummary(), Times.Once);
             _mockClient.Verify(x => x.GetLatestNonOnboardingOrganisationChangeDate(), Times.Once);
         }
 
         [Test]
-        public void IndexRoapt_ShouldLogWarningAndRedirectToRouteAparGetIndex()
+        public void IndexRoapt_ShouldLogWarning()
         {
             // Act
-            var result = _controller.IndexRoapt();
+            _controller.IndexRoapt();
 
             // Assert
             _mockLogger.Verify(
@@ -67,17 +67,23 @@ namespace SFA.DAS.DownloadService.UnitTests.Web.Controllers
                     It.IsAny<Exception>(),
                     (Func<object, Exception, string>)It.IsAny<object>()),
                 Times.Once);
-
-            var redirectToRouteResult = result as RedirectToRouteResult;
-            Assert.IsNotNull(redirectToRouteResult);
-            Assert.AreEqual("RouteAparGetIndex", redirectToRouteResult.RouteName);  // Replace "RouteAparGetIndex" with the actual route name if it's different.
         }
 
         [Test]
-        public void DownloadCsvRoatp_ShouldLogWarningAndRedirectToRouteAparDownloadCsv()
+        public void IndexRoapt_ShouldRedirectToRouteAparGetIndex()
         {
             // Act
-            var result = _controller.DownloadCsvRoatp();
+            var result = _controller.IndexRoapt() as RedirectToRouteResult;
+
+            // Assert
+            Assert.AreEqual("RouteAparGetIndex", result?.RouteName);
+        }
+
+        [Test]
+        public void DownloadCsvRoatp_ShouldLogWarning()
+        {
+            // Act
+            _controller.DownloadCsvRoatp();
 
             // Assert
             _mockLogger.Verify(
@@ -88,10 +94,16 @@ namespace SFA.DAS.DownloadService.UnitTests.Web.Controllers
                     It.IsAny<Exception>(),
                     (Func<object, Exception, string>)It.IsAny<object>()),
                 Times.Once);
+        }
 
-            var redirectToRouteResult = result as RedirectToRouteResult;
-            Assert.IsNotNull(redirectToRouteResult);
-            Assert.AreEqual("RouteAparDownloadCsv", redirectToRouteResult.RouteName); // Replace "RouteAparDownloadCsv" with the actual route name if it's different.
+        [Test]
+        public void DownloadCsvRoatp_ShouldRedirectToRouteAparDownloadCsv()
+        {
+            // Act
+            var result = _controller.DownloadCsvRoatp() as RedirectToRouteResult;
+
+            // Assert
+            Assert.AreEqual("RouteAparDownloadCsv", result?.RouteName);
         }
     }
 }
