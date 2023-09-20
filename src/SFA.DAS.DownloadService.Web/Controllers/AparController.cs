@@ -20,6 +20,9 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         private readonly IAparMapper _mapper;
         private readonly ILogger<AparController> _logger;
 
+        private const string RouteAparDownloadCsv = nameof(RouteAparDownloadCsv);
+        private const string RouteAparGetIndex = nameof(RouteAparGetIndex);
+
         public AparController(IDownloadServiceApiClient downloadServiceApiClient, IAparMapper mapper, ILogger<AparController> logger)
         {
             _downloadServiceApiClient = downloadServiceApiClient;
@@ -27,8 +30,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             _logger = logger;
         }
 
-        [Route("roatp")]
-        [Route("apar")]
+        [Route("apar", Name = RouteAparGetIndex)]
         [ResponseCache(Duration = 600)]
         public async Task<IActionResult> Index()
         {
@@ -49,10 +51,9 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         }
 
 
-        [Route("roatp/downloadcsv")]
-        [Route("apar/downloadcsv")]
+        [Route("apar/downloadcsv", Name = RouteAparDownloadCsv)]
         [ResponseCache(Duration = 600)]
-        public async Task<ActionResult> DownloadCsv()
+        public async Task<IActionResult> DownloadCsv()
         {
             var aparCsv = new List<CsvAparEntry>();
 
@@ -101,6 +102,20 @@ namespace SFA.DAS.DownloadService.Web.Controllers
                     }
                 }
             }
+        }
+
+        [Route("roatp")]
+        public IActionResult IndexRoapt()
+        {
+            _logger.LogWarning("Deprecated endpoint 'roatp' called for AparController");
+            return RedirectToRoute(RouteAparGetIndex);
+        }
+
+        [Route("roatp/downloadcsv")]
+        public IActionResult DownloadCsvRoatp()
+        {
+            _logger.LogWarning("Deprecated endpoint 'roatp/downloadcsv' called for AparController");
+            return RedirectToRoute(RouteAparDownloadCsv);
         }
 
         private static string GenerateFilename(DateTime date)
