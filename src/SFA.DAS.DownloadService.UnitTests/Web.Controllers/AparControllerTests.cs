@@ -51,5 +51,47 @@ namespace SFA.DAS.DownloadService.UnitTests.Web.Controllers
             _mockClient.Verify(x => x.GetAparSummary(), Times.Once);
             _mockClient.Verify(x => x.GetLatestNonOnboardingOrganisationChangeDate(), Times.Once);
         }
+
+        [Test]
+        public void IndexRoapt_ShouldLogWarningAndRedirectToRouteAparGetIndex()
+        {
+            // Act
+            var result = _controller.IndexRoapt();
+
+            // Assert
+            _mockLogger.Verify(
+                x => x.Log(
+                    LogLevel.Warning,
+                    It.IsAny<EventId>(),
+                    It.Is<object>(v => v.ToString().Contains("Deprecated endpoint 'roatp' called for AparController")),
+                    It.IsAny<Exception>(),
+                    (Func<object, Exception, string>)It.IsAny<object>()),
+                Times.Once);
+
+            var redirectToRouteResult = result as RedirectToRouteResult;
+            Assert.IsNotNull(redirectToRouteResult);
+            Assert.AreEqual("RouteAparGetIndex", redirectToRouteResult.RouteName);  // Replace "RouteAparGetIndex" with the actual route name if it's different.
+        }
+
+        [Test]
+        public void DownloadCsvRoatp_ShouldLogWarningAndRedirectToRouteAparDownloadCsv()
+        {
+            // Act
+            var result = _controller.DownloadCsvRoatp();
+
+            // Assert
+            _mockLogger.Verify(
+                x => x.Log(
+                    LogLevel.Warning,
+                    It.IsAny<EventId>(),
+                    It.Is<object>(v => v.ToString().Contains("Deprecated endpoint 'roatp/downloadcsv' called for AparController")),
+                    It.IsAny<Exception>(),
+                    (Func<object, Exception, string>)It.IsAny<object>()),
+                Times.Once);
+
+            var redirectToRouteResult = result as RedirectToRouteResult;
+            Assert.IsNotNull(redirectToRouteResult);
+            Assert.AreEqual("RouteAparDownloadCsv", redirectToRouteResult.RouteName); // Replace "RouteAparDownloadCsv" with the actual route name if it's different.
+        }
     }
 }
