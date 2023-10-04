@@ -118,6 +118,8 @@ namespace SFA.DAS.DownloadService.Api
 
             services.AddTransient<IRoatpTokenService, TokenService>(serviceProvider =>
                 new TokenService(ApplicationConfiguration.RoatpApiAuthentication));
+
+            services.AddTransient<IDateTimeProvider, DateTimeProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

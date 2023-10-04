@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
+using SFA.DAS.DownloadService.Api.Infrastructure;
 using SFA.DAS.DownloadService.Api.Types;
 using SFA.DAS.DownloadService.Api.Types.Assessor;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
@@ -26,12 +27,15 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         private readonly ILogger<AparController> _log;
         private readonly IAparMapper _mapper;
 
-        public AparController(ILogger<AparController> log, IRoatpApiClient roatpApiClient, IAssessorApiClient assessorApiClient, IAparMapper mapper)
+        private readonly IDateTimeProvider _dateTimeProvider;
+
+        public AparController(ILogger<AparController> log, IRoatpApiClient roatpApiClient, IAssessorApiClient assessorApiClient, IAparMapper mapper, IDateTimeProvider dateTimeProvider)
         {
             _log = log;
             _roatpApiClient = roatpApiClient;
             _assessorApiClient = assessorApiClient;
             _mapper = mapper;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         /// <summary>
@@ -91,7 +95,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
             try
             {
                 var roatpTask = _roatpApiClient.GetRoatpSummaryByUkprn(ukprn);
-                var epaoTask = _assessorApiClient.GetAssessmentOrganisationsListByUkprn(ukprn);
+                var epaoTask = _assessorApiClient.GetAparSummaryByUkprn(ukprn);
 
                 await Task.WhenAll(roatpTask, epaoTask);
 
@@ -126,16 +130,28 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         {
             _log.LogDebug($"Fetching GET latest change date");
 
-            DateTime? latestChange = DateTime.UtcNow;
+            DateTime? latestChange = _dateTimeProvider.GetCurrentDateTime();
             try
             {
-                var result = await _roatpApiClient.GetLatestNonOnboardingOrganisationChangeDate();
-                if (result != null)
-                    latestChange = result;
+                var roatpResult = await _roatpApiClient.GetLatestNonOnboardingOrganisationChangeDate();
+                var aparResult = await _assessorApiClient.GetAparSummaryLastUpdated();
+
+                if (roatpResult.HasValue && aparResult.HasValue)
+                {
+                    latestChange = roatpResult > aparResult ? roatpResult : aparResult;
+                }
+                else if (roatpResult.HasValue)
+                {
+                    latestChange = roatpResult;
+                }
+                else if (aparResult.HasValue)
+                {
+                    latestChange = aparResult;
+                }
             }
             catch (Exception ex)
             {
-                var message = "Unable to fetch latest roatp register change date";
+                var message = "Unable to fetch latest APAR summary change date";
                 _log.LogError(message, ex);
                 return StatusCode(500, message);
             }
@@ -156,20 +172,28 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         {
             _log.LogDebug($"Fetching APAR entries for all UKPRN's");
 
-            IEnumerable<RoatpResult> roatpResults;
-            IEnumerable<EpaoResult> epaoResults;
-
             try
             {
                 var roatpTask = _roatpApiClient.GetRoatpSummary();
-                var epaoTask = _assessorApiClient.GetAssessmentOrganisationsList();
+                var epaoTask = _assessorApiClient.GetAparSummary();
 
                 await Task.WhenAll(roatpTask, epaoTask);
 
-                roatpResults = (await roatpTask)
-                    .Where(x => x.IsDateValid(DateTime.UtcNow));
 
-                epaoResults = await epaoTask;
+                var roatpData = await roatpTask;
+                var roatpResults = roatpData == null
+                    ? Enumerable.Empty<RoatpResult>()
+                    : roatpData.Where(x => x.IsDateValid(DateTime.UtcNow));
+
+                var epaoData = await epaoTask;
+                var epaoResults = epaoData ?? Enumerable.Empty<EpaoResult>();
+
+                var apprenticeshipProviders = _mapper.Map(roatpResults.ToList(), Resolve).Where(p => p != null);
+                var assessmentOrganisations = _mapper.Map(epaoResults.ToList(), Resolve);
+
+                var apar = apprenticeshipProviders.Concat(assessmentOrganisations);
+
+                return Ok(apar);
             }
             catch (Exception ex)
             {
@@ -177,13 +201,6 @@ namespace SFA.DAS.DownloadService.Api.Controllers
                 _log.LogError(message, ex);
                 return StatusCode(500, message);
             }
-
-            var apprenticeshipProviders = roatpResults == null ? Enumerable.Empty<AparEntry>() : _mapper.Map(roatpResults.ToList(), Resolve).Where(p => p != null);
-            var assessmentOrganisations = epaoResults == null ? Enumerable.Empty<AparEntry>() : _mapper.Map(epaoResults.ToList(), Resolve);
-
-            var apar = apprenticeshipProviders.Concat(assessmentOrganisations);
-
-            return Ok(apar);
         }
 
         private string Resolve(long ukprn)
