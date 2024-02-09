@@ -1,41 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Table;
-using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Configuration;
+using SFA.DAS.Configuration.AzureTableStorage;
 
 namespace SFA.DAS.DownloadService.Settings
 {
     public static class ConfigurationService
     {
-        public static async Task<IWebConfiguration> GetConfig(string environment, string storageConnectionString, string version, string serviceName)
+        public static IConfiguration AddStorageConfiguration(this IConfiguration configuration)
         {
-            if (environment == null) throw new ArgumentNullException(nameof(environment));
-            if (storageConnectionString == null) throw new ArgumentNullException(nameof(storageConnectionString));
+            var config = new ConfigurationBuilder()
+                .AddConfiguration(configuration)
+                .AddAzureTableStorage(options =>
+                {
+                    options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+                    options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                    options.EnvironmentName = configuration["EnvironmentName"];
+                    options.PreFixConfigurationKeys = false;
+                });
 
-            var conn = CloudStorageAccount.Parse(storageConnectionString);
-            var tableClient = conn.CreateCloudTableClient();
-            var table = tableClient.GetTableReference("Configuration");
-
-            var operation = TableOperation.Retrieve(environment, $"{serviceName}_{version}");
-            TableResult result;
-            try
-            {
-                result = await table.ExecuteAsync(operation);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Could not connect to Storage to retrieve settings.", e);
-            }
-
-            var dynResult = result.Result as DynamicTableEntity;
-            var data = dynResult.Properties["Data"].StringValue;
-
-            var webConfig = JsonConvert.DeserializeObject<WebConfiguration>(data);
-
-            return webConfig;
+            return config.Build();
         }
     }
 }

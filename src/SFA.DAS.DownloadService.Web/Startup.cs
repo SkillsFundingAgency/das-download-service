@@ -1,20 +1,20 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.DownloadService.Api.Client;
+using SFA.DAS.DownloadService.Api.Client.Clients;
+using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Services;
 using SFA.DAS.DownloadService.Settings;
 using SFA.DAS.DownloadService.Web.Infrastructure;
-using SFA.DAS.DownloadService.Api.Client;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using SFA.DAS.DownloadService.Api.Client.Interfaces;
-using SFA.DAS.DownloadService.Api.Client.Clients;
 
 namespace SFA.DAS.DownloadService.Web
 {
@@ -26,7 +26,7 @@ namespace SFA.DAS.DownloadService.Web
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IConfiguration Configuration;
         private readonly ILogger<Startup> _logger;
-        
+
         private IWebConfiguration ApplicationConfiguration { get; set; }
 
         public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment, ILogger<Startup> logger)
@@ -68,9 +68,9 @@ namespace SFA.DAS.DownloadService.Web
             ConfigureDependencyInjection(services);
         }
 
-        private void  ConfigureDependencyInjection(IServiceCollection services)
+        private void ConfigureDependencyInjection(IServiceCollection services)
         {
-            services.AddTransient<IAparMapper,AparMapper>();
+            services.AddTransient<IAparMapper, AparMapper>();
             services.AddTransient(x => ApplicationConfiguration);
             services.AddTransient<IDownloadServiceTokenService, TokenService>(serviceProvider =>
                 new TokenService(ApplicationConfiguration.DownloadServiceApiAuthentication));

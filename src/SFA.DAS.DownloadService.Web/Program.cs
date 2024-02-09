@@ -1,13 +1,13 @@
 ﻿namespace SFA.DAS.DownloadService.Web
 {
     using System;
-    using Microsoft.AspNetCore;
-    using Microsoft.AspNetCore.Hosting;
     using global::NLog.Web;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Hosting;
 
     public class Program
     {
-     
+
         public static void Main(string[] args)
         {
             var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
@@ -26,10 +26,13 @@
             }
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .UseApplicationInsights()
-                .UseNLog();
+        public static IHostBuilder CreateWebHostBuilder(string[] args) =>
+             Host
+                .CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseNLog();
+                });
     }
 }

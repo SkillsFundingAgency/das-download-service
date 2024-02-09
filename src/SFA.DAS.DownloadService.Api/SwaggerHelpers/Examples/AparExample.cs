@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using SFA.DAS.DownloadService.Api.Types;
-using Swashbuckle.AspNetCore.Examples;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace SFA.DAS.DownloadService.Api.SwaggerHelpers.Examples
 {
-    public class AparExample : IExamplesProvider
+    public class AparExample : IExamplesProvider<List<AparEntry>>
     {
-        public object GetExamples()
+        public List<AparEntry> GetExamples()
         {
             var apar = new List<AparEntry>
             {
-                new AparEntry
-                {
+                new() {
                     Ukprn = 12345678,
                     Name = "Good Trainers Ltd",
                     ApplicationType = AparEntryType.MainProvider,
@@ -20,8 +19,7 @@ namespace SFA.DAS.DownloadService.Api.SwaggerHelpers.Examples
                     ApplicationDeterminedDate = null,
                     CurrentlyNotStartingNewApprentices = false,
                 },
-                new AparEntry
-                {
+                new() {
                     Ukprn = 87654321,
                     Name = "Best Trainers Ltd",
                     ApplicationType = AparEntryType.EmployerProvider,
@@ -29,8 +27,7 @@ namespace SFA.DAS.DownloadService.Api.SwaggerHelpers.Examples
                     ApplicationDeterminedDate = DateTime.Today,
                     CurrentlyNotStartingNewApprentices = true
                 },
-                new AparEntry
-                {
+                new() {
                     Ukprn = 87654321,
                     Name = "Assessments R Us Ltd",
                     ApplicationType = AparEntryType.EPAO,

@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace SFA.DAS.DownloadService.Api.Authorization
 {
     public static class AuthorizationExtensions
     {
-        public static IServiceCollection AddApiAuthorization(this IServiceCollection services, IHostingEnvironment environment)
+        public static IServiceCollection AddApiAuthorization(this IServiceCollection services, IWebHostEnvironment environment)
         {
             if (!environment.IsDevelopment())
             {

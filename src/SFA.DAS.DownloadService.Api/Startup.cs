@@ -1,11 +1,16 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using SFA.DAS.DownloadService.Api.Client;
 using SFA.DAS.DownloadService.Api.Client.Clients;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
@@ -13,28 +18,17 @@ using SFA.DAS.DownloadService.Api.Infrastructure;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Services;
 using SFA.DAS.DownloadService.Settings;
-using Swashbuckle.AspNetCore.Examples;
-using Swashbuckle.AspNetCore.Swagger;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
 
 namespace SFA.DAS.DownloadService.Api
 {
     public class Startup
     {
-        private const string ServiceName = "SFA.DAS.DownloadService";
-        private const string Version = "1.0";
-
         private readonly IConfiguration Configuration;
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
         private IWebConfiguration ApplicationConfiguration { get; set; }
-        
-        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
             Configuration = configuration;
             _hostingEnvironment = hostingEnvironment;
@@ -52,7 +46,11 @@ namespace SFA.DAS.DownloadService.Api
 
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new Info { Title = $"Download Service API {Configuration["InstanceName"]}", Version = "v1" });
+                options.SwaggerDoc("v1",
+                    new OpenApiInfo
+                    {
+                        Title = $"Download Service API {Configuration["InstanceName"]}"
+                    });
                 options.TagActionsBy(api =>
                 {
                     if (api.GroupName != null)
@@ -60,8 +58,7 @@ namespace SFA.DAS.DownloadService.Api
                         return new[] { api.GroupName };
                     }
 
-                    var controllerActionDescriptor = api.ActionDescriptor as ControllerActionDescriptor;
-                    if (controllerActionDescriptor != null)
+                    if (api.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
                     {
                         return new[] { controllerActionDescriptor.ControllerName };
                     }
@@ -71,10 +68,10 @@ namespace SFA.DAS.DownloadService.Api
                 options.CustomSchemaIds(x => x.GetCustomAttributes(false).OfType<DisplayNameAttribute>().FirstOrDefault()?.DisplayName ?? x.Name);
                 options.DocInclusionPredicate((name, api) => true);
                 options.EnableAnnotations();
-                options.OperationFilter<ExamplesOperationFilter>();
             });
 
-            ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+            var config = Configuration.AddStorageConfiguration();
+            ApplicationConfiguration = config.GetSection(nameof(WebConfiguration)).Get<WebConfiguration>();
 
             // The authentication of the API has been added but disabled as this is a public API which only
             // exposes data which is already in the public domain, this does not follow the standard APIM
@@ -100,10 +97,10 @@ namespace SFA.DAS.DownloadService.Api
                 config.BaseAddress = new Uri(ApplicationConfiguration.RoatpApiAuthentication.ApiBaseAddress);
             });
 
-            services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddControllers();
             services.AddDataProtection(ApplicationConfiguration, _hostingEnvironment);
+            services.AddApplicationInsightsTelemetry();
 
             ConfigureDependencyInjection(services);
         }
@@ -113,7 +110,7 @@ namespace SFA.DAS.DownloadService.Api
             services.AddTransient<IAparMapper, AparMapper>();
             services.AddTransient(x => ApplicationConfiguration);
 
-            services.AddTransient<IAssessorTokenService, TokenService>(serviceProvider => 
+            services.AddTransient<IAssessorTokenService, TokenService>(serviceProvider =>
                 new TokenService(ApplicationConfiguration.AssessorApiAuthentication));
 
             services.AddTransient<IRoatpTokenService, TokenService>(serviceProvider =>
@@ -123,7 +120,7 @@ namespace SFA.DAS.DownloadService.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -135,20 +132,19 @@ namespace SFA.DAS.DownloadService.Api
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseRouting();
             app.UseCookiePolicy();
-            app.UseSession();
             app.UseHealthChecks("/ping");
             app.UseRequestLocalization();
 
             app.UseSwagger()
                 .UseSwaggerUI(c =>
                 {
-                    c.RoutePrefix = "api";
+                    c.RoutePrefix = string.Empty;
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Download Service API v1");
                 });
 
-            app.UseMvc();
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

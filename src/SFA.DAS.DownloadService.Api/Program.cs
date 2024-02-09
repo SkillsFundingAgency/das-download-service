@@ -1,18 +1,18 @@
-﻿using System;
-
-namespace SFA.DAS.DownloadService.Api
+﻿namespace SFA.DAS.DownloadService.Api
 {
     using System;
-    using Microsoft.AspNetCore;
-    using Microsoft.AspNetCore.Hosting;
+    using global::NLog;
     using global::NLog.Web;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Hosting;
 
     public class Program
     {
 
         public static void Main(string[] args)
         {
-            var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var logger = LogManager.Setup().LoadConfigurationFromXml(environment == "Development" ? "nlog.Development.config" : "nlog.config").GetCurrentClassLogger();
 
             try
             {
@@ -28,10 +28,12 @@ namespace SFA.DAS.DownloadService.Api
             }
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .UseApplicationInsights()
-                .UseNLog();
+        public static IHostBuilder CreateWebHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseNLog();
+                });
     }
 }
