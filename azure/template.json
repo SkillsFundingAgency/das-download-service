@@ -127,7 +127,8 @@
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
     "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
     "uiAppServiceName": "[concat(variables('resourceNamePrefix'), '-as')]",
-    "apiAppServiceName": "[concat(variables('resourceNamePrefix'), 'api-as')]"
+    "apiAppServiceName": "[concat(variables('resourceNamePrefix'), 'api-as')]",
+    "configNames": "SFA.DAS.DownloadService:WebConfiguration"
   },
   "resources": [
     {
