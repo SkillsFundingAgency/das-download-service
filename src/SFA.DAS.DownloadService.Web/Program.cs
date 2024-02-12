@@ -1,11 +1,13 @@
 ﻿namespace SFA.DAS.DownloadService.Web
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using global::NLog;
     using global::NLog.Web;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;
 
+    [ExcludeFromCodeCoverage]
     public class Program
     {
         public static void Main(string[] args)
