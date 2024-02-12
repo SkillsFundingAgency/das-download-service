@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
 using SFA.DAS.DownloadService.Api.Client;
 using SFA.DAS.DownloadService.Api.Client.Clients;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
@@ -20,20 +20,25 @@ namespace SFA.DAS.DownloadService.Web
 {
     public class Startup
     {
-        private const string ServiceName = "SFA.DAS.DownloadService";
-        private const string Version = "1.0";
-
-        private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly IConfiguration Configuration;
-        private readonly ILogger<Startup> _logger;
+        private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly IConfigurationRoot _configuration;
 
         private IWebConfiguration ApplicationConfiguration { get; set; }
 
-        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment, ILogger<Startup> logger)
+        public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
-            Configuration = configuration;
+            //_configuration = configuration;
             _hostingEnvironment = hostingEnvironment;
-            _logger = logger;
+            var config = new ConfigurationBuilder()
+                .AddConfiguration(configuration)
+                .SetBasePath(Directory.GetCurrentDirectory());
+#if DEBUG
+            config
+                .AddJsonFile("appsettings.json", true)
+                .AddJsonFile("appsettings.Development.json", true);
+#endif
+
+            _configuration = config.Build();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -46,7 +51,8 @@ namespace SFA.DAS.DownloadService.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+            var config = _configuration.AddStorageConfiguration();
+            ApplicationConfiguration = config.GetSection(nameof(WebConfiguration)).Get<WebConfiguration>();
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -60,9 +66,10 @@ namespace SFA.DAS.DownloadService.Web
                 config.BaseAddress = new Uri(ApplicationConfiguration.DownloadServiceApiAuthentication.ApiBaseAddress);
             });
 
+            services.AddDistributedMemoryCache();
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc();
             services.AddDataProtection(ApplicationConfiguration, _hostingEnvironment);
 
             ConfigureDependencyInjection(services);
@@ -78,7 +85,7 @@ namespace SFA.DAS.DownloadService.Web
 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -92,16 +99,16 @@ namespace SFA.DAS.DownloadService.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UseRouting();
             app.UseSession();
             app.UseHealthChecks("/ping");
             app.UseRequestLocalization();
 
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller}/{action}/{id?}",
-                    defaults: new { controller = "Home", action = "Index" });
+                endpoints.MapControllerRoute(
+                    "default",
+                    "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

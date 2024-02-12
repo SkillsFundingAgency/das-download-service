@@ -1,16 +1,17 @@
 ﻿namespace SFA.DAS.DownloadService.Web
 {
     using System;
+    using global::NLog;
     using global::NLog.Web;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;
 
     public class Program
     {
-
         public static void Main(string[] args)
         {
-            var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var logger = LogManager.Setup().LoadConfigurationFromXml(environment == "Development" ? "nlog.Development.config" : "nlog.config").GetCurrentClassLogger();
 
             try
             {

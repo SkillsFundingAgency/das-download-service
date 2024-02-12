@@ -1,16 +1,16 @@
-﻿using CsvHelper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.DownloadService.Api.Types;
-using SFA.DAS.DownloadService.Services.Interfaces;
-using SFA.DAS.DownloadService.Services.Utility;
-using SFA.DAS.DownloadService.Web.Models;
-using SFA.DAS.DownloadService.Api.Client.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.DownloadService.Api.Client.Interfaces;
+using SFA.DAS.DownloadService.Api.Types;
+using SFA.DAS.DownloadService.Services.Interfaces;
+using SFA.DAS.DownloadService.Services.Utility;
+using SFA.DAS.DownloadService.Web.Models;
 
 namespace SFA.DAS.DownloadService.Web.Controllers
 {
@@ -34,7 +34,6 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         [ResponseCache(Duration = 600)]
         public async Task<IActionResult> Index()
         {
-            
             DateTime? date;
             try
             {
@@ -42,7 +41,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("Unable to retrieve results for latest non-onboarding organisation change", ex);
+                _logger.LogError(ex, "Unable to retrieve results for latest non-onboarding organisation change");
                 date = DateTime.Now;
             }
 
@@ -82,26 +81,20 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Unable to retrieve results for getting all APAR details, message: [{ex.Message}]", ex);
-                throw; 
+                throw;
             }
 
             var date = await _downloadServiceApiClient.GetLatestNonOnboardingOrganisationChangeDate() ?? DateTime.Now;
 
-            using (var memoryStream = new MemoryStream())
-            {
-                using (var streamWriter = new StreamWriter(memoryStream))
-                {
-                    using (var csvWriter = new CsvWriter(streamWriter))
-                    {
-                        csvWriter.Configuration.Delimiter = ",";
-                        csvWriter.WriteRecords(aparCsv);
+            using var memoryStream = new MemoryStream();
+            using var streamWriter = new StreamWriter(memoryStream);
+            using var csvWriter = new CsvWriter(streamWriter);
+            csvWriter.Configuration.Delimiter = ",";
+            csvWriter.WriteRecords(aparCsv);
 
-                        await streamWriter.FlushAsync();
-                        memoryStream.Position = 0;
-                        return File(memoryStream.ToArray(), "text/csv", GenerateFilename(date));
-                    }
-                }
-            }
+            await streamWriter.FlushAsync();
+            memoryStream.Position = 0;
+            return File(memoryStream.ToArray(), "text/csv", GenerateFilename(date));
         }
 
         [Route("roatp")]
