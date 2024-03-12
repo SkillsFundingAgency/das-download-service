@@ -74,7 +74,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Web.Controllers
         public void IndexRoapt_ShouldLogWarning()
         {
             // Act
-            _controller.IndexRoapt();
+            _controller.IndexRoatp();
 
             // Assert
             _mockLogger.Verify(
@@ -91,7 +91,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Web.Controllers
         public void IndexRoapt_ShouldRedirectToRouteAparGetIndex()
         {
             // Act
-            var result = _controller.IndexRoapt() as RedirectToRouteResult;
+            var result = _controller.IndexRoatp() as RedirectToRouteResult;
 
             // Assert
             Assert.AreEqual("RouteAparGetIndex", result?.RouteName);

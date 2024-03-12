@@ -98,7 +98,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         }
 
         [Route("roatp")]
-        public IActionResult IndexRoapt()
+        public IActionResult IndexRoatp()
         {
             _logger.LogWarning("Deprecated endpoint 'roatp' called for AparController");
             return RedirectToRoute(RouteAparGetIndex);
