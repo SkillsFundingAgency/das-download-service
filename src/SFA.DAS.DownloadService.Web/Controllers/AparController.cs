@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
@@ -88,8 +90,8 @@ namespace SFA.DAS.DownloadService.Web.Controllers
 
             using var memoryStream = new MemoryStream();
             using var streamWriter = new StreamWriter(memoryStream);
-            using var csvWriter = new CsvWriter(streamWriter);
-            csvWriter.Configuration.Delimiter = ",";
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = "," };
+            using var csvWriter = new CsvWriter(streamWriter, config);
             csvWriter.WriteRecords(aparCsv);
 
             await streamWriter.FlushAsync();
