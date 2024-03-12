@@ -1,19 +1,20 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
+using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Api.Controllers;
+using SFA.DAS.DownloadService.Api.Infrastructure;
 using SFA.DAS.DownloadService.Api.Types;
+using SFA.DAS.DownloadService.Api.Types.Assessor;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Services.Interfaces;
-using SFA.DAS.DownloadService.Api.Client.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using SFA.DAS.DownloadService.Api.Types.Assessor;
-using System.Threading.Tasks;
-using SFA.DAS.DownloadService.Api.Infrastructure;
 
 namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
 {
@@ -70,7 +71,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
             var res = _controller.Get(ukprn).Result;
 
             // Assert
-            Assert.AreEqual((int)HttpStatusCode.BadRequest, ((ObjectResult)res).StatusCode);
+            ClassicAssert.That((int)HttpStatusCode.BadRequest, Is.EqualTo(((ObjectResult)res).StatusCode));
         }
 
         [Test]
@@ -89,7 +90,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
             var result = await _controller.Get(validUkprn);
 
             // Assert
-            Assert.IsInstanceOf<NotFoundObjectResult>(result);
+            ClassicAssert.IsInstanceOf<NotFoundObjectResult>(result);
         }
 
         [Test]
@@ -110,7 +111,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
             var result = await _controller.Get(validUkprn);
 
             // Assert
-            Assert.IsInstanceOf<OkObjectResult>(result);
+            ClassicAssert.IsInstanceOf<OkObjectResult>(result);
         }
 
         [TestCase("01/01/2000", "01/01/2222", "01/01/2222")]
@@ -130,7 +131,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
             var result = await _controller.GetLatestTime() as OkObjectResult;
 
             //Assert
-            Assert.AreEqual(expected, result.Value);
+            ClassicAssert.That(expected, Is.EqualTo(result.Value));
         }
 
     }

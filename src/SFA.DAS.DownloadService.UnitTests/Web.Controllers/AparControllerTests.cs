@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
+using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Api.Types;
 using SFA.DAS.DownloadService.Services.Services;
 using SFA.DAS.DownloadService.Web.Controllers;
-using SFA.DAS.DownloadService.Api.Client.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.DownloadService.UnitTests.Web.Controllers
 {
@@ -41,7 +42,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Web.Controllers
             _mockClient.Setup(x => x.GetAparSummary()).ReturnsAsync(new List<AparEntry>());
             var result = await _controller.DownloadCsv();
             var redirectResult = result as RedirectToActionResult;
-            Assert.AreEqual("ServiceUnavailable", redirectResult.ActionName);
+            ClassicAssert.AreEqual("ServiceUnavailable", redirectResult.ActionName);
         }
 
         public async Task When_DownloadCsv_IsCalled_And_RecordsAreReturnedFromGetAparSummary_GetLatestNonOnboardingOrganisationChangeDate_IsCalled()
@@ -63,10 +64,10 @@ namespace SFA.DAS.DownloadService.UnitTests.Web.Controllers
             var fileDownloadResult = result as FileContentResult;
             var expectedFileName = $"apar-{dateUpdated:yyyy-MM-dd-HH-mm-ss}.csv";
 
-            Assert.Multiple(() =>
+            ClassicAssert.Multiple(() =>
             {
-                Assert.AreEqual("text/csv", fileDownloadResult.ContentType);
-                Assert.AreEqual(expectedFileName, fileDownloadResult.FileDownloadName);
+                ClassicAssert.AreEqual("text/csv", fileDownloadResult.ContentType);
+                ClassicAssert.AreEqual(expectedFileName, fileDownloadResult.FileDownloadName);
             });
         }
 
@@ -94,7 +95,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Web.Controllers
             var result = _controller.IndexRoatp() as RedirectToRouteResult;
 
             // Assert
-            Assert.AreEqual("RouteAparGetIndex", result?.RouteName);
+            ClassicAssert.AreEqual("RouteAparGetIndex", result?.RouteName);
         }
 
         [Test]
@@ -121,7 +122,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Web.Controllers
             var result = _controller.DownloadCsvRoatp() as RedirectToRouteResult;
 
             // Assert
-            Assert.AreEqual("RouteAparDownloadCsv", result?.RouteName);
+            ClassicAssert.AreEqual("RouteAparDownloadCsv", result?.RouteName);
         }
     }
 }
