@@ -38,7 +38,7 @@
         "description": "The resource id of the shared front end subnet."
       }
     },
-    "sharedBackEndAppServicePlan": {
+    "sharedBackEndAppServicePlanName": {
       "type": "string",
       "metadata": {
         "description": "The name of the shared back end App Service Plan."
