@@ -100,13 +100,13 @@
         "description": "The name of the certificate stored in the shared keyvault."
       }
     },
-    "keyVaultName": {
+    "SharedKeyVaultName": {
       "type": "string",
       "metadata": {
         "description": "The name of the shared keyvault."
       }
     },
-    "keyVaultResourceGroupName": {
+    "SharedManagementResourceGroup": {
       "type": "string",
       "metadata": {
         "description": "The resource group name of the shared keyvault."
@@ -148,10 +148,10 @@
             "value": "[parameters('apiKeyVaultCertificateName')]"
           },
           "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
+            "value": "[parameters('SharedKeyVaultName')]"
           },
           "keyVaultResourceGroup": {
-            "value": "[parameters('keyVaultResourceGroupName')]"
+            "value": "[parameters('SharedManagementResourceGroup')]"
           }
         }
       }
@@ -173,10 +173,10 @@
             "value": "[parameters('uiKeyVaultCertificateName')]"
           },
           "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
+            "value": "[parameters('SharedKeyVaultName')]"
           },
           "keyVaultResourceGroup": {
-            "value": "[parameters('keyVaultResourceGroupName')]"
+            "value": "[parameters('SharedManagementResourceGroup')]"
           }
         }
       },
