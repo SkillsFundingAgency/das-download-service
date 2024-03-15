@@ -239,7 +239,7 @@
             "value": "[variables('apiAppServiceName')]"
           },
           "appServicePlanName": {
-            "value": "[parameters('sharedBackEndAppServicePlan')]"
+            "value": "[parameters('sharedBackEndAppServicePlanName')]"
           },
           "appServicePlanResourceGroup": {
             "value": "[parameters('sharedAppServicePlanResourceGroup')]"
@@ -310,7 +310,7 @@
             "value": "[variables('uiAppServiceName')]"
           },
           "appServicePlanName": {
-            "value": "[parameters('sharedFrontEndAppServicePlan')]"
+            "value": "[parameters('sharedFrontEndAppServicePlanName')]"
           },
           "appServicePlanResourceGroup": {
             "value": "[parameters('sharedAppServicePlanResourceGroup')]"
