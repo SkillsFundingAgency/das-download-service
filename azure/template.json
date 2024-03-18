@@ -118,6 +118,12 @@
         "description": "The cdn url for the UI app service"
       }
     },
+    "resourceGroupLocation": {
+        "type": "string"
+    },
+    "tags": {
+        "type": "object"
+    },
     "utcValue": {
       "type": "string",
       "defaultValue": "[utcNow()]"
@@ -131,6 +137,15 @@
     "configNames": "SFA.DAS.DownloadService:WebConfiguration"
   },
   "resources": [
+    {
+      "apiVersion": "2020-06-01",
+      "name": "[variables('resourceGroupName')]",
+      "type": "Microsoft.Resources/resourceGroups",
+      "location": "[parameters('resourceGroupLocation')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+      }
+    },
     {
       "condition": "[greater(length(parameters('apiCustomHostName')), 0)]",
       "apiVersion": "2020-06-01",
