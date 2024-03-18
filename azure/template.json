@@ -248,7 +248,7 @@
       "apiVersion": "2021-04-01",
       "name": "[concat('api-app-service-', parameters('utcValue'))]",
       "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[variables('resourceGroupName')]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -320,7 +320,7 @@
       "apiVersion": "2021-04-01",
       "name": "[concat('ui-app-service-', parameters('utcValue'))]",
       "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[variables('resourceGroupName')]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
