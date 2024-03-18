@@ -23,6 +23,8 @@ jobs:
       publishWebProjects: false
       projects: 'src/SFA.DAS.DownloadService.Web/SFA.DAS.DownloadService.Web.csproj'
       arguments: '--configuration release --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+      modifyOutputPath: true
+      zipAfterPublish: true
 
   - task: DotNetCoreCLI@2
     displayName: 'Publish API'
@@ -31,6 +33,8 @@ jobs:
       publishWebProjects: false
       projects: 'src/SFA.DAS.DownloadService.Api/SFA.DAS.DownloadService.Api.csproj'
       arguments: '--configuration release --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+      modifyOutputPath: true
+      zipAfterPublish: true
 
   - task: CopyFiles@2
     displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
