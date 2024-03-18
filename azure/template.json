@@ -118,6 +118,9 @@
         "description": "The cdn url for the UI app service"
       }
     },
+    "resourceGroupName": {
+      "type": "string"
+  },
     "resourceGroupLocation": {
         "type": "string"
     },
