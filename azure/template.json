@@ -245,7 +245,7 @@
       }
     },
     {
-      "apiVersion": "2021-04-01",
+      "apiVersion": "2020-06-01",
       "name": "[concat('api-app-service-', parameters('utcValue'))]",
       "type": "Microsoft.Resources/deployments",
       "resourceGroup": "[parameters('resourceGroupName')]",
@@ -317,7 +317,7 @@
       ]
     },
     {
-      "apiVersion": "2021-04-01",
+      "apiVersion": "2020-06-01",
       "name": "[concat('ui-app-service-', parameters('utcValue'))]",
       "type": "Microsoft.Resources/deployments",
       "resourceGroup": "[parameters('resourceGroupName')]",
@@ -358,14 +358,6 @@
                 {
                   "name": "ASPNETCORE_ENVIRONMENT",
                   "value": "[toUpper(parameters('environmentName'))]"
-                },
-                {
-                  "name": "WEBSITE_SWAP_WARMUP_PING_PATH",
-                  "value": "/ping"
-                },
-                {
-                  "name": "WEBSITE_SWAP_WARMUP_PING_STATUSES",
-                  "value": "200"
                 },
                 {
                   "name": "cdn:url",
