@@ -115,7 +115,7 @@ stages:
 
 - stage: Deploy_MO
   dependsOn: Build
-  displayName: Deploy to PROD
+  displayName: Deploy to MO
   variables:
   - group: MO Management Resources
   - group: MO Shared Resources
