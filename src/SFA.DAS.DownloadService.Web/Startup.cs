@@ -27,7 +27,6 @@ namespace SFA.DAS.DownloadService.Web
 
         public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
-            //_configuration = configuration;
             _hostingEnvironment = hostingEnvironment;
             var config = new ConfigurationBuilder()
                 .AddConfiguration(configuration)
@@ -82,7 +81,6 @@ namespace SFA.DAS.DownloadService.Web
             services.AddTransient<IDownloadServiceTokenService, TokenService>(serviceProvider =>
                 new TokenService(ApplicationConfiguration.DownloadServiceApiAuthentication));
         }
-
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

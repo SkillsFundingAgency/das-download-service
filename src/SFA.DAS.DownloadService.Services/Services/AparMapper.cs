@@ -1,11 +1,11 @@
-﻿using SFA.DAS.DownloadService.Api.Types;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using SFA.DAS.DownloadService.Api.Types;
 using SFA.DAS.DownloadService.Api.Types.Assessor;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Utility;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SFA.DAS.DownloadService.Services.Services
 {
@@ -15,7 +15,7 @@ namespace SFA.DAS.DownloadService.Services.Services
         {
             if (roatpResult == null)
                 return null;
-            
+
             if (!long.TryParse(roatpResult.Ukprn, out long ukprn))
             {
                 return null;
@@ -29,9 +29,9 @@ namespace SFA.DAS.DownloadService.Services.Services
                 Ukprn = ukprn,
                 Name = roatpResult.OrganisationName,
                 Uri = uriResolver(ukprn),
-                ApplicationType = MapAparEntryType(roatpResult?.ApplicationType),
-                StartDate = roatpResult?.StartDate,
-                ApplicationDeterminedDate = roatpResult?.ApplicationDeterminedDate,
+                ApplicationType = MapAparEntryType(roatpResult.ApplicationType),
+                StartDate = roatpResult.StartDate,
+                ApplicationDeterminedDate = roatpResult.ApplicationDeterminedDate,
                 CurrentlyNotStartingNewApprentices = roatpResult.ProviderNotCurrentlyStartingNewApprentices != null,
             };
         }

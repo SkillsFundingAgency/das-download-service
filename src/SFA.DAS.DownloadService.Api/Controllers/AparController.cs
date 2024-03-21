@@ -105,7 +105,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
             catch (Exception ex)
             {
                 var message = $"Unable to fetch APAR entries from ROATP or EPAO with UKPRN: {ukprn}";
-                _log.LogError(message, ex);
+                _log.LogError(ex, message);
                 return StatusCode(500, message);
             }
 
@@ -149,8 +149,8 @@ namespace SFA.DAS.DownloadService.Api.Controllers
             }
             catch (Exception ex)
             {
-                var message = "Unable to fetch latest APAR summary change date";
-                _log.LogError(message, ex);
+                const string message = "Unable to fetch latest APAR summary change date";
+                _log.LogError(ex, message);
                 return StatusCode(500, message);
             }
 
@@ -195,8 +195,8 @@ namespace SFA.DAS.DownloadService.Api.Controllers
             }
             catch (Exception ex)
             {
-                var message = "Unable to fetch APAR entries from ROATP or EPAO";
-                _log.LogError(message, ex);
+                const string message = "Unable to fetch APAR entries from ROATP or EPAO";
+                _log.LogError(ex, message);
                 return StatusCode(500, message);
             }
         }
