@@ -19,8 +19,8 @@
     "SFA.DAS.DownloadService.Api": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api",
-      "applicationUrl": "http://localhost:52818/",
+      "launchUrl": "",
+      "applicationUrl": "https://localhost:52818/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

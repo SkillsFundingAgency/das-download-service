@@ -23,15 +23,19 @@ namespace SFA.DAS.DownloadService.Api
 {
     public class Startup
     {
-        private readonly IConfiguration Configuration;
+        private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _hostingEnvironment;
 
         private IWebConfiguration ApplicationConfiguration { get; set; }
 
         public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
-            Configuration = configuration;
             _hostingEnvironment = hostingEnvironment;
+            var config = new ConfigurationBuilder()
+                .AddConfiguration(configuration)
+                .AddStorageConfiguration(configuration);
+
+            _configuration = config.Build();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -49,7 +53,7 @@ namespace SFA.DAS.DownloadService.Api
                 options.SwaggerDoc("v1",
                     new OpenApiInfo
                     {
-                        Title = $"Download Service API {Configuration["InstanceName"]}"
+                        Title = $"Download Service API {_configuration["InstanceName"]}"
                     });
                 options.TagActionsBy(api =>
                 {
@@ -70,15 +74,14 @@ namespace SFA.DAS.DownloadService.Api
                 options.EnableAnnotations();
             });
 
-            var config = Configuration.AddStorageConfiguration();
-            ApplicationConfiguration = config.GetSection(nameof(WebConfiguration)).Get<WebConfiguration>();
+            ApplicationConfiguration = _configuration.GetSection(nameof(WebConfiguration)).Get<WebConfiguration>();
 
-            // The authentication of the API has been added but disabled as this is a public API which only
-            // exposes data which is already in the public domain, this does not follow the standard APIM
-            // pattern by design - following the standard pattern would be tech debt - when that is addressed
-            // the authentication below could be re-enabled to make this API a secured internal API
-            //services.AddApiAuthorization(_hostingEnvironment);
-            //services.AddApiAuthentication(ApplicationConfiguration.ApiAuthentication);
+            /// The authentication of the API has been added but disabled as this is a public API which only
+            /// exposes data which is already in the public domain, this does not follow the standard APIM
+            /// pattern by design - following the standard pattern would be tech debt - when that is addressed
+            /// the authentication below could be re-enabled to make this API a secured internal API
+            /// services.AddApiAuthorization(_hostingEnvironment);
+            /// services.AddApiAuthentication(ApplicationConfiguration.ApiAuthentication);
 
             services.Configure<RequestLocalizationOptions>(options =>
             {

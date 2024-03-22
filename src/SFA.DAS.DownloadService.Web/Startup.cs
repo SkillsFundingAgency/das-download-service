@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -30,12 +29,7 @@ namespace SFA.DAS.DownloadService.Web
             _hostingEnvironment = hostingEnvironment;
             var config = new ConfigurationBuilder()
                 .AddConfiguration(configuration)
-                .SetBasePath(Directory.GetCurrentDirectory());
-#if DEBUG
-            config
-                .AddJsonFile("appsettings.json", true)
-                .AddJsonFile("appsettings.Development.json", true);
-#endif
+                .AddStorageConfiguration(configuration);
 
             _configuration = config.Build();
         }
@@ -50,8 +44,7 @@ namespace SFA.DAS.DownloadService.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            var config = _configuration.AddStorageConfiguration();
-            ApplicationConfiguration = config.GetSection(nameof(WebConfiguration)).Get<WebConfiguration>();
+            ApplicationConfiguration = _configuration.GetSection(nameof(WebConfiguration)).Get<WebConfiguration>();
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -65,7 +58,6 @@ namespace SFA.DAS.DownloadService.Web
                 config.BaseAddress = new Uri(ApplicationConfiguration.DownloadServiceApiAuthentication.ApiBaseAddress);
             });
 
-            services.AddDistributedMemoryCache();
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
             services.AddMvc();

@@ -1,9 +1,6 @@
 ﻿namespace SFA.DAS.DownloadService.Web
 {
-    using System;
     using System.Diagnostics.CodeAnalysis;
-    using global::NLog;
-    using global::NLog.Web;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;
 
@@ -12,21 +9,7 @@
     {
         public static void Main(string[] args)
         {
-            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            var logger = LogManager.Setup().LoadConfigurationFromXml(environment == "Development" ? "nlog.Development.config" : "nlog.config").GetCurrentClassLogger();
-
-            try
-            {
-                logger.Info("Starting up host");
-
-                CreateWebHostBuilder(args).Build().Run();
-            }
-            catch (Exception ex)
-            {
-                //NLog: catch setup errors
-                logger.Error(ex, "Stopped program because of exception");
-                throw;
-            }
+            CreateWebHostBuilder(args).Build().Run();
         }
 
         public static IHostBuilder CreateWebHostBuilder(string[] args) =>
@@ -35,7 +18,6 @@
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseNLog();
                 });
     }
 }
