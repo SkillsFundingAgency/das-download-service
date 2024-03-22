@@ -58,6 +58,8 @@ namespace SFA.DAS.DownloadService.Web
                 config.BaseAddress = new Uri(ApplicationConfiguration.DownloadServiceApiAuthentication.ApiBaseAddress);
             });
 
+            services.AddLogging();
+            services.AddApplicationInsightsTelemetry();
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
             services.AddMvc();
@@ -93,7 +95,6 @@ namespace SFA.DAS.DownloadService.Web
             app.UseSession();
             app.UseHealthChecks("/ping");
             app.UseRequestLocalization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

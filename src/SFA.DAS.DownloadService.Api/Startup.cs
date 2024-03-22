@@ -100,10 +100,11 @@ namespace SFA.DAS.DownloadService.Api
                 config.BaseAddress = new Uri(ApplicationConfiguration.RoatpApiAuthentication.ApiBaseAddress);
             });
 
+            services.AddLogging();
             services.AddHealthChecks();
+            services.AddApplicationInsightsTelemetry();
             services.AddControllers();
             services.AddDataProtection(ApplicationConfiguration, _hostingEnvironment);
-            services.AddApplicationInsightsTelemetry();
 
             ConfigureDependencyInjection(services);
         }
