@@ -286,6 +286,14 @@
                 {
                   "name": "ASPNETCORE_ENVIRONMENT",
                   "value": "[toUpper(parameters('environmentName'))]"
+                },
+                {
+                  "name": "ConfigNames",
+                  "value": "[variables('configNames')]"
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
                 }
               ]
             }
@@ -362,6 +370,14 @@
                 {
                   "name": "cdn:url",
                   "value": "[parameters('cdnUrl')]"
+                },
+                {
+                  "name": "ConfigNames",
+                  "value": "[variables('configNames')]"
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
                 }
               ]
             }
