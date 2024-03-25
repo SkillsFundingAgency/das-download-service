@@ -1,11 +1,10 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using SFA.DAS.DownloadService.Api.Types;
 using SFA.DAS.DownloadService.Api.Types.Assessor;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Services.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SFA.DAS.DownloadService.UnitTests.Mappers
 {
@@ -25,7 +24,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
         {
             var result = _aparMapper.Map(null, null, ukprn => ukprn.ToString());
 
-            Assert.IsNull(result);
+            ClassicAssert.IsNull(result);
         }
 
         [Test]
@@ -44,24 +43,24 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
                 ApplicationDeterminedDate = applicationDeterminedDate.AddMonths(-2),
                 ProviderNotCurrentlyStartingNewApprentices = null,
             };
-            
+
             Func<long, string> uriResolver = ukprn => $"http://example.com/{ukprn}";
 
             // Act
             var result = _aparMapper.Map(roatpResult, null, uriResolver);
 
             // Assert
-            Assert.Multiple(() =>
+            ClassicAssert.Multiple(() =>
             {
-                Assert.NotNull(result);
-                Assert.AreEqual(12345678, result.Ukprn);
-                Assert.AreEqual("Org1", result.Name);
-                Assert.AreEqual("http://example.com/12345678", result.Uri);
-                Assert.AreEqual(AparEntryType.MainProvider, result.ApplicationType);
-                Assert.AreEqual(startDate.AddMonths(-1), result.StartDate);
-                Assert.AreEqual(applicationDeterminedDate.AddMonths(-2), result.ApplicationDeterminedDate);
-                Assert.IsFalse(result.CurrentlyNotStartingNewApprentices);
-                Assert.IsNull(result.Epao);
+                ClassicAssert.NotNull(result);
+                ClassicAssert.That(12345678, Is.EqualTo(result.Ukprn));
+                ClassicAssert.AreEqual("Org1", result.Name);
+                ClassicAssert.AreEqual("http://example.com/12345678", result.Uri);
+                ClassicAssert.AreEqual(AparEntryType.MainProvider, result.ApplicationType);
+                ClassicAssert.AreEqual(startDate.AddMonths(-1), result.StartDate);
+                ClassicAssert.AreEqual(applicationDeterminedDate.AddMonths(-2), result.ApplicationDeterminedDate);
+                ClassicAssert.IsFalse(result.CurrentlyNotStartingNewApprentices);
+                ClassicAssert.IsNull(result.Epao);
             });
         }
 
@@ -86,21 +85,21 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
             var result = _aparMapper.Map(null, epaoResult, uriResolver);
 
             // Assert
-            Assert.Multiple(() =>
+            ClassicAssert.Multiple(() =>
             {
-                Assert.NotNull(result);
-                Assert.AreEqual(12345678, result.Ukprn);
-                Assert.AreEqual("EpaoName", result.Name);
-                Assert.AreEqual("http://example.com/12345678", result.Uri);
-                Assert.AreEqual(AparEntryType.EPAO, result.ApplicationType);
-                Assert.AreEqual(earliestEffectiveFromDate.AddMonths(-1), result.StartDate);
-                Assert.AreEqual(earliestDateStandardApprovedOnRegister.AddMonths(-1), result.ApplicationDeterminedDate);
-                Assert.IsNull(result.CurrentlyNotStartingNewApprentices);
+                ClassicAssert.NotNull(result);
+                ClassicAssert.AreEqual(12345678, result.Ukprn);
+                ClassicAssert.AreEqual("EpaoName", result.Name);
+                ClassicAssert.AreEqual("http://example.com/12345678", result.Uri);
+                ClassicAssert.AreEqual(AparEntryType.EPAO, result.ApplicationType);
+                ClassicAssert.AreEqual(earliestEffectiveFromDate.AddMonths(-1), result.StartDate);
+                ClassicAssert.AreEqual(earliestDateStandardApprovedOnRegister.AddMonths(-1), result.ApplicationDeterminedDate);
+                ClassicAssert.IsNull(result.CurrentlyNotStartingNewApprentices);
 
-                Assert.IsNotNull(result.Epao);
-                Assert.AreEqual(epaoResult.Name, result.Epao.Name);
-                Assert.AreEqual(earliestEffectiveFromDate.AddMonths(-1), result.Epao.StartDate);
-                Assert.AreEqual(earliestDateStandardApprovedOnRegister.AddMonths(-1), result.Epao.ApplicationDeterminedDate);
+                ClassicAssert.IsNotNull(result.Epao);
+                ClassicAssert.AreEqual(epaoResult.Name, result.Epao.Name);
+                ClassicAssert.AreEqual(earliestEffectiveFromDate.AddMonths(-1), result.Epao.StartDate);
+                ClassicAssert.AreEqual(earliestDateStandardApprovedOnRegister.AddMonths(-1), result.Epao.ApplicationDeterminedDate);
             });
         }
 
@@ -138,21 +137,21 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
             var result = _aparMapper.Map(roatpResult, epaoResult, uriResolver);
 
             // Assert
-            Assert.Multiple(() =>
+            ClassicAssert.Multiple(() =>
             {
-                Assert.NotNull(result);
-                Assert.AreEqual(12345678, result.Ukprn);
-                Assert.AreEqual("Org1", result.Name);
-                Assert.AreEqual("http://example.com/12345678", result.Uri);
-                Assert.AreEqual(AparEntryType.MainProvider, result.ApplicationType);
-                Assert.AreEqual(startDate.AddMonths(-1), result.StartDate);
-                Assert.AreEqual(applicationDeterminedDate.AddMonths(-2), result.ApplicationDeterminedDate);
-                Assert.IsFalse(result.CurrentlyNotStartingNewApprentices);
-                
-                Assert.IsNotNull(result.Epao);
-                Assert.AreEqual(epaoResult.Name, result.Epao.Name);
-                Assert.AreEqual(earliestEffectiveFromDate.AddMonths(-1), result.Epao.StartDate);
-                Assert.AreEqual(earliestDateStandardApprovedOnRegister.AddMonths(-1), result.Epao.ApplicationDeterminedDate);
+                ClassicAssert.NotNull(result);
+                ClassicAssert.AreEqual(12345678, result.Ukprn);
+                ClassicAssert.AreEqual("Org1", result.Name);
+                ClassicAssert.AreEqual("http://example.com/12345678", result.Uri);
+                ClassicAssert.AreEqual(AparEntryType.MainProvider, result.ApplicationType);
+                ClassicAssert.AreEqual(startDate.AddMonths(-1), result.StartDate);
+                ClassicAssert.AreEqual(applicationDeterminedDate.AddMonths(-2), result.ApplicationDeterminedDate);
+                ClassicAssert.IsFalse(result.CurrentlyNotStartingNewApprentices);
+
+                ClassicAssert.IsNotNull(result.Epao);
+                ClassicAssert.AreEqual(epaoResult.Name, result.Epao.Name);
+                ClassicAssert.AreEqual(earliestEffectiveFromDate.AddMonths(-1), result.Epao.StartDate);
+                ClassicAssert.AreEqual(earliestDateStandardApprovedOnRegister.AddMonths(-1), result.Epao.ApplicationDeterminedDate);
             });
         }
     }

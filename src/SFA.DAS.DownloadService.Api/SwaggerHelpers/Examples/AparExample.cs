@@ -1,40 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using SFA.DAS.DownloadService.Api.Types;
-using Swashbuckle.AspNetCore.Examples;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace SFA.DAS.DownloadService.Api.SwaggerHelpers.Examples
 {
-    public class AparExample : IExamplesProvider
+    public class AparExample : IExamplesProvider<List<AparEntry>>
     {
-        public object GetExamples()
+        public List<AparEntry> GetExamples()
         {
             var apar = new List<AparEntry>
             {
-                new AparEntry
-                {
+                new() {
                     Ukprn = 12345678,
                     Name = "Good Trainers Ltd",
                     ApplicationType = AparEntryType.MainProvider,
-                    StartDate = new DateTime(DateTime.Now.Year - 1, 05, 17),
+                    StartDate = new DateTime(DateTime.Now.Year - 1, 05, 17, 0, 0, 0, DateTimeKind.Utc),
                     ApplicationDeterminedDate = null,
                     CurrentlyNotStartingNewApprentices = false,
                 },
-                new AparEntry
-                {
+                new() {
                     Ukprn = 87654321,
                     Name = "Best Trainers Ltd",
                     ApplicationType = AparEntryType.EmployerProvider,
-                    StartDate = new DateTime(DateTime.Now.Year - 1, 01, 04),
+                    StartDate = new DateTime(DateTime.Now.Year - 1, 01, 04, 0, 0, 0, DateTimeKind.Utc),
                     ApplicationDeterminedDate = DateTime.Today,
                     CurrentlyNotStartingNewApprentices = true
                 },
-                new AparEntry
-                {
+                new() {
                     Ukprn = 87654321,
                     Name = "Assessments R Us Ltd",
                     ApplicationType = AparEntryType.EPAO,
-                    StartDate = new DateTime(DateTime.Now.Year - 1, 03, 22),
+                    StartDate = new DateTime(DateTime.Now.Year - 1, 03, 22, 0, 0, 0, DateTimeKind.Utc),
                     ApplicationDeterminedDate = DateTime.Today.AddMonths(-5),
                     CurrentlyNotStartingNewApprentices = null
                 }

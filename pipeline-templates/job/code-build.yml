@@ -1,8 +1,10 @@
+parameters:
+  SolutionBaseName:
+
 jobs:
 - job: CodeBuild
   pool:
     name: DAS - Continuous Integration Agents
-    demands: LATEST_DOTNET_VERSION -equals 3.1
     workspace:
       clean: all
   variables:
@@ -21,16 +23,20 @@ jobs:
     inputs:
       command: publish
       publishWebProjects: false
-      projects: 'src/SFA.DAS.DownloadService.Web/SFA.DAS.DownloadService.Web.csproj'
+      projects: 'src/${{ parameters.SolutionBaseName }}.Web/${{ parameters.SolutionBaseName }}.Web.csproj'
       arguments: '--configuration release --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+      modifyOutputPath: true
+      zipAfterPublish: true
 
   - task: DotNetCoreCLI@2
     displayName: 'Publish API'
     inputs:
       command: publish
       publishWebProjects: false
-      projects: 'src/SFA.DAS.DownloadService.Api/SFA.DAS.DownloadService.Api.csproj'
+      projects: 'src/${{ parameters.SolutionBaseName }}.Api/${{ parameters.SolutionBaseName }}.Api.csproj'
       arguments: '--configuration release --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+      modifyOutputPath: true
+      zipAfterPublish: true
 
   - task: CopyFiles@2
     displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
@@ -43,3 +49,4 @@ jobs:
     displayName: 'Publish Artifact'
     inputs:
       PathtoPublish: '$(build.artifactstagingdirectory)/publish'
+      artifactName: '${{ parameters.SolutionBaseName }}'

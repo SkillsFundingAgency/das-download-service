@@ -1,30 +1,27 @@
 ﻿using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using SFA.DAS.DownloadService.Settings;
 using StackExchange.Redis;
-
 
 namespace SFA.DAS.DownloadService.Api.Infrastructure
 {
     public static class DataProtectionStartupExtensions
     {
-        public static IServiceCollection AddDataProtection(this IServiceCollection services, IWebConfiguration configuration, IHostingEnvironment environment)
+        public static IServiceCollection AddDataProtection(this IServiceCollection services, IWebConfiguration configuration, IWebHostEnvironment environment)
         {
-            if (!environment.IsDevelopment())
+            if (!environment.IsDevelopment() && configuration != null)
             {
-                if (configuration != null)
-                {
-                    var redisConnectionString = configuration.RedisConnectionString;
-                    var dataProtectionKeysDatabase = configuration.DataProtectionKeysDatabase;
+                var redisConnectionString = configuration.RedisConnectionString;
+                var dataProtectionKeysDatabase = configuration.DataProtectionKeysDatabase;
 
-                    var redis = ConnectionMultiplexer
-                        .Connect($"{redisConnectionString},{dataProtectionKeysDatabase}");
+                var redis = ConnectionMultiplexer
+                    .Connect($"{redisConnectionString},{dataProtectionKeysDatabase}");
 
-                    services.AddDataProtection()
-                        .SetApplicationName("das-download-service")
-                        .PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
-                }
+                services.AddDataProtection()
+                    .SetApplicationName("das-download-service")
+                    .PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
             }
             return services;
         }

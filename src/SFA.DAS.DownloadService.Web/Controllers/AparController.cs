@@ -1,16 +1,18 @@
-﻿using CsvHelper;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Api.Types;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Utility;
 using SFA.DAS.DownloadService.Web.Models;
-using SFA.DAS.DownloadService.Api.Client.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.DownloadService.Web.Controllers
 {
@@ -34,7 +36,6 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         [ResponseCache(Duration = 600)]
         public async Task<IActionResult> Index()
         {
-            
             DateTime? date;
             try
             {
@@ -42,7 +43,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("Unable to retrieve results for latest non-onboarding organisation change", ex);
+                _logger.LogError(ex, "Unable to retrieve results for latest non-onboarding organisation change");
                 date = DateTime.Now;
             }
 
@@ -69,43 +70,37 @@ namespace SFA.DAS.DownloadService.Web.Controllers
                     return RedirectToAction("ServiceUnavailable");
                 }
 
-                _logger.LogDebug($"{apar.Count()} results from GetAparSummary");
+                _logger.LogDebug("{aparCount} results from GetAparSummary", apar.Count());
 
                 var aparFiltered = apar.Where(x => x.IsDateValid(DateTime.Now));
 
-                _logger.LogDebug($"{aparFiltered.Count()} results filtered from GetAparSummary");
+                _logger.LogDebug("{aparFilteredCount} results filtered from GetAparSummary", aparFiltered.Count());
 
                 aparCsv = _mapper.MapCsv(aparFiltered.ToList());
 
-                _logger.LogDebug($"{aparCsv.Count} apar entries mapped to CSV-ready state");
+                _logger.LogDebug("{aparCsvCount} apar entries mapped to CSV-ready state", aparCsv.Count);
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Unable to retrieve results for getting all APAR details, message: [{ex.Message}]", ex);
-                throw; 
+                throw;
             }
 
             var date = await _downloadServiceApiClient.GetLatestNonOnboardingOrganisationChangeDate() ?? DateTime.Now;
 
-            using (var memoryStream = new MemoryStream())
-            {
-                using (var streamWriter = new StreamWriter(memoryStream))
-                {
-                    using (var csvWriter = new CsvWriter(streamWriter))
-                    {
-                        csvWriter.Configuration.Delimiter = ",";
-                        csvWriter.WriteRecords(aparCsv);
+            using var memoryStream = new MemoryStream();
+            using var streamWriter = new StreamWriter(memoryStream);
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = "," };
+            using var csvWriter = new CsvWriter(streamWriter, config);
+            csvWriter.WriteRecords(aparCsv);
 
-                        await streamWriter.FlushAsync();
-                        memoryStream.Position = 0;
-                        return File(memoryStream.ToArray(), "text/csv", GenerateFilename(date));
-                    }
-                }
-            }
+            await streamWriter.FlushAsync();
+            memoryStream.Position = 0;
+            return File(memoryStream.ToArray(), "text/csv", GenerateFilename(date));
         }
 
         [Route("roatp")]
-        public IActionResult IndexRoapt()
+        public IActionResult IndexRoatp()
         {
             _logger.LogWarning("Deprecated endpoint 'roatp' called for AparController");
             return RedirectToRoute(RouteAparGetIndex);

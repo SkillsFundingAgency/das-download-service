@@ -1,39 +1,37 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
+using SFA.DAS.DownloadService.Api.Client;
+using SFA.DAS.DownloadService.Api.Client.Clients;
+using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Services;
 using SFA.DAS.DownloadService.Settings;
 using SFA.DAS.DownloadService.Web.Infrastructure;
-using SFA.DAS.DownloadService.Api.Client;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using SFA.DAS.DownloadService.Api.Client.Interfaces;
-using SFA.DAS.DownloadService.Api.Client.Clients;
 
 namespace SFA.DAS.DownloadService.Web
 {
     public class Startup
     {
-        private const string ServiceName = "SFA.DAS.DownloadService";
-        private const string Version = "1.0";
+        private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly IConfigurationRoot _configuration;
 
-        private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly IConfiguration Configuration;
-        private readonly ILogger<Startup> _logger;
-        
         private IWebConfiguration ApplicationConfiguration { get; set; }
 
-        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment, ILogger<Startup> logger)
+        public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
-            Configuration = configuration;
             _hostingEnvironment = hostingEnvironment;
-            _logger = logger;
+            var config = new ConfigurationBuilder()
+                .AddConfiguration(configuration)
+                .AddStorageConfiguration(configuration);
+
+            _configuration = config.Build();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -46,7 +44,7 @@ namespace SFA.DAS.DownloadService.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+            ApplicationConfiguration = _configuration.GetSection(nameof(WebConfiguration)).Get<WebConfiguration>();
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -60,25 +58,26 @@ namespace SFA.DAS.DownloadService.Web
                 config.BaseAddress = new Uri(ApplicationConfiguration.DownloadServiceApiAuthentication.ApiBaseAddress);
             });
 
+            services.AddLogging();
+            services.AddApplicationInsightsTelemetry();
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc();
             services.AddDataProtection(ApplicationConfiguration, _hostingEnvironment);
 
             ConfigureDependencyInjection(services);
         }
 
-        private void  ConfigureDependencyInjection(IServiceCollection services)
+        private void ConfigureDependencyInjection(IServiceCollection services)
         {
-            services.AddTransient<IAparMapper,AparMapper>();
+            services.AddTransient<IAparMapper, AparMapper>();
             services.AddTransient(x => ApplicationConfiguration);
             services.AddTransient<IDownloadServiceTokenService, TokenService>(serviceProvider =>
                 new TokenService(ApplicationConfiguration.DownloadServiceApiAuthentication));
         }
 
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -92,16 +91,15 @@ namespace SFA.DAS.DownloadService.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UseRouting();
             app.UseSession();
             app.UseHealthChecks("/ping");
             app.UseRequestLocalization();
-
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller}/{action}/{id?}",
-                    defaults: new { controller = "Home", action = "Index" });
+                endpoints.MapControllerRoute(
+                    "default",
+                    "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

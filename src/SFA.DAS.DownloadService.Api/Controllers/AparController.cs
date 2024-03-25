@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Api.Infrastructure;
@@ -7,12 +12,7 @@ using SFA.DAS.DownloadService.Api.Types.Assessor;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
-using Swashbuckle.AspNetCore.Examples;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace SFA.DAS.DownloadService.Api.Controllers
 {
@@ -44,9 +44,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         /// <param name="ukprn">The Ukprn to check in the APAR</param>
         /// <returns></returns>
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
-        [SwaggerResponse((int)HttpStatusCode.NotFound)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Invalid UKPRN (should be 8 numbers long)")]
-        [SwaggerOperation("GetOk", "Check a UKPRN exists in the APAR", Produces = new string[] { "application/json" })]
+        [SwaggerOperation("GetOk", "Check a UKPRN exists in the APAR")]
         [HttpHead("providers/{ukprn}")]
         public async Task<IActionResult> Head(int ukprn)
         {
@@ -77,7 +75,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "OK", typeof(UkprnAparEntry))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, "APAR entry not found or start date in future")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, "Invalid UKPRN (should be 8 numbers long)")]
-        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.UkpnrAparExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.UkprnAparExample))]
         [HttpGet("providers/{ukprn}")]
         public async Task<IActionResult> Get(int ukprn)
         {
@@ -107,7 +105,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
             catch (Exception ex)
             {
                 var message = $"Unable to fetch APAR entries from ROATP or EPAO with UKPRN: {ukprn}";
-                _log.LogError(message, ex);
+                _log.LogError(ex, message);
                 return StatusCode(500, message);
             }
 
@@ -151,8 +149,8 @@ namespace SFA.DAS.DownloadService.Api.Controllers
             }
             catch (Exception ex)
             {
-                var message = "Unable to fetch latest APAR summary change date";
-                _log.LogError(message, ex);
+                const string message = "Unable to fetch latest APAR summary change date";
+                _log.LogError(ex, message);
                 return StatusCode(500, message);
             }
 
@@ -197,8 +195,8 @@ namespace SFA.DAS.DownloadService.Api.Controllers
             }
             catch (Exception ex)
             {
-                var message = "Unable to fetch APAR entries from ROATP or EPAO";
-                _log.LogError(message, ex);
+                const string message = "Unable to fetch APAR entries from ROATP or EPAO";
+                _log.LogError(ex, message);
                 return StatusCode(500, message);
             }
         }

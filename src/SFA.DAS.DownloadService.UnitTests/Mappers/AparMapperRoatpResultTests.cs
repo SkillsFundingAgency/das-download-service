@@ -1,9 +1,10 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Collections.Generic;
+using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using SFA.DAS.DownloadService.Api.Types;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Services.Services;
-using System;
-using System.Collections.Generic;
 
 namespace SFA.DAS.DownloadService.UnitTests.Mappers
 {
@@ -41,16 +42,16 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
             var result = _mapper.Map(roatpResult, uriResolver);
 
             // Assert
-            Assert.Multiple(() =>
+            ClassicAssert.Multiple(() =>
             {
-                Assert.NotNull(result);
-                Assert.AreEqual(12345678, result.Ukprn);
-                Assert.AreEqual("Org1", result.Name);
-                Assert.AreEqual("http://example.com/12345678", result.Uri);
-                Assert.AreEqual(AparEntryType.MainProvider, result.ApplicationType);
-                Assert.AreEqual(startDate.AddMonths(-1), result.StartDate);
-                Assert.AreEqual(applicationDeterminedDate.AddMonths(-2), result.ApplicationDeterminedDate);
-                Assert.AreEqual(expectedCurrentlyNotStartingNewApprentices, result.CurrentlyNotStartingNewApprentices);
+                ClassicAssert.NotNull(result);
+                ClassicAssert.AreEqual(12345678, result.Ukprn);
+                ClassicAssert.AreEqual("Org1", result.Name);
+                ClassicAssert.AreEqual("http://example.com/12345678", result.Uri);
+                ClassicAssert.AreEqual(AparEntryType.MainProvider, result.ApplicationType);
+                ClassicAssert.AreEqual(startDate.AddMonths(-1), result.StartDate);
+                ClassicAssert.AreEqual(applicationDeterminedDate.AddMonths(-2), result.ApplicationDeterminedDate);
+                ClassicAssert.AreEqual(expectedCurrentlyNotStartingNewApprentices, result.CurrentlyNotStartingNewApprentices);
             });
         }
 
@@ -65,7 +66,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
             var result = _mapper.Map(roatpResult, uriResolver);
 
             // Assert
-            Assert.IsNull(result);
+            ClassicAssert.IsNull(result);
         }
 
         [Test]
@@ -79,7 +80,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
             var result = _mapper.Map(roatpResult, uriResolver);
 
             // Assert
-            Assert.IsNull(result);
+            ClassicAssert.IsNull(result);
         }
 
         [Test]
@@ -119,39 +120,39 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
                     ProviderNotCurrentlyStartingNewApprentices = null,
                 }
             };
-            
+
             Func<long, string> uriResolver = ukprn => $"http://example.com/{ukprn}";
 
             // Act
             var results = _mapper.Map(roatpResults, uriResolver);
 
             // Assert
-            Assert.Multiple(() =>
+            ClassicAssert.Multiple(() =>
             {
-                Assert.NotNull(results);
-                Assert.AreEqual(12345678, results[0].Ukprn);
-                Assert.AreEqual("Org1", results[0].Name);
-                Assert.AreEqual("http://example.com/12345678", results[0].Uri);
-                Assert.AreEqual(AparEntryType.MainProvider, results[0].ApplicationType);
-                Assert.AreEqual(startDate.AddMonths(-1), results[0].StartDate);
-                Assert.AreEqual(applicationDeterminedDate.AddMonths(-2), results[0].ApplicationDeterminedDate);
-                Assert.IsFalse(results[0].CurrentlyNotStartingNewApprentices);
+                ClassicAssert.NotNull(results);
+                ClassicAssert.AreEqual(12345678, results[0].Ukprn);
+                ClassicAssert.AreEqual("Org1", results[0].Name);
+                ClassicAssert.AreEqual("http://example.com/12345678", results[0].Uri);
+                ClassicAssert.AreEqual(AparEntryType.MainProvider, results[0].ApplicationType);
+                ClassicAssert.AreEqual(startDate.AddMonths(-1), results[0].StartDate);
+                ClassicAssert.AreEqual(applicationDeterminedDate.AddMonths(-2), results[0].ApplicationDeterminedDate);
+                ClassicAssert.IsFalse(results[0].CurrentlyNotStartingNewApprentices);
 
-                Assert.AreEqual(23456789, results[1].Ukprn);
-                Assert.AreEqual("Org2", results[1].Name);
-                Assert.AreEqual("http://example.com/23456789", results[1].Uri);
-                Assert.AreEqual(AparEntryType.EmployerProvider, results[1].ApplicationType);
-                Assert.AreEqual(startDate.AddMonths(-2), results[1].StartDate);
-                Assert.AreEqual(applicationDeterminedDate.AddMonths(-3), results[1].ApplicationDeterminedDate);
-                Assert.IsTrue(results[1].CurrentlyNotStartingNewApprentices);
+                ClassicAssert.AreEqual(23456789, results[1].Ukprn);
+                ClassicAssert.AreEqual("Org2", results[1].Name);
+                ClassicAssert.AreEqual("http://example.com/23456789", results[1].Uri);
+                ClassicAssert.AreEqual(AparEntryType.EmployerProvider, results[1].ApplicationType);
+                ClassicAssert.AreEqual(startDate.AddMonths(-2), results[1].StartDate);
+                ClassicAssert.AreEqual(applicationDeterminedDate.AddMonths(-3), results[1].ApplicationDeterminedDate);
+                ClassicAssert.IsTrue(results[1].CurrentlyNotStartingNewApprentices);
 
-                Assert.AreEqual(34567890, results[2].Ukprn);
-                Assert.AreEqual("Org3", results[2].Name);
-                Assert.AreEqual("http://example.com/34567890", results[2].Uri);
-                Assert.AreEqual(AparEntryType.SupportingProvider, results[2].ApplicationType);
-                Assert.AreEqual(startDate.AddMonths(-3), results[2].StartDate);
-                Assert.AreEqual(applicationDeterminedDate.AddMonths(-4), results[2].ApplicationDeterminedDate);
-                Assert.IsFalse(results[2].CurrentlyNotStartingNewApprentices);
+                ClassicAssert.AreEqual(34567890, results[2].Ukprn);
+                ClassicAssert.AreEqual("Org3", results[2].Name);
+                ClassicAssert.AreEqual("http://example.com/34567890", results[2].Uri);
+                ClassicAssert.AreEqual(AparEntryType.SupportingProvider, results[2].ApplicationType);
+                ClassicAssert.AreEqual(startDate.AddMonths(-3), results[2].StartDate);
+                ClassicAssert.AreEqual(applicationDeterminedDate.AddMonths(-4), results[2].ApplicationDeterminedDate);
+                ClassicAssert.IsFalse(results[2].CurrentlyNotStartingNewApprentices);
             });
         }
     }
