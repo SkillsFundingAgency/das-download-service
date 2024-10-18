@@ -39,7 +39,6 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
             _mockMapper = new Mock<IAparMapper>();
             _mockRoatpApiClient.Setup(z => z.GetRoatpSummaryByUkprn(It.IsAny<int>())).ReturnsAsync((IEnumerable<RoatpResult>)null);
             _mockRoatpApiClient.Setup(z => z.GetRoatpSummary()).ReturnsAsync((IEnumerable<RoatpResult>)null);
-            _mockDateTimeProvider.Setup(z => z.GetCurrentDateTime()).Returns(DateTime.Parse("01/01/1900"));
 
             HttpContextRequest = new Mock<HttpRequest>();
             HttpContextRequest.Setup(r => r.Method).Returns("GET");
@@ -91,29 +90,41 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
         public async Task Get_ReturnsOk_WhenResultsFound()
         {
             // Arrange
-            var validUkprn = 12345678;
+            _mockDateTimeProvider.Setup(z => z.GetCurrentDateTime()).Returns(new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+
+            var roatpResult = new RoatpResult
+            {
+                Ukprn = 12345678.ToString(),
+                StartDate = _mockDateTimeProvider.Object.GetCurrentDateTime().AddMonths(-1),
+                EndDate = _mockDateTimeProvider.Object.GetCurrentDateTime().AddMonths(1)
+            };
 
             // Set up the mocks to return results
             _mockRoatpApiClient.Setup(x => x.GetRoatpSummaryByUkprn(It.IsAny<int>()))
-                .ReturnsAsync(new List<RoatpResult> { new RoatpResult() });
+                .ReturnsAsync(new List<RoatpResult> { roatpResult });
+
             _mockMapper.Setup(x => x.Map(It.IsAny<RoatpResult>(), It.IsAny<Func<long, string>>()))
-                .Returns(new UkprnAparEntry());
+                .Returns(new UkprnAparEntry 
+                {
+                    Ukprn = long.Parse(roatpResult.Ukprn),
+                    StartDate = roatpResult.StartDate
+                });
 
             // Act
-            var result = await _controller.Get(validUkprn);
+            var result = await _controller.Get(int.Parse(roatpResult.Ukprn));
 
             // Assert
             Assert.IsInstanceOf<OkObjectResult>(result);
         }
 
-        [TestCase("01/01/2000", "01/01/2222", "01/01/2222")]
-        [TestCase("01/01/2222", "01/01/2001", "01/01/2222")]
-        [TestCase("01/01/2000", null, "01/01/2000")]
-        [TestCase(null, "01/01/2000", "01/01/2000")]
-        [TestCase(null, null, "01/01/1900")]
-        public async Task GetLatestTime_ReturnsCorrectDateTime(DateTime? roatpDate, DateTime? aparDate, DateTime expected)
+        [TestCase("01/01/2000", "01/01/2000")]
+        [TestCase("01/01/2222", "01/01/2222")]
+        [TestCase(null, "01/01/1900")]
+        public async Task GetLatestTime_ReturnsCorrectDateTime(DateTime? roatpDate, DateTime expected)
         {
             // Arrange
+            _mockDateTimeProvider.Setup(z => z.GetCurrentDateTime()).Returns(new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+
             _mockRoatpApiClient.Setup(x => x.GetLatestNonOnboardingOrganisationChangeDate())
                 .ReturnsAsync(roatpDate);
 

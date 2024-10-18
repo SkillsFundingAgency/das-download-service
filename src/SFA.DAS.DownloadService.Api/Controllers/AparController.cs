@@ -88,7 +88,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
             try
             {
                 var roatpResult = (await _roatpApiClient.GetRoatpSummaryByUkprn(ukprn))
-                    .FirstOrDefault(x => x.IsDateValid(DateTime.UtcNow));
+                    .FirstOrDefault(x => x.IsDateValid(_dateTimeProvider.GetCurrentDateTime()));
 
                 if (roatpResult == null)
                 {
@@ -151,7 +151,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
                 var roatpData = await _roatpApiClient.GetRoatpSummary() ?? Enumerable.Empty<RoatpResult>();
 
                 var roatpResults = roatpData
-                    .Where(x => x.IsDateValid(DateTime.UtcNow))
+                    .Where(x => x.IsDateValid(_dateTimeProvider.GetCurrentDateTime()))
                     .ToList();
 
                 var apprenticeshipProviders = _mapper.Map(roatpResults, Resolve).Where(p => p != null);
