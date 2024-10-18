@@ -90,11 +90,6 @@ namespace SFA.DAS.DownloadService.Api
                 options.RequestCultureProviders.Clear();
             });
 
-            services.AddHttpClient<IAssessorApiClient, AssessorApiClient>("AssessorApiClient", config =>
-            {
-                config.BaseAddress = new Uri(ApplicationConfiguration.AssessorApiAuthentication.ApiBaseAddress);
-            });
-
             services.AddHttpClient<IRoatpApiClient, RoatpApiClient>("RoatpApiClient", config =>
             {
                 config.BaseAddress = new Uri(ApplicationConfiguration.RoatpApiAuthentication.ApiBaseAddress);
@@ -112,9 +107,6 @@ namespace SFA.DAS.DownloadService.Api
         {
             services.AddTransient<IAparMapper, AparMapper>();
             services.AddTransient(x => ApplicationConfiguration);
-
-            services.AddTransient<IAssessorTokenService, TokenService>(serviceProvider => 
-                new TokenService(ApplicationConfiguration.AssessorApiAuthentication));
 
             services.AddTransient<IRoatpTokenService, TokenService>(serviceProvider =>
                 new TokenService(ApplicationConfiguration.RoatpApiAuthentication));

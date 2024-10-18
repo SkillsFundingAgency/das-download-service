@@ -1,5 +1,4 @@
 ﻿using SFA.DAS.DownloadService.Api.Types;
-using SFA.DAS.DownloadService.Api.Types.Assessor;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Utility;
@@ -29,9 +28,9 @@ namespace SFA.DAS.DownloadService.Services.Services
                 Ukprn = ukprn,
                 Name = roatpResult.OrganisationName,
                 Uri = uriResolver(ukprn),
-                ApplicationType = MapAparEntryType(roatpResult?.ApplicationType),
-                StartDate = roatpResult?.StartDate,
-                ApplicationDeterminedDate = roatpResult?.ApplicationDeterminedDate,
+                ApplicationType = MapAparEntryType(roatpResult.ApplicationType),
+                StartDate = roatpResult.StartDate,
+                ApplicationDeterminedDate = roatpResult.ApplicationDeterminedDate,
                 CurrentlyNotStartingNewApprentices = roatpResult.ProviderNotCurrentlyStartingNewApprentices != null,
             };
         }
@@ -39,54 +38,6 @@ namespace SFA.DAS.DownloadService.Services.Services
         public List<AparEntry> Map(List<RoatpResult> roatpResults, Func<long, string> uriResolver)
         {
             return roatpResults?.Select(roatpResult => Map(roatpResult, uriResolver)).ToList();
-        }
-
-        public AparEntry Map(EpaoResult epaoResult, Func<long, string> uriResolver)
-        {
-            if (epaoResult == null)
-                return null;
-
-            return new AparEntry
-            {
-                Ukprn = epaoResult.Ukprn,
-                Name = epaoResult.Name,
-                Uri = uriResolver(epaoResult.Ukprn),
-                ApplicationType = AparEntryType.EPAO,
-                StartDate = epaoResult.EarliestEffectiveFromDate,
-                ApplicationDeterminedDate = epaoResult.EarliestDateStandardApprovedOnRegister,
-                CurrentlyNotStartingNewApprentices = null
-            };
-        }
-
-        public List<AparEntry> Map(List<EpaoResult> epaoResults, Func<long, string> uriResolver)
-        {
-            return epaoResults?.Select(epaoResult => Map(epaoResult, uriResolver)).ToList();
-        }
-
-        public UkprnAparEntry Map(RoatpResult roatpResult, EpaoResult epaoResult, Func<long, string> uriResolver)
-        {
-            UkprnAparEntry ukprnAparEntry = null;
-            if (roatpResult != null)
-            {
-                ukprnAparEntry = UkprnAparEntry.FromAparEntry(Map(roatpResult, uriResolver));
-            }
-
-            if (ukprnAparEntry == null && epaoResult != null)
-            {
-                ukprnAparEntry = UkprnAparEntry.FromAparEntry(Map(epaoResult, uriResolver));
-            }
-
-            if (ukprnAparEntry != null && epaoResult != null)
-            {
-                ukprnAparEntry.Epao = new Epao
-                {
-                    Name = epaoResult.Name,
-                    StartDate = epaoResult.EarliestEffectiveFromDate,
-                    ApplicationDeterminedDate = epaoResult.EarliestDateStandardApprovedOnRegister
-                };
-            }
-
-            return ukprnAparEntry;
         }
 
         public CsvAparEntry MapCsv(AparEntry aparEntry)

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.DownloadService.Api.Client
 {
-    public class TokenService : IAssessorTokenService, IRoatpTokenService, IDownloadServiceTokenService
+    public class TokenService : IRoatpTokenService, IDownloadServiceTokenService
     {
         private readonly IManagedIdentityApiAuthentication _apiAuthentication;
 
@@ -37,16 +37,14 @@ namespace SFA.DAS.DownloadService.Api.Client
 
                 return result.AccessToken;
             }
-            else if (_apiAuthentication is IManagedIdentityApiAuthentication managedIdentityApiAuthenication)
+            else
             {
                 var defaultAzureCredential = new DefaultAzureCredential();
                 var result = await defaultAzureCredential.GetTokenAsync(
-                    new TokenRequestContext(scopes: new string[] { managedIdentityApiAuthenication.Identifier + "/.default" }) { });
+                    new TokenRequestContext(scopes: new string[] { _apiAuthentication.Identifier + "/.default" }) { });
 
                 return result.Token;
             }
-
-            return string.Empty;
         }
     }
 }
