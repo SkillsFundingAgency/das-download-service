@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using SFA.DAS.DownloadService.Api.Client;
 using SFA.DAS.DownloadService.Api.Client.Clients;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
@@ -15,12 +19,6 @@ using SFA.DAS.DownloadService.Services.Services;
 using SFA.DAS.DownloadService.Settings;
 using Swashbuckle.AspNetCore.Examples;
 using Swashbuckle.AspNetCore.Swagger;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
 
 namespace SFA.DAS.DownloadService.Api
 {
@@ -76,13 +74,6 @@ namespace SFA.DAS.DownloadService.Api
 
             ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
-            // The authentication of the API has been added but disabled as this is a public API which only
-            // exposes data which is already in the public domain, this does not follow the standard APIM
-            // pattern by design - following the standard pattern would be tech debt - when that is addressed
-            // the authentication below could be re-enabled to make this API a secured internal API
-            //services.AddApiAuthorization(_hostingEnvironment);
-            //services.AddApiAuthentication(ApplicationConfiguration.ApiAuthentication);
-
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
@@ -115,7 +106,7 @@ namespace SFA.DAS.DownloadService.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public static void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {

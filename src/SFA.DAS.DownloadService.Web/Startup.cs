@@ -1,20 +1,16 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Services;
 using SFA.DAS.DownloadService.Settings;
 using SFA.DAS.DownloadService.Web.Infrastructure;
-using SFA.DAS.DownloadService.Api.Client;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using SFA.DAS.DownloadService.Api.Client.Interfaces;
-using SFA.DAS.DownloadService.Api.Client.Clients;
 
 namespace SFA.DAS.DownloadService.Web
 {
@@ -25,15 +21,13 @@ namespace SFA.DAS.DownloadService.Web
 
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IConfiguration Configuration;
-        private readonly ILogger<Startup> _logger;
         
         private IWebConfiguration ApplicationConfiguration { get; set; }
 
-        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment, ILogger<Startup> logger)
+        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
             Configuration = configuration;
             _hostingEnvironment = hostingEnvironment;
-            _logger = logger;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -55,11 +49,6 @@ namespace SFA.DAS.DownloadService.Web
                 options.RequestCultureProviders.Clear();
             });
 
-            services.AddHttpClient<IDownloadServiceApiClient, DownloadServiceApiClient>("DownloadServiceApiClient", config =>
-            {
-                config.BaseAddress = new Uri(ApplicationConfiguration.DownloadServiceApiAuthentication.ApiBaseAddress);
-            });
-
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -72,8 +61,6 @@ namespace SFA.DAS.DownloadService.Web
         {
             services.AddTransient<IAparMapper,AparMapper>();
             services.AddTransient(x => ApplicationConfiguration);
-            services.AddTransient<IDownloadServiceTokenService, TokenService>(serviceProvider =>
-                new TokenService(ApplicationConfiguration.DownloadServiceApiAuthentication));
         }
 
 

@@ -10,8 +10,8 @@ namespace SFA.DAS.DownloadService.Api.Client.Clients
 {
     public class DownloadServiceApiClient : ApiClientBase, IDownloadServiceApiClient
     {
-        public DownloadServiceApiClient(HttpClient httpClient, IDownloadServiceTokenService tokenService, ILogger<ApiClientBase> logger)
-            : base(httpClient, tokenService, logger)
+        public DownloadServiceApiClient(HttpClient httpClient, ILogger<DownloadServiceApiClient> logger)
+            : base(httpClient, null, logger)
         {
         }
 
