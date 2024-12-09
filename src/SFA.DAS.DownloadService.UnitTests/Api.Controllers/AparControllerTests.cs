@@ -11,7 +11,6 @@ using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Net;
-using SFA.DAS.DownloadService.Api.Types.Assessor;
 using System.Threading.Tasks;
 using SFA.DAS.DownloadService.Api.Infrastructure;
 
@@ -23,7 +22,6 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
         private AparController _controller;
         private Mock<ILogger<AparController>> _mockLogger;
         private Mock<IRoatpApiClient> _mockRoatpApiClient;
-        private Mock<IAssessorApiClient> _mockAssessorApiClient;
         private Mock<IAparMapper> _mockMapper;
         private Mock<IDateTimeProvider> _mockDateTimeProvider;
 
@@ -36,13 +34,11 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
         {
             _mockLogger = new Mock<ILogger<AparController>>();
             _mockRoatpApiClient = new Mock<IRoatpApiClient>();
-            _mockAssessorApiClient = new Mock<IAssessorApiClient>();
             _mockDateTimeProvider = new Mock<IDateTimeProvider>();
 
             _mockMapper = new Mock<IAparMapper>();
             _mockRoatpApiClient.Setup(z => z.GetRoatpSummaryByUkprn(It.IsAny<int>())).ReturnsAsync((IEnumerable<RoatpResult>)null);
             _mockRoatpApiClient.Setup(z => z.GetRoatpSummary()).ReturnsAsync((IEnumerable<RoatpResult>)null);
-            _mockDateTimeProvider.Setup(z => z.GetCurrentDateTime()).Returns(DateTime.Parse("01/01/1900"));
 
             HttpContextRequest = new Mock<HttpRequest>();
             HttpContextRequest.Setup(r => r.Method).Returns("GET");
@@ -50,7 +46,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
             HttpContext.Setup(x => x.Request.Scheme).Returns("http");
             HttpContext.Setup(x => x.Request.Host).Returns(new HostString("localhost"));
 
-            _controller = new AparController(_mockLogger.Object, _mockRoatpApiClient.Object, _mockAssessorApiClient.Object, _mockMapper.Object, _mockDateTimeProvider.Object);
+            _controller = new AparController(_mockRoatpApiClient.Object, _mockMapper.Object, _mockDateTimeProvider.Object, _mockLogger.Object);
 
             _controller.ControllerContext = new ControllerContext();
             _controller.ControllerContext.HttpContext = HttpContext.Object;
@@ -82,9 +78,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
             // Set up the mocks to return no results
             _mockRoatpApiClient.Setup(x => x.GetRoatpSummaryByUkprn(It.IsAny<int>()))
                 .ReturnsAsync(new List<RoatpResult>());
-            _mockAssessorApiClient.Setup(x => x.GetAparSummaryByUkprn(It.IsAny<int>()))
-                .ReturnsAsync((EpaoResult)null);
-
+            
             // Act
             var result = await _controller.Get(validUkprn);
 
@@ -96,33 +90,41 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
         public async Task Get_ReturnsOk_WhenResultsFound()
         {
             // Arrange
-            var validUkprn = 12345678;
+            _mockDateTimeProvider.Setup(z => z.GetCurrentDateTime()).Returns(new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+
+            var roatpResult = new RoatpResult
+            {
+                Ukprn = 12345678.ToString(),
+                StartDate = _mockDateTimeProvider.Object.GetCurrentDateTime().AddMonths(-1),
+                EndDate = _mockDateTimeProvider.Object.GetCurrentDateTime().AddMonths(1)
+            };
 
             // Set up the mocks to return results
             _mockRoatpApiClient.Setup(x => x.GetRoatpSummaryByUkprn(It.IsAny<int>()))
-                .ReturnsAsync(new List<RoatpResult> { new RoatpResult() });
-            _mockAssessorApiClient.Setup(x => x.GetAparSummaryByUkprn(It.IsAny<int>()))
-                .ReturnsAsync(new EpaoResult());
-            _mockMapper.Setup(x => x.Map(It.IsAny<RoatpResult>(), It.IsAny<EpaoResult>(), It.IsAny<Func<long, string>>()))
-                .Returns(new UkprnAparEntry());
+                .ReturnsAsync(new List<RoatpResult> { roatpResult });
+
+            _mockMapper.Setup(x => x.Map(It.IsAny<RoatpResult>(), It.IsAny<Func<long, string>>()))
+                .Returns(new UkprnAparEntry 
+                {
+                    Ukprn = long.Parse(roatpResult.Ukprn),
+                    StartDate = roatpResult.StartDate
+                });
 
             // Act
-            var result = await _controller.Get(validUkprn);
+            var result = await _controller.Get(int.Parse(roatpResult.Ukprn));
 
             // Assert
             Assert.IsInstanceOf<OkObjectResult>(result);
         }
 
-        [TestCase("01/01/2000", "01/01/2222", "01/01/2222")]
-        [TestCase("01/01/2222", "01/01/2001", "01/01/2222")]
-        [TestCase("01/01/2000", null, "01/01/2000")]
-        [TestCase(null, "01/01/2000", "01/01/2000")]
-        [TestCase(null, null, "01/01/1900")]
-        public async Task GetLatestTime_ReturnsCorrectDateTime(DateTime? roatpDate, DateTime? aparDate, DateTime expected)
+        [TestCase("01/01/2000", "01/01/2000")]
+        [TestCase("01/01/2222", "01/01/2222")]
+        [TestCase(null, "01/01/1900")]
+        public async Task GetLatestTime_ReturnsCorrectDateTime(DateTime? roatpDate, DateTime expected)
         {
             // Arrange
-            _mockAssessorApiClient.Setup(x => x.GetAparSummaryLastUpdated())
-                .ReturnsAsync(aparDate);
+            _mockDateTimeProvider.Setup(z => z.GetCurrentDateTime()).Returns(new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+
             _mockRoatpApiClient.Setup(x => x.GetLatestNonOnboardingOrganisationChangeDate())
                 .ReturnsAsync(roatpDate);
 
@@ -132,6 +134,5 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
             //Assert
             Assert.AreEqual(expected, result.Value);
         }
-
     }
 }

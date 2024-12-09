@@ -49,7 +49,6 @@ namespace SFA.DAS.DownloadService.Api.Client.Clients
                 }
 
                 return await _httpClient.SendAsync(clonedRequest);
-
             });
 
             if (result.StatusCode == HttpStatusCode.OK)

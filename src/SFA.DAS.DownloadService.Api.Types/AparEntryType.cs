@@ -11,8 +11,6 @@ namespace SFA.DAS.DownloadService.Api.Types
         [Description("Supporting provider")]
         SupportingProvider = 2,
         [Description("Employer provider")]
-        EmployerProvider = 3,
-        [Description("EPAO")]
-        EPAO = 4
+        EmployerProvider = 3
     }
 }

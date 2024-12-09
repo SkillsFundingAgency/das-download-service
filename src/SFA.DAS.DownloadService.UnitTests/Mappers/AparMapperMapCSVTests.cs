@@ -66,7 +66,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
                 {
                     Ukprn = 87654321,
                     Name = "TestName2",
-                    ApplicationType = AparEntryType.EPAO,
+                    ApplicationType = AparEntryType.SupportingProvider,
                     StartDate = DateTime.Now,
                     CurrentlyNotStartingNewApprentices = false,
                     ApplicationDeterminedDate = DateTime.Now
@@ -81,6 +81,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
             {
                 Assert.NotNull(results);
                 Assert.AreEqual(2, results.Count);
+
                 Assert.AreEqual(12345678, results[0].Ukprn);
                 Assert.AreEqual("TestName1", results[0].Name);
                 Assert.AreEqual("Main provider", results[0].ApplicationType);
@@ -88,7 +89,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
 
                 Assert.AreEqual(87654321, results[1].Ukprn);
                 Assert.AreEqual("TestName2", results[1].Name);
-                Assert.AreEqual("EPAO", results[1].ApplicationType);
+                Assert.AreEqual("Supporting provider", results[1].ApplicationType);
                 Assert.AreEqual(string.Empty, results[1].Status);
             });
         }
