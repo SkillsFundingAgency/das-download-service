@@ -20,6 +20,9 @@
         "description": "The connection string to connect to the table configuration storage account."
       }
     },
+    "sharedEnvResourceGroup": {
+      "type": "string"
+    },
     "serviceName": {
       "type": "string",
       "metadata": {
