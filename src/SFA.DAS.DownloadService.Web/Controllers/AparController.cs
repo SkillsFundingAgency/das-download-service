@@ -1,16 +1,16 @@
-﻿using CsvHelper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.DownloadService.Api.Types;
-using SFA.DAS.DownloadService.Services.Interfaces;
-using SFA.DAS.DownloadService.Services.Utility;
-using SFA.DAS.DownloadService.Web.Models;
-using SFA.DAS.DownloadService.Api.Client.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.DownloadService.Api.Client.Interfaces;
+using SFA.DAS.DownloadService.Api.Types;
+using SFA.DAS.DownloadService.Services.Interfaces;
+using SFA.DAS.DownloadService.Services.Utility;
+using SFA.DAS.DownloadService.Web.Models;
 
 namespace SFA.DAS.DownloadService.Web.Controllers
 {
@@ -34,7 +34,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         [ResponseCache(Duration = 600)]
         public async Task<IActionResult> Index()
         {
-            
+
             DateTime? date;
             try
             {
@@ -59,7 +59,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
 
             try
             {
-                _logger.LogDebug("Getting results from GetAparSummary");
+                _logger.LogInformation("Getting results from GetAparSummary");
 
                 var apar = await _downloadServiceApiClient.GetAparSummary();
 
@@ -69,20 +69,20 @@ namespace SFA.DAS.DownloadService.Web.Controllers
                     return RedirectToAction("ServiceUnavailable");
                 }
 
-                _logger.LogDebug($"{apar.Count()} results from GetAparSummary");
+                _logger.LogInformation($"{apar.Count()} results from GetAparSummary");
 
                 var aparFiltered = apar.Where(x => x.IsDateValid(DateTime.Now));
 
-                _logger.LogDebug($"{aparFiltered.Count()} results filtered from GetAparSummary");
+                _logger.LogInformation($"{aparFiltered.Count()} results filtered from GetAparSummary");
 
                 aparCsv = _mapper.MapCsv(aparFiltered.ToList());
 
-                _logger.LogDebug($"{aparCsv.Count} apar entries mapped to CSV-ready state");
+                _logger.LogInformation($"{aparCsv.Count} apar entries mapped to CSV-ready state");
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Unable to retrieve results for getting all APAR details, message: [{ex.Message}]", ex);
-                throw; 
+                throw;
             }
 
             var date = await _downloadServiceApiClient.GetLatestNonOnboardingOrganisationChangeDate() ?? DateTime.Now;
