@@ -80,8 +80,8 @@ namespace SFA.DAS.DownloadService.Api.Controllers
 
             if (ukprn.ToString().Length != 8)
             {
-                var message = $"Invalid UKPRN (should be 8 numbers): {ukprn}";
-                _logger.LogInformation(message);
+                var message = "Invalid UKPRN (should be 8 numbers): {ukprn}";
+                _logger.LogInformation(message, ukprn);
                 return BadRequest(message);
             }
 
@@ -92,8 +92,8 @@ namespace SFA.DAS.DownloadService.Api.Controllers
 
                 if (roatpResult == null)
                 {
-                    var message = $"APAR entry from RoATP for UKPRN: {ukprn} is not found or start date in future";
-                    _logger.LogInformation(message);
+                    var message = "APAR entry from RoATP for UKPRN: {ukprn} is not found or start date in future";
+                    _logger.LogInformation(message, ukprn);
                     return NotFound(message);
                 }
 

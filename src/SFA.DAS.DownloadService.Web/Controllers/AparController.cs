@@ -69,15 +69,15 @@ namespace SFA.DAS.DownloadService.Web.Controllers
                     return RedirectToAction("ServiceUnavailable");
                 }
 
-                _logger.LogInformation($"{apar.Count()} results from GetAparSummary");
+                _logger.LogInformation("{apar.Count()} results from GetAparSummary", apar.Count());
 
                 var aparFiltered = apar.Where(x => x.IsDateValid(DateTime.Now));
 
-                _logger.LogInformation($"{aparFiltered.Count()} results filtered from GetAparSummary");
+                _logger.LogInformation("{aparFiltered.Count()} results filtered from GetAparSummary", aparFiltered.Count());
 
                 aparCsv = _mapper.MapCsv(aparFiltered.ToList());
 
-                _logger.LogInformation($"{aparCsv.Count} apar entries mapped to CSV-ready state");
+                _logger.LogInformation("{aparCsv.Count} apar entries mapped to CSV-ready state", aparCsv.Count);
             }
             catch (Exception ex)
             {
