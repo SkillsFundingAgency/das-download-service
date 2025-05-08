@@ -113,7 +113,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         [HttpGet("getLatestTime")]
         public async Task<IActionResult> GetLatestTime()
         {
-            _logger.LogInformation($"Fetching GET latest change date");
+            _logger.LogInformation("Fetching GET latest change date");
 
             DateTime? latestChange = _dateTimeProvider.GetCurrentDateTime();
             try
@@ -144,7 +144,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.AparExample))]
         public async Task<IActionResult> GetAll()
         {
-            _logger.LogInformation($"Fetching APAR entries for all UKPRN's");
+            _logger.LogInformation("Fetching APAR entries for all UKPRN's");
 
             try
             {
