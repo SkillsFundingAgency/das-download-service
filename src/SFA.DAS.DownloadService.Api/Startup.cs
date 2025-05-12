@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 using SFA.DAS.DownloadService.Api.Client;
 using SFA.DAS.DownloadService.Api.Client.Clients;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
@@ -31,7 +33,7 @@ namespace SFA.DAS.DownloadService.Api
         private readonly IHostingEnvironment _hostingEnvironment;
 
         private IWebConfiguration ApplicationConfiguration { get; set; }
-        
+
         public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
             Configuration = configuration;
@@ -90,6 +92,14 @@ namespace SFA.DAS.DownloadService.Api
             services.AddHealthChecks();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDataProtection(ApplicationConfiguration, _hostingEnvironment);
+
+            services.AddLogging(builder =>
+            {
+                builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
+                builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
+            });
+
+            services.AddApplicationInsightsTelemetry();
 
             ConfigureDependencyInjection(services);
         }

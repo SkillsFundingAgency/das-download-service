@@ -29,6 +29,9 @@
         "description": "The name of the service."
       }
     },
+    "sharedEnvResourceGroup": {
+      "type": "string"
+    },
     "sharedFrontEndAppServicePlan": {
       "type": "string",
       "metadata": {

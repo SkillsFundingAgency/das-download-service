@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Api.Infrastructure;
@@ -7,11 +12,6 @@ using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Examples;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.DownloadService.Api.Controllers
 {
@@ -45,7 +45,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         [HttpHead("providers/{ukprn}")]
         public async Task<IActionResult> Head(int ukprn)
         {
-            _logger.LogDebug("Fetching HEAD for UKPRN: {Ukprn}", ukprn);
+            _logger.LogInformation("Fetching HEAD for UKPRN: {Ukprn}", ukprn);
             var resultFromGet = await Get(ukprn);
             return ((ObjectResult)resultFromGet).StatusCode == (int)HttpStatusCode.OK ? NoContent() : resultFromGet;
         }
@@ -76,12 +76,12 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         [HttpGet("providers/{ukprn}")]
         public async Task<IActionResult> Get(int ukprn)
         {
-            _logger.LogDebug("Fetching APAR entries for UKPRN: {Ukprn}", ukprn);
+            _logger.LogInformation("Fetching APAR entries for UKPRN: {Ukprn}", ukprn);
 
             if (ukprn.ToString().Length != 8)
             {
-                var message = $"Invalid UKPRN (should be 8 numbers): {ukprn}";
-                _logger.LogDebug(message);
+                var message = "Invalid UKPRN (should be 8 numbers): {ukprn}";
+                _logger.LogInformation(message, ukprn);
                 return BadRequest(message);
             }
 
@@ -92,8 +92,8 @@ namespace SFA.DAS.DownloadService.Api.Controllers
 
                 if (roatpResult == null)
                 {
-                    var message = $"APAR entry from RoATP for UKPRN: {ukprn} is not found or start date in future";
-                    _logger.LogDebug(message);
+                    var message = "APAR entry from RoATP for UKPRN: {ukprn} is not found or start date in future";
+                    _logger.LogInformation(message, ukprn);
                     return NotFound(message);
                 }
 
@@ -113,7 +113,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         [HttpGet("getLatestTime")]
         public async Task<IActionResult> GetLatestTime()
         {
-            _logger.LogDebug($"Fetching GET latest change date");
+            _logger.LogInformation("Fetching GET latest change date");
 
             DateTime? latestChange = _dateTimeProvider.GetCurrentDateTime();
             try
@@ -144,7 +144,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.AparExample))]
         public async Task<IActionResult> GetAll()
         {
-            _logger.LogDebug($"Fetching APAR entries for all UKPRN's");
+            _logger.LogInformation("Fetching APAR entries for all UKPRN's");
 
             try
             {
