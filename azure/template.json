@@ -1,131 +1,74 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "environmentName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the environment."
-      }
-    },
-    "resourceEnvironmentName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the resource environment."
-      }
-    },
-    "configurationStorageConnectionString": {
-      "type": "securestring",
-      "metadata": {
-        "description": "The connection string to connect to the table configuration storage account."
-      }
-    },
-    "sharedEnvResourceGroup": {
       "type": "string"
     },
     "serviceName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the service."
-      }
+      "type": "string"
+    },
+    "resourceEnvironmentName": {
+      "type": "string"
+    },
+    "configurationStorageConnectionString": {
+      "type": "securestring"
+    },
+    "sharedEnvResourceGroup": {
+      "type": "string"
     },
     "sharedEnvResourceGroup": {
       "type": "string"
     },
     "sharedFrontEndAppServicePlanName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the shared front end App Service Plan."
-      }
+      "type": "string"
     },
     "sharedFrontEndSubnetResourceId": {
-      "type": "string",
-      "metadata": {
-        "description": "The resource id of the shared front end subnet."
-      }
+      "type": "string"
     },
     "sharedBackEndAppServicePlanName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the shared back end App Service Plan."
-      }
+      "type": "string"
     },
     "sharedBackEndSubnetResourceId": {
-      "type": "string",
-      "metadata": {
-        "description": "The resource id of the shared back end subnet."
-      }
+      "type": "string"
     },
     "sharedAppServicePlanResourceGroup": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the resource group where the shared App Service Plans are located."
-      }
+      "type": "string"
     },
     "deployPrivateLinkedScopedResource": {
-            "type": "bool"
+      "type": "bool"
     },
     "backEndAccessRestrictions": {
-      "type": "array",
-      "metadata": {
-        "description": "An array of IPs or subnet resourceIds used to set ipSecurityRestrictions for the API."
-      }
+      "type": "array"
     },
     "frontEndAccessRestrictions": {
-      "type": "array",
-      "metadata": {
-        "description": "An array of IPs or subnet resourceIds used to set ipSecurityRestrictions for the UI."
-      }
+      "type": "array"
     },
     "loggingRedisConnectionString": {
-      "type": "securestring",
-      "metadata": {
-        "description": "The connection string for the Redis logging cache."
-      }
+      "type": "securestring"
     },
     "uiCustomHostName": {
       "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "The DNS hostname for the service."
-      }
+      "defaultValue": ""
     },
     "apiCustomHostName": {
       "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "The DNS hostname for the api service."
-      }
+      "defaultValue": ""
     },
     "uiKeyVaultCertificateName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the certificate stored in the shared keyvault."
-      }
+      "type": "string"
     },
     "apiKeyVaultCertificateName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the certificate stored in the shared keyvault."
-      }
+      "type": "string"
     },
-    "keyVaultName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the shared keyvault."
-      }
+    "sharedKeyVaultName": {
+      "type": "string"
     },
-    "keyVaultResourceGroupName": {
-      "type": "string",
-      "metadata": {
-        "description": "The resource group name of the shared keyvault."
-      }
+    "sharedManagementResourceGroup": {
+      "type": "string"
     },
     "cdnUrl": {
-      "type": "string",
-      "metadata": {
-        "description": "The cdn url for the UI app service"
-      }
+      "type": "string"
     },
     "utcValue": {
       "type": "string",
@@ -135,14 +78,23 @@
   "variables": {
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
     "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
+    "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
     "uiAppServiceName": "[concat(variables('resourceNamePrefix'), '-as')]",
     "apiAppServiceName": "[concat(variables('resourceNamePrefix'), 'api-as')]",
     "privateLinkScopeName": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-shared-ampls'))]"
   },
   "resources": [
     {
+      "apiVersion": "2021-04-01",
+      "name": "[variables('resourceGroupName')]",
+      "type": "Microsoft.Resources/resourceGroups",
+      "location": "[parameters('resourceGroupLocation')]",
+      "tags": "[parameters('tags')]",
+      "properties": {}
+    },
+    {
       "condition": "[greater(length(parameters('apiCustomHostName')), 0)]",
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2021-04-01",
       "name": "[concat('api-app-service-certificate-', parameters('utcValue'))]",
       "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
       "type": "Microsoft.Resources/deployments",
@@ -157,17 +109,17 @@
             "value": "[parameters('apiKeyVaultCertificateName')]"
           },
           "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
+            "value": "[parameters('sharedKeyVaultName')]"
           },
           "keyVaultResourceGroup": {
-            "value": "[parameters('keyVaultResourceGroupName')]"
+            "value": "[parameters('sharedManagementResourceGroup')]"
           }
         }
       }
     },
     {
       "condition": "[greater(length(parameters('uiCustomHostName')), 0)]",
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2021-04-01",
       "name": "[concat('ui-app-service-certificate-', parameters('utcValue'))]",
       "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
       "type": "Microsoft.Resources/deployments",
@@ -182,10 +134,10 @@
             "value": "[parameters('uiKeyVaultCertificateName')]"
           },
           "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
+            "value": "[parameters('sharedKeyVaultName')]"
           },
           "keyVaultResourceGroup": {
-            "value": "[parameters('keyVaultResourceGroupName')]"
+            "value": "[parameters('sharedManagementResourceGroup')]"
           }
         }
       },
@@ -194,7 +146,7 @@
       ]
     },
     {
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2021-04-01",
       "name": "[concat('api-application-insights-', parameters('utcValue'))]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -239,7 +191,7 @@
       }
     },
     {
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2021-04-01",
       "name": "[concat('ui-application-insights-', parameters('utcValue'))]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -284,7 +236,7 @@
       }
     },
     {
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2021-04-01",
       "name": "[concat('api-app-service-', parameters('utcValue'))]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -355,7 +307,7 @@
       ]
     },
     {
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2021-04-01",
       "name": "[concat('ui-app-service-', parameters('utcValue'))]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
