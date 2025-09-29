@@ -20,6 +20,12 @@
     "sharedEnvResourceGroup": {
       "type": "string"
     },
+    "tags": {
+      "type": "object"
+    },
+    "resourceGroupLocation": {
+      "type": "string"
+    },
     "sharedFrontEndAppServicePlanName": {
       "type": "string"
     },
