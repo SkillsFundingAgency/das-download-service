@@ -32,7 +32,7 @@
     "sharedEnvResourceGroup": {
       "type": "string"
     },
-    "sharedFrontEndAppServicePlan": {
+    "sharedFrontEndAppServicePlanName": {
       "type": "string",
       "metadata": {
         "description": "The name of the shared front end App Service Plan."
@@ -369,7 +369,7 @@
             "value": "[variables('uiAppServiceName')]"
           },
           "appServicePlanName": {
-            "value": "[parameters('sharedFrontEndAppServicePlan')]"
+            "value": "[parameters('sharedFrontEndAppServicePlanName')]"
           },
           "appServicePlanResourceGroup": {
             "value": "[parameters('sharedAppServicePlanResourceGroup')]"
