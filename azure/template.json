@@ -44,7 +44,7 @@
         "description": "The resource id of the shared front end subnet."
       }
     },
-    "sharedBackEndAppServicePlan": {
+    "sharedBackEndAppServicePlanName": {
       "type": "string",
       "metadata": {
         "description": "The name of the shared back end App Service Plan."
@@ -298,7 +298,7 @@
             "value": "[variables('apiAppServiceName')]"
           },
           "appServicePlanName": {
-            "value": "[parameters('sharedBackEndAppServicePlan')]"
+            "value": "[parameters('sharedBackEndAppServicePlanName')]"
           },
           "appServicePlanResourceGroup": {
             "value": "[parameters('sharedAppServicePlanResourceGroup')]"
