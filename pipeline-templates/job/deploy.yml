@@ -42,7 +42,8 @@ jobs:
             TargetFileName: '*.schema.json'
             TableName: Configuration
             Version: '2.0'
-            ConfigurationSecrets: {} # remove this if there are no secrets that need to be mapped for config
+            ConfigurationSecrets: 
+              DefaultSessionRedisConnectionString: $(DefaultSessionRedisConnectionString)
         - template: azure-pipelines-templates/deploy/step/app-role-assignments.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.AppRoleAssignmentsServiceConnection }}
