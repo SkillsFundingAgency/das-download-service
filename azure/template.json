@@ -67,10 +67,6 @@
     "sharedKeyVaultName": {
       "type": "string"
     },
-    "logAnalyticsSubscriptionId": {
-      "type": "string",
-      "defaultValue": "[subscription().subscriptionId]"
-    },
     "sharedManagementResourceGroup": {
       "type": "string"
     },
@@ -168,9 +164,6 @@
           },
           "attachedService": {
             "value": "[variables('apiAppServiceName')]"
-          },
-          "logAnalyticsWorkspaceId": {
-            "value": "[resourceId(parameters('logAnalyticsSubscriptionId'),parameters('sharedManagementResourceGroup'),'Microsoft.OperationalInsights/workspaces',parameters('logAnalyticsWorkspaceName'))]"
           }
         },
         "dependsOn": [
@@ -219,9 +212,6 @@
           },
           "attachedService": {
             "value": "[variables('uiAppServiceName')]"
-          },
-          "logAnalyticsWorkspaceId": {
-            "value": "[resourceId(parameters('logAnalyticsSubscriptionId'),parameters('sharedManagementResourceGroup'),'Microsoft.OperationalInsights/workspaces',parameters('logAnalyticsWorkspaceName'))]"
           }
         },
          "dependsOn": [
