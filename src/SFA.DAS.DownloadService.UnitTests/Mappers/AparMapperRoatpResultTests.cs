@@ -28,7 +28,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
 
             var roatpResult = new RoatpResult
             {
-                Ukprn = "12345678",
+                Ukprn = 12345678,
                 OrganisationName = "Org1",
                 ApplicationType = "main provider",
                 StartDate = startDate.AddMonths(-1),
@@ -55,24 +55,10 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
         }
 
         [Test]
-        public void Map_RoatpResultToAparEntry_InvalidUkprn_ReturnsNull()
-        {
-            // Arrange
-            var roatpResult = new RoatpResult { Ukprn = "invalid", OrganisationName = "Org1", ApplicationType = "main provider", StartDate = DateTime.Now };
-            Func<long, string> uriResolver = ukprn => $"http://example.com/{ukprn}";
-
-            // Act
-            var result = _mapper.Map(roatpResult, uriResolver);
-
-            // Assert
-            Assert.IsNull(result);
-        }
-
-        [Test]
         public void Map_RoatpResultToAparEntry_EndDateBeforeToday_ReturnsNull()
         {
             // Arrange
-            var roatpResult = new RoatpResult { Ukprn = "12345678", OrganisationName = "Org1", ApplicationType = "main provider", EndDate = DateTime.Today.AddDays(-1), StartDate = DateTime.Now };
+            var roatpResult = new RoatpResult { Ukprn = 12345678, OrganisationName = "Org1", ApplicationType = "main provider", EndDate = DateTime.Today.AddDays(-1), StartDate = DateTime.Now };
             Func<long, string> uriResolver = ukprn => $"http://example.com/{ukprn}";
 
             // Act
@@ -93,7 +79,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
             {
                 new RoatpResult
                 {
-                    Ukprn = "12345678",
+                    Ukprn = 12345678,
                     OrganisationName = "Org1",
                     ApplicationType = "main provider",
                     StartDate = startDate.AddMonths(-1),
@@ -102,7 +88,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
                 },
                 new RoatpResult
                 {
-                    Ukprn = "23456789",
+                    Ukprn = 23456789,
                     OrganisationName = "Org2",
                     ApplicationType = "employer provider",
                     StartDate = startDate.AddMonths(-2),
@@ -111,7 +97,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
                 },
                 new RoatpResult
                 {
-                    Ukprn = "34567890",
+                    Ukprn = 34567890,
                     OrganisationName = "Org3",
                     ApplicationType = "supporting provider",
                     StartDate = startDate.AddMonths(-3),

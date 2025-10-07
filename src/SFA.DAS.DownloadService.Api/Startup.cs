@@ -13,10 +13,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.OpenApi.Models;
+using Refit;
+using SFA.DAS.Api.Common.Infrastructure;
 using SFA.DAS.DownloadService.Api.Client;
 using SFA.DAS.DownloadService.Api.Client.Clients;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Api.Infrastructure;
+using SFA.DAS.DownloadService.Api.SwaggerHelpers.Examples;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Services;
 using SFA.DAS.DownloadService.Settings;
@@ -73,6 +76,8 @@ namespace SFA.DAS.DownloadService.Api
                 options.EnableAnnotations();
                 options.ExampleFilters();
             });
+            services.AddSwaggerExamplesFromAssemblyOf<AparExample>();
+            services.AddSwaggerExamplesFromAssemblyOf<UkpnrAparExample>();
 
             ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
@@ -83,14 +88,14 @@ namespace SFA.DAS.DownloadService.Api
                 options.RequestCultureProviders.Clear();
             });
 
-            services.AddHttpClient<IRoatpApiClient, RoatpApiClient>("RoatpApiClient", config =>
-            {
-                config.BaseAddress = new Uri(ApplicationConfiguration.RoatpApiAuthentication.ApiBaseAddress);
-            });
+            services.AddRefitClient<IRoatpApiClient>()
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(ApplicationConfiguration.RoatpApiAuthentication.ApiBaseAddress))
+                .AddHttpMessageHandler(() => new InnerApiAuthenticationHeaderHandler(new AzureClientCredentialHelper(), ApplicationConfiguration.RoatpApiAuthentication.Identifier));
 
+            services.AddDistributedMemoryCache();
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddControllers();
             services.AddDataProtection(ApplicationConfiguration, _hostingEnvironment);
 
             services.AddLogging(builder =>
@@ -108,9 +113,6 @@ namespace SFA.DAS.DownloadService.Api
         {
             services.AddTransient<IAparMapper, AparMapper>();
             services.AddTransient(x => ApplicationConfiguration);
-
-            services.AddTransient<IRoatpTokenService, TokenService>(serviceProvider =>
-                new TokenService(ApplicationConfiguration.RoatpApiAuthentication));
 
             services.AddTransient<IDateTimeProvider, DateTimeProvider>();
         }
@@ -141,7 +143,14 @@ namespace SFA.DAS.DownloadService.Api
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Download Service API v1");
                 });
 
-            app.UseMvc();
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }

@@ -14,20 +14,15 @@ namespace SFA.DAS.DownloadService.Services.Services
         {
             if (roatpResult == null)
                 return null;
-            
-            if (!long.TryParse(roatpResult.Ukprn, out long ukprn))
-            {
-                return null;
-            }
 
             if (roatpResult.EndDate != null && roatpResult.EndDate <= DateTime.Today)
                 return null;
 
             return new AparEntry
             {
-                Ukprn = ukprn,
+                Ukprn = roatpResult.Ukprn,
                 Name = roatpResult.OrganisationName,
-                Uri = uriResolver(ukprn),
+                Uri = uriResolver(roatpResult.Ukprn),
                 ApplicationType = MapAparEntryType(roatpResult.ApplicationType),
                 StartDate = roatpResult.StartDate,
                 ApplicationDeterminedDate = roatpResult.ApplicationDeterminedDate,
