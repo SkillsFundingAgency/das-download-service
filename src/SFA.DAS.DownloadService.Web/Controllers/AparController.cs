@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -91,9 +92,8 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             {
                 using (var streamWriter = new StreamWriter(memoryStream))
                 {
-                    using (var csvWriter = new CsvWriter(streamWriter))
+                    using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.CurrentCulture))
                     {
-                        csvWriter.Configuration.Delimiter = ",";
                         csvWriter.WriteRecords(aparCsv);
 
                         await streamWriter.FlushAsync();
