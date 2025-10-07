@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
+using Microsoft.OpenApi.Models;
 using SFA.DAS.DownloadService.Api.Client;
 using SFA.DAS.DownloadService.Api.Client.Clients;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
@@ -19,8 +20,7 @@ using SFA.DAS.DownloadService.Api.Infrastructure;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Services;
 using SFA.DAS.DownloadService.Settings;
-using Swashbuckle.AspNetCore.Examples;
-using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace SFA.DAS.DownloadService.Api
 {
@@ -52,7 +52,7 @@ namespace SFA.DAS.DownloadService.Api
 
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new Info { Title = $"Download Service API {Configuration["InstanceName"]}", Version = "v1" });
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = $"Download Service API {Configuration["InstanceName"]}", Version = "v1" });
                 options.TagActionsBy(api =>
                 {
                     if (api.GroupName != null)
@@ -71,7 +71,7 @@ namespace SFA.DAS.DownloadService.Api
                 options.CustomSchemaIds(x => x.GetCustomAttributes(false).OfType<DisplayNameAttribute>().FirstOrDefault()?.DisplayName ?? x.Name);
                 options.DocInclusionPredicate((name, api) => true);
                 options.EnableAnnotations();
-                options.OperationFilter<ExamplesOperationFilter>();
+                options.ExampleFilters();
             });
 
             ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;

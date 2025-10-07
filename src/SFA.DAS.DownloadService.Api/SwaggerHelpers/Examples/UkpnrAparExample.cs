@@ -1,10 +1,10 @@
 ﻿using SFA.DAS.DownloadService.Api.Types;
-using Swashbuckle.AspNetCore.Examples;
 using System;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace SFA.DAS.DownloadService.Api.SwaggerHelpers.Examples
 {
-    public class UkpnrAparExample : IExamplesProvider
+    public class UkpnrAparExample : IExamplesProvider<object>
     {
         public object GetExamples()
         {

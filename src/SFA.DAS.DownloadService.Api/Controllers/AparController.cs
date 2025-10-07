@@ -11,7 +11,7 @@ using SFA.DAS.DownloadService.Api.Types;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
-using Swashbuckle.AspNetCore.Examples;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace SFA.DAS.DownloadService.Api.Controllers
 {
@@ -41,7 +41,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, "Invalid UKPRN (should be 8 numbers)")]
-        [SwaggerOperation("GetOk", "Check a UKPRN exists in the APAR", Produces = new string[] { "application/json" })]
+        [SwaggerOperation("GetOk", "Check a UKPRN exists in the APAR")][ Produces("application/json" )]
         [HttpHead("providers/{ukprn}")]
         public async Task<IActionResult> Head(int ukprn)
         {
