@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Table;
+using Azure;
+using Azure.Data.Tables;
 using Newtonsoft.Json;
 
 namespace SFA.DAS.DownloadService.Settings
@@ -13,27 +13,28 @@ namespace SFA.DAS.DownloadService.Settings
             if (environment == null) throw new ArgumentNullException(nameof(environment));
             if (storageConnectionString == null) throw new ArgumentNullException(nameof(storageConnectionString));
 
-            var conn = CloudStorageAccount.Parse(storageConnectionString);
-            var tableClient = conn.CreateCloudTableClient();
-            var table = tableClient.GetTableReference("Configuration");
+            var tableClient = new TableClient(storageConnectionString, "Configuration");
 
-            var operation = TableOperation.Retrieve(environment, $"{serviceName}_{version}");
-            TableResult result;
             try
             {
-                result = await table.ExecuteAsync(operation);
+                var result = await tableClient.GetEntityAsync<TableEntity>(
+                    partitionKey: environment,
+                    rowKey: $"{serviceName}_{version}"
+                );
+
+                string data = result.Value.GetString("Data");
+                var webConfig = JsonConvert.DeserializeObject<WebConfiguration>(data);
+
+                return webConfig;
             }
-            catch (Exception e)
+            catch (RequestFailedException ex) when (ex.Status == 404)
             {
-                throw new Exception("Could not connect to Storage to retrieve settings.", e);
+                throw new Exception("Settings not found in table storage.");
             }
-
-            var dynResult = result.Result as DynamicTableEntity;
-            var data = dynResult.Properties["Data"].StringValue;
-
-            var webConfig = JsonConvert.DeserializeObject<WebConfiguration>(data);
-
-            return webConfig;
+            catch (Exception ex)
+            {
+                throw new Exception("Could not connect to Storage to retrieve settings.", ex);
+            }
         }
     }
 }
