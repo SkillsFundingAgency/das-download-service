@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using Refit;
 using SFA.DAS.Api.Common.Infrastructure;
 using SFA.DAS.DownloadService.Api.Client;
@@ -88,7 +89,7 @@ namespace SFA.DAS.DownloadService.Api
                 options.RequestCultureProviders.Clear();
             });
 
-            services.AddRefitClient<IRoatpApiClient>()
+            services.AddRefitClient<IRoatpApiClient>(new RefitSettings(new NewtonsoftJsonContentSerializer()))
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri(ApplicationConfiguration.RoatpApiAuthentication.ApiBaseAddress))
                 .AddHttpMessageHandler(() => new InnerApiAuthenticationHeaderHandler(new AzureClientCredentialHelper(), ApplicationConfiguration.RoatpApiAuthentication.Identifier));
 
