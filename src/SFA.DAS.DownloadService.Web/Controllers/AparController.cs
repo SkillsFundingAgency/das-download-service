@@ -43,7 +43,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("Unable to retrieve results for latest non-onboarding organisation change", ex);
+                _logger.LogError(ex, "Unable to retrieve results for latest non-onboarding organisation change");
                 date = DateTime.Now;
             }
 
