@@ -98,7 +98,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
                 var ukprnApar = _mapper.Map(roatpResult, Resolve);
                 return Ok(ukprnApar);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 var message = $"Unable to fetch APAR entry from RoATP for UKPRN: {ukprn}";
                 return StatusCode(500, message);
@@ -121,7 +121,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
                     latestChange = roatpResult;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 var message = "Unable to fetch latest APAR change date";
                 return StatusCode(500, message);
@@ -153,7 +153,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
                 var apprenticeshipProviders = _mapper.Map(roatpResults, Resolve).Where(p => p != null);
                 return Ok(apprenticeshipProviders);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 var message = "Unable to fetch APAR entries from RoATP";
                 return StatusCode(500, message);
