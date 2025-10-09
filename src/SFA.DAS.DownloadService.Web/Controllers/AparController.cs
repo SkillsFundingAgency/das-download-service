@@ -94,7 +94,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
                 {
                     using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.CurrentCulture))
                     {
-                        csvWriter.WriteRecords(aparCsv);
+                        await csvWriter.WriteRecordsAsync(aparCsv);
 
                         await streamWriter.FlushAsync();
                         memoryStream.Position = 0;

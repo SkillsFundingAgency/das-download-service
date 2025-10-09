@@ -10,8 +10,8 @@ namespace SFA.DAS.DownloadService.Settings
     {
         public static async Task<IWebConfiguration> GetConfig(string environment, string storageConnectionString, string version, string serviceName)
         {
-            if (environment == null) throw new ArgumentNullException(nameof(environment));
-            if (storageConnectionString == null) throw new ArgumentNullException(nameof(storageConnectionString));
+            ArgumentNullException.ThrowIfNull(environment);
+            ArgumentNullException.ThrowIfNull(storageConnectionString);
 
             var tableClient = new TableClient(storageConnectionString, "Configuration");
 
@@ -29,11 +29,11 @@ namespace SFA.DAS.DownloadService.Settings
             }
             catch (RequestFailedException ex) when (ex.Status == 404)
             {
-                throw new Exception("Settings not found in table storage.");
+                throw new RequestFailedException("Settings not found in table storage.");
             }
             catch (Exception ex)
             {
-                throw new Exception("Could not connect to Storage to retrieve settings.", ex);
+                throw new RequestFailedException("Could not connect to Storage to retrieve settings.", ex);
             }
         }
     }
