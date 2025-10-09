@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Api.Types;
@@ -82,7 +83,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Unable to retrieve results for getting all APAR details, message: [{ex.Message}]", ex);
+                _logger.LogError(ex, "Unable to retrieve results for getting all APAR details, message: [{Message}]", ex.Message);
                 throw;
             }
 
