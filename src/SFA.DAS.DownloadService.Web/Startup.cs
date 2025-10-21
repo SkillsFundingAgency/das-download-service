@@ -4,12 +4,12 @@ using System.Globalization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
+using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.DownloadService.Api.Client.Clients;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Services.Interfaces;
@@ -31,7 +31,18 @@ namespace SFA.DAS.DownloadService.Web
 
         public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
-            Configuration = configuration;
+            var config = new ConfigurationBuilder()
+                .AddConfiguration(configuration);
+
+            config.AddAzureTableStorage(options =>
+            {
+                options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+                options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                options.EnvironmentName = configuration["Environment"];
+                options.PreFixConfigurationKeys = false;
+            });
+
+            Configuration = config.Build();
             _hostingEnvironment = hostingEnvironment;
         }
 
@@ -44,8 +55,6 @@ namespace SFA.DAS.DownloadService.Web
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
-            ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
             services.Configure<RequestLocalizationOptions>(options =>
             {

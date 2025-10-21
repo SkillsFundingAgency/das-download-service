@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
@@ -38,11 +39,11 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         /// </summary>
         /// <param name="ukprn">The UKPRN to check for in the APAR</param>
         /// <returns></returns>
-        [SwaggerResponse((int)HttpStatusCode.NoContent)]
-        [SwaggerResponse((int)HttpStatusCode.NotFound)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Invalid UKPRN (should be 8 numbers)")]
-        [SwaggerOperation("GetOk", "Check a UKPRN exists in the APAR")][ Produces("application/json" )]
         [HttpHead("providers/{ukprn}")]
+        [SwaggerOperation(Summary = "GetOk", Description = "Check a UKPRN exists in the APAR")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Head(int ukprn)
         {
             _logger.LogInformation("Fetching HEAD for UKPRN: {Ukprn}", ukprn);

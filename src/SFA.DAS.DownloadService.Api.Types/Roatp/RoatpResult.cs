@@ -5,7 +5,7 @@ namespace SFA.DAS.DownloadService.Api.Types.Roatp
 {
     public class RoatpResult
     {
-        public long Ukprn { get; set; }
+        public int Ukprn { get; set; }
 
         [JsonProperty("Organisation Name")]
         public string OrganisationName { get; set; }

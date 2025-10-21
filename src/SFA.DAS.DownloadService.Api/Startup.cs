@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -17,6 +18,7 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Refit;
 using SFA.DAS.Api.Common.Infrastructure;
+using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.DownloadService.Api.Client;
 using SFA.DAS.DownloadService.Api.Client.Clients;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
@@ -41,7 +43,18 @@ namespace SFA.DAS.DownloadService.Api
 
         public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
-            Configuration = configuration;
+            var config = new ConfigurationBuilder()
+                .AddConfiguration(configuration);
+
+            config.AddAzureTableStorage(options =>
+            {
+                options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+                options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                options.EnvironmentName = configuration["Environment"];
+                options.PreFixConfigurationKeys = false;
+            });
+
+            Configuration = config.Build();
             _hostingEnvironment = hostingEnvironment;
         }
 
@@ -80,8 +93,6 @@ namespace SFA.DAS.DownloadService.Api
             });
             services.AddSwaggerExamplesFromAssemblyOf<AparExample>();
             services.AddSwaggerExamplesFromAssemblyOf<UkpnrAparExample>();
-
-            ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -131,6 +142,10 @@ namespace SFA.DAS.DownloadService.Api
                 app.UseHsts();
             }
 
+            var rewriteOptions = new RewriteOptions()
+                .AddRedirect("^$", "swagger"); // Redirect root (empty path) to /swagger
+
+            app.UseRewriter(rewriteOptions);
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
