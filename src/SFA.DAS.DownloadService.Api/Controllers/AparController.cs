@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -40,10 +41,9 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         /// <param name="ukprn">The UKPRN to check for in the APAR</param>
         /// <returns></returns>
         [HttpHead("providers/{ukprn}")]
-        [SwaggerOperation(Summary = "GetOk", Description = "Check a UKPRN exists in the APAR")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]//UPDATE THE OTHER ENDPOINTS TO MATCH THIS PATTERN
         public async Task<IActionResult> Head(int ukprn)
         {
             _logger.LogInformation("Fetching HEAD for UKPRN: {Ukprn}", ukprn);
@@ -54,10 +54,9 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         /// <summary>
         /// Check if you can get active APAR entries
         /// </summary>
-        [SwaggerOperation("GetAllOk")]
-        [SwaggerResponse((int)HttpStatusCode.NoContent)]
-        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpHead("providers")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Head()
         {
             var resultFromGet = await GetAll();
@@ -69,11 +68,9 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         /// </summary>
         /// <param name="ukprn">The UKPRN to get from the APAR</param>
         /// <returns></returns>
-        [SwaggerOperation("Get")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "OK", typeof(UkprnAparEntry))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound, "APAR entry not found or start date in future")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Invalid UKPRN (should be 8 numbers)")]
-        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.UkpnrAparExample))]
+        [ProducesResponseType(typeof(UkprnAparEntry), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("providers/{ukprn}")]
         public async Task<IActionResult> Get(int ukprn)
         {
@@ -106,7 +103,6 @@ namespace SFA.DAS.DownloadService.Api.Controllers
             }
         }
 
-        [SwaggerOperation("GetLatestTime")]
         [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet("getLatestTime")]
         public async Task<IActionResult> GetLatestTime()
@@ -135,10 +131,8 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         /// Gets active APAR entries
         /// </summary>
         /// <returns></returns>
-        [SwaggerOperation("GetAll")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "OK", typeof(IEnumerable<AparEntry>))]
+        [ProducesResponseType(typeof(IEnumerable<AparEntry>), StatusCodes.Status200OK)]
         [HttpGet("providers")]
-        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.AparExample))]
         public async Task<IActionResult> GetAll()
         {
             _logger.LogInformation("Fetching APAR entries for all UKPRN's");

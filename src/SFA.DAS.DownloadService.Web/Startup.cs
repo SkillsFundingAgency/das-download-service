@@ -21,11 +21,8 @@ namespace SFA.DAS.DownloadService.Web
 {
     public class Startup
     {
-        private const string ServiceName = "SFA.DAS.DownloadService";
-        private const string Version = "1.0";
-
         private readonly IWebHostEnvironment _hostingEnvironment;
-        private readonly IConfiguration Configuration;
+        private readonly IConfiguration _configuration;
 
         private IWebConfiguration ApplicationConfiguration { get; set; }
 
@@ -38,11 +35,11 @@ namespace SFA.DAS.DownloadService.Web
             {
                 options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
                 options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
-                options.EnvironmentName = configuration["Environment"];
+                options.EnvironmentName = configuration["EnvironmentName"];
                 options.PreFixConfigurationKeys = false;
             });
 
-            Configuration = config.Build();
+            _configuration = config.Build();
             _hostingEnvironment = hostingEnvironment;
         }
 

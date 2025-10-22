@@ -23,7 +23,6 @@ using SFA.DAS.DownloadService.Api.Client;
 using SFA.DAS.DownloadService.Api.Client.Clients;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Api.Infrastructure;
-using SFA.DAS.DownloadService.Api.SwaggerHelpers.Examples;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Services;
 using SFA.DAS.DownloadService.Settings;
@@ -33,10 +32,7 @@ namespace SFA.DAS.DownloadService.Api
 {
     public class Startup
     {
-        private const string ServiceName = "SFA.DAS.DownloadService";
-        private const string Version = "1.0";
-
-        private readonly IConfiguration Configuration;
+        private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _hostingEnvironment;
 
         private IWebConfiguration ApplicationConfiguration { get; set; }
@@ -50,11 +46,11 @@ namespace SFA.DAS.DownloadService.Api
             {
                 options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
                 options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
-                options.EnvironmentName = configuration["Environment"];
+                options.EnvironmentName = configuration["EnvironmentName"];
                 options.PreFixConfigurationKeys = false;
             });
 
-            Configuration = config.Build();
+            _configuration = config.Build();
             _hostingEnvironment = hostingEnvironment;
         }
 
@@ -70,7 +66,7 @@ namespace SFA.DAS.DownloadService.Api
 
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = $"Download Service API {Configuration["InstanceName"]}", Version = "v1" });
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = $"Download Service API {_configuration["InstanceName"]}", Version = "v1" });
                 options.TagActionsBy(api =>
                 {
                     if (api.GroupName != null)
@@ -88,11 +84,7 @@ namespace SFA.DAS.DownloadService.Api
                 });
                 options.CustomSchemaIds(x => x.GetCustomAttributes(false).OfType<DisplayNameAttribute>().FirstOrDefault()?.DisplayName ?? x.Name);
                 options.DocInclusionPredicate((name, api) => true);
-                options.EnableAnnotations();
-                options.ExampleFilters();
             });
-            services.AddSwaggerExamplesFromAssemblyOf<AparExample>();
-            services.AddSwaggerExamplesFromAssemblyOf<UkpnrAparExample>();
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -103,7 +95,7 @@ namespace SFA.DAS.DownloadService.Api
 
             services.AddRefitClient<IRoatpApiClient>(new RefitSettings(new NewtonsoftJsonContentSerializer()))
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri(ApplicationConfiguration.RoatpApiAuthentication.ApiBaseAddress))
-                .AddHttpMessageHandler(() => new InnerApiAuthenticationHeaderHandler(new AzureClientCredentialHelper(), ApplicationConfiguration.RoatpApiAuthentication.Identifier));
+                .AddHttpMessageHandler(() => new InnerApiAuthenticationHeaderHandler(new AzureClientCredentialHelper(_configuration), ApplicationConfiguration.RoatpApiAuthentication.Identifier));
 
             services.AddDistributedMemoryCache();
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
@@ -143,7 +135,7 @@ namespace SFA.DAS.DownloadService.Api
             }
 
             var rewriteOptions = new RewriteOptions()
-                .AddRedirect("^$", "swagger"); // Redirect root (empty path) to /swagger
+                .AddRedirect("^$", "api"); 
 
             app.UseRewriter(rewriteOptions);
             app.UseHttpsRedirection();
