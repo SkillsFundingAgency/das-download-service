@@ -24,7 +24,7 @@
   - Data: {The contents of the local config json file}
 }
 
-- Create a file in the SFA.DAS.DownloadService.Api project called `appSettings.json` with the following content:
+- Create a file in the SFA.DAS.DownloadService.Api project called `appsettings.json` with the following content:
 ```json
 {
   "Logging": {
@@ -43,7 +43,7 @@
 }
 ```  
 
-- Create a file in the SFA.DAS.DownloadService.Web project called `appSettings.json` with the following content:
+- Create a file in the SFA.DAS.DownloadService.Web project called `appsettings.json` with the following content:
 ```json
 {
   "Logging": {
