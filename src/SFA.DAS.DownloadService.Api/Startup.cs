@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
@@ -34,9 +35,7 @@ namespace SFA.DAS.DownloadService.Api
     {
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _hostingEnvironment;
-
-        private IWebConfiguration ApplicationConfiguration { get; set; }
-
+        
         public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
             var config = new ConfigurationBuilder()
@@ -85,7 +84,7 @@ namespace SFA.DAS.DownloadService.Api
                 options.CustomSchemaIds(x => x.GetCustomAttributes(false).OfType<DisplayNameAttribute>().FirstOrDefault()?.DisplayName ?? x.Name);
                 options.DocInclusionPredicate((name, api) => true);
             });
-
+            
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
@@ -93,15 +92,17 @@ namespace SFA.DAS.DownloadService.Api
                 options.RequestCultureProviders.Clear();
             });
 
+            var roatpApiAuthentication = _configuration.GetSection("RoatpApiAuthentication").Get<ManagedIdentityApiAuthentication>();
+            
             services.AddRefitClient<IRoatpApiClient>(new RefitSettings(new NewtonsoftJsonContentSerializer()))
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri(ApplicationConfiguration.RoatpApiAuthentication.ApiBaseAddress))
-                .AddHttpMessageHandler(() => new InnerApiAuthenticationHeaderHandler(new AzureClientCredentialHelper(_configuration), ApplicationConfiguration.RoatpApiAuthentication.Identifier));
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(roatpApiAuthentication.ApiBaseAddress))
+                .AddHttpMessageHandler(() => new InnerApiAuthenticationHeaderHandler(new AzureClientCredentialHelper(_configuration), roatpApiAuthentication.Identifier));
 
             services.AddDistributedMemoryCache();
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
             services.AddControllers();
-            services.AddDataProtection(ApplicationConfiguration, _hostingEnvironment);
+            services.AddDataProtection(_configuration, _hostingEnvironment);
 
             services.AddLogging(builder =>
             {
@@ -117,7 +118,6 @@ namespace SFA.DAS.DownloadService.Api
         private void ConfigureDependencyInjection(IServiceCollection services)
         {
             services.AddTransient<IAparMapper, AparMapper>();
-            services.AddTransient(x => ApplicationConfiguration);
 
             services.AddTransient<IDateTimeProvider, DateTimeProvider>();
         }

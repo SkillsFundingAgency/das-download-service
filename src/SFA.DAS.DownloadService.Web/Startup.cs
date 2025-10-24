@@ -24,8 +24,6 @@ namespace SFA.DAS.DownloadService.Web
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IConfiguration _configuration;
 
-        private IWebConfiguration ApplicationConfiguration { get; set; }
-
         public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
             var config = new ConfigurationBuilder()
@@ -60,15 +58,17 @@ namespace SFA.DAS.DownloadService.Web
                 options.RequestCultureProviders.Clear();
             });
 
+            var downloadServiceApiAuthentication = _configuration.GetSection("DownloadServiceApiAuthentication")
+                .Get<ManagedIdentityApiAuthentication>();
             services.AddHttpClient<IDownloadServiceApiClient, DownloadServiceApiClient>("DownloadServiceApiClient", config =>
             {
-                config.BaseAddress = new Uri(ApplicationConfiguration.DownloadServiceApiAuthentication.ApiBaseAddress);
+                config.BaseAddress = new Uri(downloadServiceApiAuthentication.ApiBaseAddress);
             });
 
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
             services.AddMvc(options => options.EnableEndpointRouting = false);
-            services.AddDataProtection(ApplicationConfiguration, _hostingEnvironment);
+            services.AddDataProtection(_configuration, _hostingEnvironment);
 
             services.AddLogging(builder =>
             {
@@ -84,7 +84,6 @@ namespace SFA.DAS.DownloadService.Web
         private void ConfigureDependencyInjection(IServiceCollection services)
         {
             services.AddTransient<IAparMapper, AparMapper>();
-            services.AddTransient(x => ApplicationConfiguration);
         }
 
 
