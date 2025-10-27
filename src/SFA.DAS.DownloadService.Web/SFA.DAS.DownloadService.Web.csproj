@@ -29,6 +29,7 @@
 
   <!--Transitive Packacges-->
   <ItemGroup>
+    <PackageReference Include="Microsoft.Build" Version="17.8.43" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.6" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
