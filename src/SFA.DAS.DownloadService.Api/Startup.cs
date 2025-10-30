@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
@@ -16,14 +14,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
 using Refit;
 using SFA.DAS.Api.Common.Infrastructure;
 using SFA.DAS.Configuration.AzureTableStorage;
-using SFA.DAS.DownloadService.Api.Client;
-using SFA.DAS.DownloadService.Api.Client.Clients;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Api.Infrastructure;
+using SFA.DAS.DownloadService.Api.SwaggerHelpers.Examples;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Services;
 using SFA.DAS.DownloadService.Settings;
@@ -35,7 +31,7 @@ namespace SFA.DAS.DownloadService.Api
     {
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _hostingEnvironment;
-        
+
         public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
             var config = new ConfigurationBuilder()
@@ -62,7 +58,7 @@ namespace SFA.DAS.DownloadService.Api
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
+            services.AddSwaggerExamplesFromAssemblyOf<AparExample>();
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = $"Download Service API {_configuration["InstanceName"]}", Version = "v1" });
@@ -83,8 +79,9 @@ namespace SFA.DAS.DownloadService.Api
                 });
                 options.CustomSchemaIds(x => x.GetCustomAttributes(false).OfType<DisplayNameAttribute>().FirstOrDefault()?.DisplayName ?? x.Name);
                 options.DocInclusionPredicate((name, api) => true);
+                options.ExampleFilters();
             });
-            
+
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
@@ -93,7 +90,7 @@ namespace SFA.DAS.DownloadService.Api
             });
 
             var roatpApiAuthentication = _configuration.GetSection("RoatpApiAuthentication").Get<ManagedIdentityApiAuthentication>();
-            
+
             services.AddRefitClient<IRoatpApiClient>(new RefitSettings(new NewtonsoftJsonContentSerializer()))
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri(roatpApiAuthentication.ApiBaseAddress))
                 .AddHttpMessageHandler(() => new InnerApiAuthenticationHeaderHandler(new AzureClientCredentialHelper(_configuration), roatpApiAuthentication.Identifier));
@@ -135,7 +132,7 @@ namespace SFA.DAS.DownloadService.Api
             }
 
             var rewriteOptions = new RewriteOptions()
-                .AddRedirect("^$", "api"); 
+                .AddRedirect("^$", "api");
 
             app.UseRewriter(rewriteOptions);
             app.UseHttpsRedirection();

@@ -35,8 +35,4 @@
     <ProjectReference Include="..\SFA.DAS.DownloadService.Services\SFA.DAS.DownloadService.Services.csproj" />
     <ProjectReference Include="..\SFA.DAS.DownloadService.Settings\SFA.DAS.DownloadService.Settings.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-  </ItemGroup>
 </Project>
