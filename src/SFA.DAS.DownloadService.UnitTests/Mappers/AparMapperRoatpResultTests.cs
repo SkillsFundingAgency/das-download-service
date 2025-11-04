@@ -47,7 +47,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
                 Assert.AreEqual(12345678, result.Ukprn);
                 Assert.AreEqual("Org1", result.Name);
                 Assert.AreEqual("http://example.com/12345678", result.Uri);
-                Assert.AreEqual(AparEntryType.MainProvider, result.ApplicationType);
+                Assert.AreEqual(ProviderType.MainProvider, result.ApplicationType);
                 Assert.AreEqual(startDate.AddMonths(-1), result.StartDate);
                 Assert.AreEqual(applicationDeterminedDate.AddMonths(-2), result.ApplicationDeterminedDate);
                 Assert.AreEqual(expectedCurrentlyNotStartingNewApprentices, result.CurrentlyNotStartingNewApprentices);
@@ -118,7 +118,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
                 Assert.AreEqual(12345678, results[0].Ukprn);
                 Assert.AreEqual("Org1", results[0].Name);
                 Assert.AreEqual("http://example.com/12345678", results[0].Uri);
-                Assert.AreEqual(AparEntryType.MainProvider, results[0].ApplicationType);
+                Assert.AreEqual(ProviderType.MainProvider, results[0].ApplicationType);
                 Assert.AreEqual(startDate.AddMonths(-1), results[0].StartDate);
                 Assert.AreEqual(applicationDeterminedDate.AddMonths(-2), results[0].ApplicationDeterminedDate);
                 Assert.IsFalse(results[0].CurrentlyNotStartingNewApprentices);
@@ -126,7 +126,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
                 Assert.AreEqual(23456789, results[1].Ukprn);
                 Assert.AreEqual("Org2", results[1].Name);
                 Assert.AreEqual("http://example.com/23456789", results[1].Uri);
-                Assert.AreEqual(AparEntryType.EmployerProvider, results[1].ApplicationType);
+                Assert.AreEqual(ProviderType.EmployerProvider, results[1].ApplicationType);
                 Assert.AreEqual(startDate.AddMonths(-2), results[1].StartDate);
                 Assert.AreEqual(applicationDeterminedDate.AddMonths(-3), results[1].ApplicationDeterminedDate);
                 Assert.IsTrue(results[1].CurrentlyNotStartingNewApprentices);
@@ -134,7 +134,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
                 Assert.AreEqual(34567890, results[2].Ukprn);
                 Assert.AreEqual("Org3", results[2].Name);
                 Assert.AreEqual("http://example.com/34567890", results[2].Uri);
-                Assert.AreEqual(AparEntryType.SupportingProvider, results[2].ApplicationType);
+                Assert.AreEqual(ProviderType.SupportingProvider, results[2].ApplicationType);
                 Assert.AreEqual(startDate.AddMonths(-3), results[2].StartDate);
                 Assert.AreEqual(applicationDeterminedDate.AddMonths(-4), results[2].ApplicationDeterminedDate);
                 Assert.IsFalse(results[2].CurrentlyNotStartingNewApprentices);
