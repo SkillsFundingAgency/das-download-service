@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
@@ -11,8 +6,15 @@ using SFA.DAS.DownloadService.Api.Infrastructure;
 using SFA.DAS.DownloadService.Api.SwaggerHelpers.Examples;
 using SFA.DAS.DownloadService.Api.Types;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
+using SFA.DAS.DownloadService.Api.Types.Roatp.Common;
+using SFA.DAS.DownloadService.Api.Types.Roatp.Models;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using Swashbuckle.AspNetCore.Filters;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.DownloadService.Api.Controllers
 {
@@ -67,7 +69,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         /// </summary>
         /// <param name="ukprn">The UKPRN to get from the APAR</param>
         /// <returns></returns>
-        [ProducesResponseType(typeof(UkprnAparEntry), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProviderModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(UkprnAparExample))]
@@ -82,25 +84,17 @@ namespace SFA.DAS.DownloadService.Api.Controllers
                 return BadRequest(message);
             }
 
-            try
-            {
-                var roatpResult = (await _roatpApiClient.GetRoatpSummaryByUkprn(ukprn))
-                    .FirstOrDefault(x => x.IsDateValid(_dateTimeProvider.GetCurrentDateTime()));
+            OrganisationModel model = await _roatpApiClient.GetRoatpSummaryByUkprn(ukprn);
 
-                if (roatpResult == null)
-                {
-                    var message = "APAR entry from RoATP for UKPRN: {ukprn} is not found or start date in future";
-                    return NotFound(message);
-                }
-
-                var ukprnApar = _mapper.Map(roatpResult, Resolve);
-                return Ok(ukprnApar);
-            }
-            catch (Exception)
+            if (model == null || model.Status == OrganisationStatus.Removed)
             {
-                var message = $"Unable to fetch APAR entry from RoATP for UKPRN: {ukprn}";
-                return StatusCode(500, message);
+                var message = "APAR entry from RoATP for UKPRN: {ukprn} is not found or they are in removed status";
+                return NotFound(message);
             }
+
+            ProviderModel providerModel = model;
+            providerModel.Uri = Resolve(model.Ukprn);
+            return Ok(providerModel);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
