@@ -1,8 +1,9 @@
-﻿using SFA.DAS.DownloadService.Api.Types.Roatp;
+﻿using Refit;
+using SFA.DAS.DownloadService.Api.Types.Roatp;
+using SFA.DAS.DownloadService.Api.Types.Roatp.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Refit;
 
 namespace SFA.DAS.DownloadService.Api.Client.Interfaces
 {
@@ -11,8 +12,8 @@ namespace SFA.DAS.DownloadService.Api.Client.Interfaces
         [Get("/api/v1/download/roatp-summary")]
         Task<IEnumerable<RoatpResult>> GetRoatpSummary();
 
-        [Get("/api/v1/download/roatp-summary/{ukprn}")]
-        Task<IEnumerable<RoatpResult>> GetRoatpSummaryByUkprn([AliasAs("ukprn")] int ukprn);
+        [Get("/organisations/{ukprn}")]
+        Task<OrganisationModel> GetRoatpSummaryByUkprn([AliasAs("ukprn")] int ukprn);
 
         [Get("/api/v1/download/roatp-summary/most-recent")]
         Task<DateTime?> GetLatestNonOnboardingOrganisationChangeDate();

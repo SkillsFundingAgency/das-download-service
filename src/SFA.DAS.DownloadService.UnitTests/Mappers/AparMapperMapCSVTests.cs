@@ -27,7 +27,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
             {
                 Ukprn = 12345678,
                 Name = "TestName",
-                ApplicationType = AparEntryType.MainProvider,
+                ApplicationType = ProviderType.MainProvider,
                 StartDate = DateTime.Now,
                 CurrentlyNotStartingNewApprentices = true,
                 ApplicationDeterminedDate = DateTime.Now
@@ -57,7 +57,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
                 {
                     Ukprn = 12345678,
                     Name = "TestName1",
-                    ApplicationType = AparEntryType.MainProvider,
+                    ApplicationType = ProviderType.MainProvider,
                     StartDate = DateTime.Now,
                     CurrentlyNotStartingNewApprentices = true,
                     ApplicationDeterminedDate = DateTime.Now
@@ -66,7 +66,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
                 {
                     Ukprn = 87654321,
                     Name = "TestName2",
-                    ApplicationType = AparEntryType.SupportingProvider,
+                    ApplicationType = ProviderType.SupportingProvider,
                     StartDate = DateTime.Now,
                     CurrentlyNotStartingNewApprentices = false,
                     ApplicationDeterminedDate = DateTime.Now

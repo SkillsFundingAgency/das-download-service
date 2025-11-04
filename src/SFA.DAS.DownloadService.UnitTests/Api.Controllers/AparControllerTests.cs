@@ -3,16 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.DownloadService.Api.Controllers;
-using SFA.DAS.DownloadService.Api.Types;
-using SFA.DAS.DownloadService.Api.Types.Roatp;
-using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
+using SFA.DAS.DownloadService.Api.Controllers;
+using SFA.DAS.DownloadService.Api.Infrastructure;
+using SFA.DAS.DownloadService.Api.Types.Roatp;
+using SFA.DAS.DownloadService.Api.Types.Roatp.Common;
+using SFA.DAS.DownloadService.Api.Types.Roatp.Models;
+using SFA.DAS.DownloadService.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using SFA.DAS.DownloadService.Api.Infrastructure;
 
 namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
 {
@@ -37,7 +38,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
             _mockDateTimeProvider = new Mock<IDateTimeProvider>();
 
             _mockMapper = new Mock<IAparMapper>();
-            _mockRoatpApiClient.Setup(z => z.GetRoatpSummaryByUkprn(It.IsAny<int>())).ReturnsAsync((IEnumerable<RoatpResult>)null);
+            _mockRoatpApiClient.Setup(z => z.GetRoatpSummaryByUkprn(It.IsAny<int>())).ReturnsAsync((OrganisationModel)null);
             _mockRoatpApiClient.Setup(z => z.GetRoatpSummary()).ReturnsAsync((IEnumerable<RoatpResult>)null);
 
             HttpContextRequest = new Mock<HttpRequest>();
@@ -77,8 +78,8 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
 
             // Set up the mocks to return no results
             _mockRoatpApiClient.Setup(x => x.GetRoatpSummaryByUkprn(It.IsAny<int>()))
-                .ReturnsAsync(new List<RoatpResult>());
-            
+                .ReturnsAsync(new OrganisationModel());
+
             // Act
             var result = await _controller.Get(validUkprn);
 
@@ -90,28 +91,19 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
         public async Task Get_ReturnsOk_WhenResultsFound()
         {
             // Arrange
-            _mockDateTimeProvider.Setup(z => z.GetCurrentDateTime()).Returns(new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc));
 
-            var roatpResult = new RoatpResult
+            var model = new OrganisationModel
             {
                 Ukprn = 12345678,
-                StartDate = _mockDateTimeProvider.Object.GetCurrentDateTime().AddMonths(-1),
-                EndDate = _mockDateTimeProvider.Object.GetCurrentDateTime().AddMonths(1)
+                Status = OrganisationStatus.Active
             };
 
             // Set up the mocks to return results
             _mockRoatpApiClient.Setup(x => x.GetRoatpSummaryByUkprn(It.IsAny<int>()))
-                .ReturnsAsync(new List<RoatpResult> { roatpResult });
-
-            _mockMapper.Setup(x => x.Map(It.IsAny<RoatpResult>(), It.IsAny<Func<long, string>>()))
-                .Returns(new UkprnAparEntry 
-                {
-                    Ukprn = roatpResult.Ukprn,
-                    StartDate = roatpResult.StartDate
-                });
+                .ReturnsAsync(model);
 
             // Act
-            var result = await _controller.Get((int)roatpResult.Ukprn);
+            var result = await _controller.Get((int)model.Ukprn);
 
             // Assert
             Assert.IsInstanceOf<OkObjectResult>(result);

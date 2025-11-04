@@ -27,7 +27,7 @@ namespace SFA.DAS.DownloadService.Api.Types
         /// </summary>
         [JsonRequired]
         [JsonConverter(typeof(StringEnumConverter))]
-        public AparEntryType ApplicationType { get; set; }
+        public ProviderType ApplicationType { get; set; }
 
         /// <summary>
         /// The date this provider started on the register
