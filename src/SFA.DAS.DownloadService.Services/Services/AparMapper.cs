@@ -58,22 +58,22 @@ namespace SFA.DAS.DownloadService.Services.Services
             return aparEntries?.Select(MapCsv).ToList();
         }
 
-        private static AparEntryType MapAparEntryType(string aparEntryType)
+        private static ProviderType MapAparEntryType(string aparEntryType)
         {
-            AparEntryType returnedAparEntryType;
+            ProviderType returnedAparEntryType;
             switch (aparEntryType?.ToLower())
             {
                 case "main provider":
-                    returnedAparEntryType = AparEntryType.MainProvider;
+                    returnedAparEntryType = ProviderType.MainProvider;
                     break;
                 case "employer provider":
-                    returnedAparEntryType = AparEntryType.EmployerProvider;
+                    returnedAparEntryType = ProviderType.EmployerProvider;
                     break;
                 case "supporting provider":
-                    returnedAparEntryType = AparEntryType.SupportingProvider;
+                    returnedAparEntryType = ProviderType.SupportingProvider;
                     break;
                 default:
-                    returnedAparEntryType = AparEntryType.Unknown;
+                    returnedAparEntryType = ProviderType.Unknown;
                     break;
             }
             return returnedAparEntryType;
