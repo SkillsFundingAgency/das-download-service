@@ -81,7 +81,7 @@ namespace SFA.DAS.DownloadService.Web
             ConfigureDependencyInjection(services);
         }
 
-        private void ConfigureDependencyInjection(IServiceCollection services)
+        private static void ConfigureDependencyInjection(IServiceCollection services)
         {
             services.AddTransient<IAparMapper, AparMapper>();
         }
