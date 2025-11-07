@@ -42,7 +42,7 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         [HttpHead("providers/{ukprn}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]//UPDATE THE OTHER ENDPOINTS TO MATCH THIS PATTERN
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Head(int ukprn)
         {
             _logger.LogInformation("Fetching HEAD for UKPRN: {Ukprn}", ukprn);
