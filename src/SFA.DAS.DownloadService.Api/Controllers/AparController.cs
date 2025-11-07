@@ -5,7 +5,6 @@ using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Api.Infrastructure;
 using SFA.DAS.DownloadService.Api.SwaggerHelpers.Examples;
 using SFA.DAS.DownloadService.Api.Types;
-using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Api.Types.Roatp.Common;
 using SFA.DAS.DownloadService.Api.Types.Roatp.Models;
 using SFA.DAS.DownloadService.Services.Interfaces;
@@ -125,29 +124,26 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         /// Gets active APAR entries
         /// </summary>
         /// <returns></returns>
-        [ProducesResponseType(typeof(IEnumerable<AparEntry>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<ProviderModel>), StatusCodes.Status200OK)]
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(AparExample))]
         [HttpGet("providers")]
         public async Task<IActionResult> GetAll()
         {
             _logger.LogInformation("Fetching APAR entries for all UKPRN's");
 
-            try
-            {
-                var roatpData = await _roatpApiClient.GetRoatpSummary() ?? Enumerable.Empty<RoatpResult>();
+            var response = await _roatpApiClient.GetRoatpSummary();
 
-                var roatpResults = roatpData
-                    .Where(x => x.IsDateValid(_dateTimeProvider.GetCurrentDateTime()))
-                    .ToList();
+            List<ProviderModel> providersModel = response.Organisations
+                .Where(org => org.Status != OrganisationStatus.Removed)
+                .OrderByDescending(org => org.LastUpdatedDate)
+                .Select(org =>
+                {
+                    ProviderModel provider = org;
+                    provider.Uri = Resolve(org.Ukprn);
+                    return provider;
+                }).ToList();
 
-                var apprenticeshipProviders = _mapper.Map(roatpResults, Resolve).Where(p => p != null);
-                return Ok(apprenticeshipProviders);
-            }
-            catch (Exception)
-            {
-                var message = "Unable to fetch APAR entries from RoATP";
-                return StatusCode(500, message);
-            }
+            return Ok(providersModel);
         }
 
         private string Resolve(long ukprn)
