@@ -21,7 +21,6 @@ public class ProviderModelTests
             CompanyNumber = "12345",
             CharityNumber = "12345",
             ProviderType = DownloadService.Api.Types.Roatp.Common.ProviderType.Employer,
-            ProviderTypeName = "Employer provider",
             OrganisationTypeId = 1,
             OrganisationType = "TestOrganisationType",
             Status = OrganisationStatus.Active,

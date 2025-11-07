@@ -12,7 +12,6 @@ public class OrganisationModel
     public string CompanyNumber { get; set; }
     public string CharityNumber { get; set; }
     public Common.ProviderType ProviderType { get; set; }
-    public string ProviderTypeName { get; set; }
     public int OrganisationTypeId { get; set; }
     public string OrganisationType { get; set; }
     public OrganisationStatus Status { get; set; }

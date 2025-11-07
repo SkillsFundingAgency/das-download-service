@@ -4,9 +4,10 @@ using System;
 using System.ComponentModel;
 
 namespace SFA.DAS.DownloadService.Api.Types;
+
+[DisplayName("Provider")]
 public class ProviderModel
 {
-    [DisplayName("Provider")]
     public int Ukprn { get; set; }
     public string Name { get; set; }
     public string Uri { get; set; }
