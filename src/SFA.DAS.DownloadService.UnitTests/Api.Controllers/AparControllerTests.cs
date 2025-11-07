@@ -6,9 +6,9 @@ using NUnit.Framework;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Api.Controllers;
 using SFA.DAS.DownloadService.Api.Infrastructure;
-using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Api.Types.Roatp.Common;
 using SFA.DAS.DownloadService.Api.Types.Roatp.Models;
+using SFA.DAS.DownloadService.Api.Types.Roatp.Responses;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -39,7 +39,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
 
             _mockMapper = new Mock<IAparMapper>();
             _mockRoatpApiClient.Setup(z => z.GetRoatpSummaryByUkprn(It.IsAny<int>())).ReturnsAsync((OrganisationModel)null);
-            _mockRoatpApiClient.Setup(z => z.GetRoatpSummary()).ReturnsAsync((IEnumerable<RoatpResult>)null);
+            _mockRoatpApiClient.Setup(z => z.GetRoatpSummary()).ReturnsAsync((GetOrganisationResponse)null);
 
             HttpContextRequest = new Mock<HttpRequest>();
             HttpContextRequest.Setup(r => r.Method).Returns("GET");
@@ -107,6 +107,45 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
 
             // Assert
             Assert.IsInstanceOf<OkObjectResult>(result);
+        }
+
+        [Test]
+        public async Task GetAll_OkResponse_ReturnsOrganisationsThatAreNotInRemovedStatus()
+        {
+            // Arrange
+            var response = new GetOrganisationResponse
+            {
+                Organisations = new List<OrganisationModel>
+                {
+                    new OrganisationModel
+                    {
+                        Ukprn = 12345678,
+                        Status = OrganisationStatus.Active
+                    },
+                    new OrganisationModel
+                    {
+                        Ukprn = 19876543,
+                        Status = OrganisationStatus.OnBoarding
+                    },
+                    new OrganisationModel
+                    {
+                        Ukprn = 14376543,
+                        Status = OrganisationStatus.Removed
+                    }
+                }
+            };
+
+            // Set up the mocks to return results
+            _mockRoatpApiClient.Setup(x => x.GetRoatpSummary())
+                .ReturnsAsync(response);
+
+            // Act
+            var result = await _controller.GetAll();
+            var okResult = result as OkObjectResult;
+
+            // Assert
+            Assert.IsInstanceOf<OkObjectResult>(result);
+            Assert.That(okResult.Value, Has.Count.EqualTo(2));
         }
 
         [TestCase("01/01/2000", "01/01/2000")]
