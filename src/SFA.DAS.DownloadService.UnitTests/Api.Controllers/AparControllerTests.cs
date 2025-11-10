@@ -5,11 +5,10 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Api.Controllers;
-using SFA.DAS.DownloadService.Api.Infrastructure;
+using SFA.DAS.DownloadService.Api.Types;
 using SFA.DAS.DownloadService.Api.Types.Roatp.Common;
 using SFA.DAS.DownloadService.Api.Types.Roatp.Models;
 using SFA.DAS.DownloadService.Api.Types.Roatp.Responses;
-using SFA.DAS.DownloadService.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -23,8 +22,6 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
         private AparController _controller;
         private Mock<ILogger<AparController>> _mockLogger;
         private Mock<IRoatpApiClient> _mockRoatpApiClient;
-        private Mock<IAparMapper> _mockMapper;
-        private Mock<IDateTimeProvider> _mockDateTimeProvider;
 
         protected Mock<HttpContext> HttpContext;
         protected Mock<HttpRequest> HttpContextRequest;
@@ -35,9 +32,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
         {
             _mockLogger = new Mock<ILogger<AparController>>();
             _mockRoatpApiClient = new Mock<IRoatpApiClient>();
-            _mockDateTimeProvider = new Mock<IDateTimeProvider>();
 
-            _mockMapper = new Mock<IAparMapper>();
             _mockRoatpApiClient.Setup(z => z.GetRoatpSummaryByUkprn(It.IsAny<int>())).ReturnsAsync((OrganisationModel)null);
             _mockRoatpApiClient.Setup(z => z.GetRoatpSummary()).ReturnsAsync((GetOrganisationResponse)null);
 
@@ -47,7 +42,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
             HttpContext.Setup(x => x.Request.Scheme).Returns("http");
             HttpContext.Setup(x => x.Request.Host).Returns(new HostString("localhost"));
 
-            _controller = new AparController(_mockRoatpApiClient.Object, _mockMapper.Object, _mockDateTimeProvider.Object, _mockLogger.Object);
+            _controller = new AparController(_mockRoatpApiClient.Object, _mockLogger.Object);
 
             _controller.ControllerContext = new ControllerContext();
             _controller.ControllerContext.HttpContext = HttpContext.Object;
@@ -91,7 +86,6 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
         public async Task Get_ReturnsOk_WhenResultsFound()
         {
             // Arrange
-
             var model = new OrganisationModel
             {
                 Ukprn = 12345678,
@@ -102,11 +96,15 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
             _mockRoatpApiClient.Setup(x => x.GetRoatpSummaryByUkprn(It.IsAny<int>()))
                 .ReturnsAsync(model);
 
+            var expectedUri = $"http://localhost/api/providers/{model.Ukprn}";
+
             // Act
             var result = await _controller.Get((int)model.Ukprn);
+            var provider = (result as OkObjectResult).Value as ProviderModel;
 
             // Assert
             Assert.IsInstanceOf<OkObjectResult>(result);
+            Assert.AreEqual(expectedUri, provider.Uri);
         }
 
         [Test]
@@ -148,22 +146,37 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
             Assert.That(okResult.Value, Has.Count.EqualTo(2));
         }
 
-        [TestCase("01/01/2000", "01/01/2000")]
-        [TestCase("01/01/2222", "01/01/2222")]
-        [TestCase(null, "01/01/1900")]
-        public async Task GetLatestTime_ReturnsCorrectDateTime(DateTime? roatpDate, DateTime expected)
+        [Test]
+        public async Task GetLatestTime_ReturnsCorrectDateTime()
         {
             // Arrange
-            _mockDateTimeProvider.Setup(z => z.GetCurrentDateTime()).Returns(new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+            DateTime currentDateTime = DateTime.Now;
+            var response = new GetOrganisationResponse
+            {
+                Organisations = new List<OrganisationModel>
+                {
+                    new OrganisationModel
+                    {
+                        Ukprn = 12345678,
+                        LastUpdatedDate = currentDateTime.AddMinutes(-10)
+                    },
+                    new OrganisationModel
+                    {
+                        Ukprn = 19876543,
+                        LastUpdatedDate = currentDateTime.AddMinutes(-30)
+                    }
+                }
+            };
 
-            _mockRoatpApiClient.Setup(x => x.GetLatestNonOnboardingOrganisationChangeDate())
-                .ReturnsAsync(roatpDate);
+            // Set up the mocks to return results
+            _mockRoatpApiClient.Setup(x => x.GetRoatpSummary())
+                .ReturnsAsync(response);
 
             // Act
             var result = await _controller.GetLatestTime() as OkObjectResult;
 
             //Assert
-            Assert.AreEqual(expected, result.Value);
+            Assert.AreEqual(currentDateTime.AddMinutes(-10), result.Value);
         }
     }
 }

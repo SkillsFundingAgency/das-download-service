@@ -2,12 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
-using SFA.DAS.DownloadService.Api.Infrastructure;
 using SFA.DAS.DownloadService.Api.SwaggerHelpers.Examples;
 using SFA.DAS.DownloadService.Api.Types;
 using SFA.DAS.DownloadService.Api.Types.Roatp.Common;
 using SFA.DAS.DownloadService.Api.Types.Roatp.Models;
-using SFA.DAS.DownloadService.Services.Interfaces;
 using Swashbuckle.AspNetCore.Filters;
 using System;
 using System.Collections.Generic;
@@ -23,15 +21,11 @@ namespace SFA.DAS.DownloadService.Api.Controllers
     public class AparController : ControllerBase
     {
         private readonly IRoatpApiClient _roatpApiClient;
-        private readonly IAparMapper _mapper;
-        private readonly IDateTimeProvider _dateTimeProvider;
         private readonly ILogger<AparController> _logger;
 
-        public AparController(IRoatpApiClient roatpApiClient, IAparMapper mapper, IDateTimeProvider dateTimeProvider, ILogger<AparController> logger)
+        public AparController(IRoatpApiClient roatpApiClient, ILogger<AparController> logger)
         {
             _roatpApiClient = roatpApiClient;
-            _mapper = mapper;
-            _dateTimeProvider = dateTimeProvider;
             _logger = logger;
         }
 
@@ -102,20 +96,9 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         {
             _logger.LogInformation("Fetching GET latest change date");
 
-            DateTime? latestChange = _dateTimeProvider.GetCurrentDateTime();
-            try
-            {
-                var roatpResult = await _roatpApiClient.GetLatestNonOnboardingOrganisationChangeDate();
-                if (roatpResult.HasValue)
-                {
-                    latestChange = roatpResult;
-                }
-            }
-            catch (Exception)
-            {
-                var message = "Unable to fetch latest APAR change date";
-                return StatusCode(500, message);
-            }
+            var roatpResult = await _roatpApiClient.GetRoatpSummary();
+
+            DateTime latestChange = roatpResult.Organisations.Max(org => org.LastUpdatedDate);
 
             return Ok(latestChange);
         }
