@@ -1,42 +1,52 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Rewrite;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.ApplicationInsights;
+using Microsoft.OpenApi.Models;
+using Refit;
+using SFA.DAS.Api.Common.Infrastructure;
+using SFA.DAS.Configuration.AzureTableStorage;
+using SFA.DAS.DownloadService.Api.Client.Interfaces;
+using SFA.DAS.DownloadService.Api.Infrastructure;
+using SFA.DAS.DownloadService.Api.SwaggerHelpers.Examples;
+using SFA.DAS.DownloadService.Services.Interfaces;
+using SFA.DAS.DownloadService.Services.Services;
+using SFA.DAS.DownloadService.Settings;
+using Swashbuckle.AspNetCore.Filters;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.ApplicationInsights;
-using SFA.DAS.DownloadService.Api.Client;
-using SFA.DAS.DownloadService.Api.Client.Clients;
-using SFA.DAS.DownloadService.Api.Client.Interfaces;
-using SFA.DAS.DownloadService.Api.Infrastructure;
-using SFA.DAS.DownloadService.Services.Interfaces;
-using SFA.DAS.DownloadService.Services.Services;
-using SFA.DAS.DownloadService.Settings;
-using Swashbuckle.AspNetCore.Examples;
-using Swashbuckle.AspNetCore.Swagger;
+using System.Text.Json.Serialization;
 
 namespace SFA.DAS.DownloadService.Api
 {
     public class Startup
     {
-        private const string ServiceName = "SFA.DAS.DownloadService";
-        private const string Version = "1.0";
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
-        private readonly IConfiguration Configuration;
-        private readonly IHostingEnvironment _hostingEnvironment;
-
-        private IWebConfiguration ApplicationConfiguration { get; set; }
-
-        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
-            Configuration = configuration;
+            var config = new ConfigurationBuilder()
+                .AddConfiguration(configuration);
+
+            config.AddAzureTableStorage(options =>
+            {
+                options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+                options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                options.EnvironmentName = configuration["EnvironmentName"];
+                options.PreFixConfigurationKeys = false;
+            });
+
+            _configuration = config.Build();
             _hostingEnvironment = hostingEnvironment;
         }
 
@@ -49,10 +59,10 @@ namespace SFA.DAS.DownloadService.Api
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
+            services.AddSwaggerExamplesFromAssemblyOf<AparExample>();
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new Info { Title = $"Download Service API {Configuration["InstanceName"]}", Version = "v1" });
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = $"Download Service API {_configuration["InstanceName"]}", Version = "v1" });
                 options.TagActionsBy(api =>
                 {
                     if (api.GroupName != null)
@@ -70,11 +80,8 @@ namespace SFA.DAS.DownloadService.Api
                 });
                 options.CustomSchemaIds(x => x.GetCustomAttributes(false).OfType<DisplayNameAttribute>().FirstOrDefault()?.DisplayName ?? x.Name);
                 options.DocInclusionPredicate((name, api) => true);
-                options.EnableAnnotations();
-                options.OperationFilter<ExamplesOperationFilter>();
+                options.ExampleFilters();
             });
-
-            ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -83,15 +90,18 @@ namespace SFA.DAS.DownloadService.Api
                 options.RequestCultureProviders.Clear();
             });
 
-            services.AddHttpClient<IRoatpApiClient, RoatpApiClient>("RoatpApiClient", config =>
-            {
-                config.BaseAddress = new Uri(ApplicationConfiguration.RoatpApiAuthentication.ApiBaseAddress);
-            });
+            var roatpApiAuthentication = _configuration.GetSection("RoatpApiAuthentication").Get<ManagedIdentityApiAuthentication>();
 
+            services.AddRefitClient<IRoatpApiClient>(new RefitSettings(new NewtonsoftJsonContentSerializer()))
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(roatpApiAuthentication.ApiBaseAddress))
+                .AddHttpMessageHandler(() => new InnerApiAuthenticationHeaderHandler(new AzureClientCredentialHelper(_configuration), roatpApiAuthentication.Identifier));
+
+            services.AddDistributedMemoryCache();
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddDataProtection(ApplicationConfiguration, _hostingEnvironment);
+            services.AddControllers()
+                .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+            services.AddDataProtection(_configuration, _hostingEnvironment);
 
             services.AddLogging(builder =>
             {
@@ -104,19 +114,15 @@ namespace SFA.DAS.DownloadService.Api
             ConfigureDependencyInjection(services);
         }
 
-        private void ConfigureDependencyInjection(IServiceCollection services)
+        private static void ConfigureDependencyInjection(IServiceCollection services)
         {
             services.AddTransient<IAparMapper, AparMapper>();
-            services.AddTransient(x => ApplicationConfiguration);
-
-            services.AddTransient<IRoatpTokenService, TokenService>(serviceProvider =>
-                new TokenService(ApplicationConfiguration.RoatpApiAuthentication));
 
             services.AddTransient<IDateTimeProvider, DateTimeProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public static void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -127,6 +133,10 @@ namespace SFA.DAS.DownloadService.Api
                 app.UseHsts();
             }
 
+            var rewriteOptions = new RewriteOptions()
+                .AddRedirect("^$", "api");
+
+            app.UseRewriter(rewriteOptions);
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
@@ -141,7 +151,14 @@ namespace SFA.DAS.DownloadService.Api
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Download Service API v1");
                 });
 
-            app.UseMvc();
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }

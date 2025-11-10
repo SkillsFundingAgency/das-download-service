@@ -147,7 +147,8 @@
     "uiAppServiceName": "[concat(variables('resourceNamePrefix'), '-as')]",
     "apiAppServiceName": "[concat(variables('resourceNamePrefix'), 'api-as')]",
     "privateLinkScopeName": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-shared-ampls'))]",
-    "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]"
+    "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
+    "configNames": "SFA.DAS.DownloadService"
   },
   "resources": [
     {
@@ -351,6 +352,14 @@
                 {
                   "name": "ASPNETCORE_ENVIRONMENT",
                   "value": "[toUpper(parameters('environmentName'))]"
+                },
+                {
+                  "name": "ConfigNames",
+                  "value": "[variables('configNames')]"
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
                 }
               ]
             }
@@ -436,6 +445,14 @@
                 {
                   "name": "cdn:url",
                   "value": "[parameters('cdnUrl')]"
+                },
+                {
+                  "name": "ConfigNames",
+                  "value": "[variables('configNames')]"
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
                 }
               ]
             }

@@ -18,7 +18,7 @@
     },
     "SFA.DAS.DownloadService.Api": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": "api",
       "applicationUrl": "http://localhost:52818/",
       "environmentVariables": {

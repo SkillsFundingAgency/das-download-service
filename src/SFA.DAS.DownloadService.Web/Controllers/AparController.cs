@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Api.Types;
@@ -42,7 +44,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("Unable to retrieve results for latest non-onboarding organisation change", ex);
+                _logger.LogError(ex, "Unable to retrieve results for latest non-onboarding organisation change");
                 date = DateTime.Now;
             }
 
@@ -81,7 +83,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Unable to retrieve results for getting all APAR details, message: [{ex.Message}]", ex);
+                _logger.LogError(ex, "Unable to retrieve results for getting all APAR details, message: [{Message}]", ex.Message);
                 throw;
             }
 
@@ -91,10 +93,9 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             {
                 using (var streamWriter = new StreamWriter(memoryStream))
                 {
-                    using (var csvWriter = new CsvWriter(streamWriter))
+                    using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.CurrentCulture))
                     {
-                        csvWriter.Configuration.Delimiter = ",";
-                        csvWriter.WriteRecords(aparCsv);
+                        await csvWriter.WriteRecordsAsync(aparCsv);
 
                         await streamWriter.FlushAsync();
                         memoryStream.Position = 0;

@@ -7,7 +7,7 @@ using SFA.DAS.DownloadService.Settings;
 
 namespace SFA.DAS.DownloadService.Api.Client
 {
-    public class TokenService : IRoatpTokenService
+    public class TokenService : ITokenService
     {
         private readonly IManagedIdentityApiAuthentication _apiAuthentication;
 

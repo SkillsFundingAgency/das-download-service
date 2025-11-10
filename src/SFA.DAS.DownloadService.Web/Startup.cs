@@ -4,11 +4,12 @@ using System.Globalization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
+using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.DownloadService.Api.Client.Clients;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Services.Interfaces;
@@ -20,17 +21,23 @@ namespace SFA.DAS.DownloadService.Web
 {
     public class Startup
     {
-        private const string ServiceName = "SFA.DAS.DownloadService";
-        private const string Version = "1.0";
+        private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly IConfiguration _configuration;
 
-        private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly IConfiguration Configuration;
-
-        private IWebConfiguration ApplicationConfiguration { get; set; }
-
-        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
-            Configuration = configuration;
+            var config = new ConfigurationBuilder()
+                .AddConfiguration(configuration);
+
+            config.AddAzureTableStorage(options =>
+            {
+                options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+                options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                options.EnvironmentName = configuration["EnvironmentName"];
+                options.PreFixConfigurationKeys = false;
+            });
+
+            _configuration = config.Build();
             _hostingEnvironment = hostingEnvironment;
         }
 
@@ -44,8 +51,6 @@ namespace SFA.DAS.DownloadService.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
-
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
@@ -53,15 +58,17 @@ namespace SFA.DAS.DownloadService.Web
                 options.RequestCultureProviders.Clear();
             });
 
+            var downloadServiceApiAuthentication = _configuration.GetSection("DownloadServiceApiAuthentication")
+                .Get<ManagedIdentityApiAuthentication>();
             services.AddHttpClient<IDownloadServiceApiClient, DownloadServiceApiClient>("DownloadServiceApiClient", config =>
             {
-                config.BaseAddress = new Uri(ApplicationConfiguration.DownloadServiceApiAuthentication.ApiBaseAddress);
+                config.BaseAddress = new Uri(downloadServiceApiAuthentication.ApiBaseAddress);
             });
 
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddHealthChecks();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddDataProtection(ApplicationConfiguration, _hostingEnvironment);
+            services.AddMvc(options => options.EnableEndpointRouting = false);
+            services.AddDataProtection(_configuration, _hostingEnvironment);
 
             services.AddLogging(builder =>
             {
@@ -74,15 +81,14 @@ namespace SFA.DAS.DownloadService.Web
             ConfigureDependencyInjection(services);
         }
 
-        private void ConfigureDependencyInjection(IServiceCollection services)
+        private static void ConfigureDependencyInjection(IServiceCollection services)
         {
             services.AddTransient<IAparMapper, AparMapper>();
-            services.AddTransient(x => ApplicationConfiguration);
         }
 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

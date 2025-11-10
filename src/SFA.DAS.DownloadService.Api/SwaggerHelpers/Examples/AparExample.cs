@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using SFA.DAS.DownloadService.Api.Types;
-using Swashbuckle.AspNetCore.Examples;
+using Swashbuckle.AspNetCore.Filters;
 
-namespace SFA.DAS.DownloadService.Api.SwaggerHelpers.Examples
+namespace SFA.DAS.DownloadService.Api.SwaggerHelpers.Examples;
+
+public class AparExample : IExamplesProvider<List<AparEntry>>
 {
-    public class AparExample : IExamplesProvider
+    public List<AparEntry> GetExamples()
     {
-        public object GetExamples()
-        {
-            var apar = new List<AparEntry>
+        var apar = new List<AparEntry>
             {
                 new AparEntry
                 {
@@ -31,7 +31,6 @@ namespace SFA.DAS.DownloadService.Api.SwaggerHelpers.Examples
                 }
             };
 
-            return apar;
-        }
+        return apar;
     }
 }

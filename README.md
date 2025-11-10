@@ -24,6 +24,48 @@
   - Data: {The contents of the local config json file}
 }
 
+- Create a file in the SFA.DAS.DownloadService.Api project called `appsettings.json` with the following content:
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Debug",
+      "System": "Information",
+      "Microsoft": "Information"
+    }
+  },
+  "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true;",
+  "ConfigNames": "SFA.DAS.DownloadService",
+  "ConnectionStrings": {
+    "Redis": ""
+  },
+  "EnvironmentName": "LOCAL"
+}
+```  
+
+- Create a file in the SFA.DAS.DownloadService.Web project called `appsettings.json` with the following content:
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Debug",
+      "System": "Information",
+      "Microsoft": "Information"
+    }
+  },
+  "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true;",
+  "ConfigNames": "SFA.DAS.DownloadService",
+  "ConnectionStrings": {
+    "Redis": ""
+  },
+  "cdn": {
+    "url": "https://das-at-frnt-end.azureedge.net"
+  },
+  "EnvironmentName": "LOCAL"
+}
+
+```  
+
 ##### Open the solution
 
 - Open Visual studio as an administrator

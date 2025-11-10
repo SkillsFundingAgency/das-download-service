@@ -10,7 +10,6 @@
         {
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .UseApplicationInsights()
                 .Build().Run();
         }
     }

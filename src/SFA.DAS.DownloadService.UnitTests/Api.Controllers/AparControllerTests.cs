@@ -94,7 +94,7 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
 
             var roatpResult = new RoatpResult
             {
-                Ukprn = 12345678.ToString(),
+                Ukprn = 12345678,
                 StartDate = _mockDateTimeProvider.Object.GetCurrentDateTime().AddMonths(-1),
                 EndDate = _mockDateTimeProvider.Object.GetCurrentDateTime().AddMonths(1)
             };
@@ -106,12 +106,12 @@ namespace SFA.DAS.DownloadService.UnitTests.Api.Controllers
             _mockMapper.Setup(x => x.Map(It.IsAny<RoatpResult>(), It.IsAny<Func<long, string>>()))
                 .Returns(new UkprnAparEntry 
                 {
-                    Ukprn = long.Parse(roatpResult.Ukprn),
+                    Ukprn = roatpResult.Ukprn,
                     StartDate = roatpResult.StartDate
                 });
 
             // Act
-            var result = await _controller.Get(int.Parse(roatpResult.Ukprn));
+            var result = await _controller.Get((int)roatpResult.Ukprn);
 
             // Assert
             Assert.IsInstanceOf<OkObjectResult>(result);

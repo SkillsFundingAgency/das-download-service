@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Api.Infrastructure;
+using SFA.DAS.DownloadService.Api.SwaggerHelpers.Examples;
 using SFA.DAS.DownloadService.Api.Types;
 using SFA.DAS.DownloadService.Api.Types.Roatp;
 using SFA.DAS.DownloadService.Services.Interfaces;
-using Swashbuckle.AspNetCore.Annotations;
-using Swashbuckle.AspNetCore.Examples;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace SFA.DAS.DownloadService.Api.Controllers
 {
@@ -38,11 +39,10 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         /// </summary>
         /// <param name="ukprn">The UKPRN to check for in the APAR</param>
         /// <returns></returns>
-        [SwaggerResponse((int)HttpStatusCode.NoContent)]
-        [SwaggerResponse((int)HttpStatusCode.NotFound)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Invalid UKPRN (should be 8 numbers)")]
-        [SwaggerOperation("GetOk", "Check a UKPRN exists in the APAR", Produces = new string[] { "application/json" })]
         [HttpHead("providers/{ukprn}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Head(int ukprn)
         {
             _logger.LogInformation("Fetching HEAD for UKPRN: {Ukprn}", ukprn);
@@ -53,10 +53,9 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         /// <summary>
         /// Check if you can get active APAR entries
         /// </summary>
-        [SwaggerOperation("GetAllOk")]
-        [SwaggerResponse((int)HttpStatusCode.NoContent)]
-        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpHead("providers")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Head()
         {
             var resultFromGet = await GetAll();
@@ -68,11 +67,10 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         /// </summary>
         /// <param name="ukprn">The UKPRN to get from the APAR</param>
         /// <returns></returns>
-        [SwaggerOperation("Get")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "OK", typeof(UkprnAparEntry))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound, "APAR entry not found or start date in future")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Invalid UKPRN (should be 8 numbers)")]
-        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.UkpnrAparExample))]
+        [ProducesResponseType(typeof(UkprnAparEntry), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(UkprnAparExample))]
         [HttpGet("providers/{ukprn}")]
         public async Task<IActionResult> Get(int ukprn)
         {
@@ -81,7 +79,6 @@ namespace SFA.DAS.DownloadService.Api.Controllers
             if (ukprn.ToString().Length != 8)
             {
                 var message = "Invalid UKPRN (should be 8 numbers): {ukprn}";
-                _logger.LogInformation(message, ukprn);
                 return BadRequest(message);
             }
 
@@ -93,22 +90,19 @@ namespace SFA.DAS.DownloadService.Api.Controllers
                 if (roatpResult == null)
                 {
                     var message = "APAR entry from RoATP for UKPRN: {ukprn} is not found or start date in future";
-                    _logger.LogInformation(message, ukprn);
                     return NotFound(message);
                 }
 
                 var ukprnApar = _mapper.Map(roatpResult, Resolve);
                 return Ok(ukprnApar);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 var message = $"Unable to fetch APAR entry from RoATP for UKPRN: {ukprn}";
-                _logger.LogError(ex, message);
                 return StatusCode(500, message);
             }
         }
 
-        [SwaggerOperation("GetLatestTime")]
         [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet("getLatestTime")]
         public async Task<IActionResult> GetLatestTime()
@@ -124,10 +118,9 @@ namespace SFA.DAS.DownloadService.Api.Controllers
                     latestChange = roatpResult;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 var message = "Unable to fetch latest APAR change date";
-                _logger.LogError(ex, message);
                 return StatusCode(500, message);
             }
 
@@ -138,10 +131,9 @@ namespace SFA.DAS.DownloadService.Api.Controllers
         /// Gets active APAR entries
         /// </summary>
         /// <returns></returns>
-        [SwaggerOperation("GetAll")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "OK", typeof(IEnumerable<AparEntry>))]
+        [ProducesResponseType(typeof(IEnumerable<AparEntry>), StatusCodes.Status200OK)]
+        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(AparExample))]
         [HttpGet("providers")]
-        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.AparExample))]
         public async Task<IActionResult> GetAll()
         {
             _logger.LogInformation("Fetching APAR entries for all UKPRN's");
@@ -157,10 +149,9 @@ namespace SFA.DAS.DownloadService.Api.Controllers
                 var apprenticeshipProviders = _mapper.Map(roatpResults, Resolve).Where(p => p != null);
                 return Ok(apprenticeshipProviders);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 var message = "Unable to fetch APAR entries from RoATP";
-                _logger.LogError(ex, message);
                 return StatusCode(500, message);
             }
         }
