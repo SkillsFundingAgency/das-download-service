@@ -15,7 +15,9 @@ public static class DataProtectionStartupExtensions
     public static IServiceCollection AddDataProtection(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
         if (environment.IsDevelopment() || configuration == null)
+        {
             return services;
+        }
 
         var redisConnectionString = configuration.GetSection("RedisConnectionString").Get<string>();
         var dataProtectionKeysDatabase = configuration.GetSection("DataProtectionKeysDatabase").Get<string>();

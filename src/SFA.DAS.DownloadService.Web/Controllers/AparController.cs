@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.DownloadService.Web.Controllers
 {
+    [Route("")]
     public class AparController : Controller
     {
         private readonly IDownloadServiceApiClient _downloadServiceApiClient;
