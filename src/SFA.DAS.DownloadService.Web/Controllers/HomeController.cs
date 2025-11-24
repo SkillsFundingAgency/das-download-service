@@ -1,8 +1,9 @@
-﻿using System.Text;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace SFA.DAS.DownloadService.Web.Controllers
 {
+    [Route("")]
     public class HomeController : Controller
     {
         public IActionResult Index()
@@ -56,9 +57,9 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         {
             var builder = new StringBuilder();
 
-            builder.AppendLine("User-agent: *");      
+            builder.AppendLine("User-agent: *");
             builder.AppendLine("Disallow: /");
- 
+
             return Content(builder.ToString(), "text/plain", Encoding.UTF8);
         }
     }

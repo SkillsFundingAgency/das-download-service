@@ -12,20 +12,17 @@ namespace SFA.DAS.DownloadService.Api.Infrastructure
     {
         public static IServiceCollection AddDataProtection(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
         {
-            if (!environment.IsDevelopment())
+            if (!environment.IsDevelopment() && configuration != null)
             {
-                if (configuration != null)
-                {
-                    var redisConnectionString = configuration.GetSection("RedisConnectionString").Get<string>();
-                    var dataProtectionKeysDatabase = configuration.GetSection("DataProtectionKeysDatabase").Get<string>();
+                var redisConnectionString = configuration.GetSection("RedisConnectionString").Get<string>();
+                var dataProtectionKeysDatabase = configuration.GetSection("DataProtectionKeysDatabase").Get<string>();
 
-                    var redis = ConnectionMultiplexer
-                        .Connect($"{redisConnectionString},{dataProtectionKeysDatabase}");
+                var redis = ConnectionMultiplexer
+                    .Connect($"{redisConnectionString},{dataProtectionKeysDatabase}");
 
-                    services.AddDataProtection()
-                        .SetApplicationName("das-download-service")
-                        .PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
-                }
+                services.AddDataProtection()
+                    .SetApplicationName("das-download-service")
+                    .PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
             }
             return services;
         }

@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using CsvHelper;
+﻿using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Api.Types;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Utility;
 using SFA.DAS.DownloadService.Web.Models;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.DownloadService.Web.Controllers
 {
@@ -57,7 +56,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         [ResponseCache(Duration = 600)]
         public async Task<IActionResult> DownloadCsv()
         {
-            var aparCsv = new List<CsvAparEntry>();
+            List<CsvAparEntry> aparCsv;
 
             try
             {
@@ -71,15 +70,11 @@ namespace SFA.DAS.DownloadService.Web.Controllers
                     return RedirectToAction("ServiceUnavailable");
                 }
 
-                _logger.LogInformation("{apar.Count()} results from GetAparSummary", apar.Count());
-
                 var aparFiltered = apar.Where(x => x.IsDateValid(DateTime.Now));
-
-                _logger.LogInformation("{aparFiltered.Count()} results filtered from GetAparSummary", aparFiltered.Count());
 
                 aparCsv = _mapper.MapCsv(aparFiltered.ToList());
 
-                _logger.LogInformation("{aparCsv.Count} apar entries mapped to CSV-ready state", aparCsv.Count);
+                _logger.LogInformation("{AparCsvCount} apar entries mapped to CSV-ready state", aparCsv.Count);
             }
             catch (Exception ex)
             {
