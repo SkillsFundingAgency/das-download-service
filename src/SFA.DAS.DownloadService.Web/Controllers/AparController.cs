@@ -31,6 +31,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
         [Route("apar", Name = RouteAparGetIndex)]
         [ResponseCache(Duration = 600)]
         public async Task<IActionResult> Index()
@@ -51,7 +52,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             return View(viewModel);
         }
 
-
+        [HttpGet]
         [Route("apar/downloadcsv", Name = RouteAparDownloadCsv)]
         [ResponseCache(Duration = 600)]
         public async Task<IActionResult> DownloadCsv()
@@ -100,6 +101,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             }
         }
 
+        [HttpGet]
         [Route("roatp")]
         public IActionResult IndexRoapt()
         {
@@ -107,6 +109,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             return RedirectToRoute(RouteAparGetIndex);
         }
 
+        [HttpGet]
         [Route("roatp/downloadcsv")]
         public IActionResult DownloadCsvRoatp()
         {
@@ -119,6 +122,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             return $"apar-{date.ToSeoFormat()}.csv";
         }
 
+        [HttpGet]
         [Route("/service-unavailable")]
         public IActionResult ServiceUnavailable()
         {
