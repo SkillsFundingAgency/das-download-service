@@ -3,7 +3,6 @@ using System.Text;
 
 namespace SFA.DAS.DownloadService.Web.Controllers
 {
-    [Route("")]
     public class HomeController : Controller
     {
         [HttpGet]
