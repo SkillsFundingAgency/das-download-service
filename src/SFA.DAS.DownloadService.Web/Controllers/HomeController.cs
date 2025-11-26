@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Text;
 
 namespace SFA.DAS.DownloadService.Web.Controllers
 {
+    [Route("")]
     public class HomeController : Controller
     {
         [HttpGet]
@@ -21,12 +21,6 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         [HttpGet]
         [Route("cookie-settings")]
         public IActionResult CookieSettings()
-        {
-            return View();
-        }
-
-        [HttpGet]
-        public ActionResult Api()
         {
             return View();
         }
@@ -57,18 +51,6 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         public IActionResult Accessibility()
         {
             return View();
-        }
-
-        [HttpGet]
-        [ResponseCache(Duration = 86400)]
-        public ContentResult RobotsText()
-        {
-            var builder = new StringBuilder();
-
-            builder.AppendLine("User-agent: *");
-            builder.AppendLine("Disallow: /");
-
-            return Content(builder.ToString(), "text/plain", Encoding.UTF8);
         }
     }
 }

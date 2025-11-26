@@ -50,7 +50,6 @@
   <ItemGroup>
     <Folder Include="Views\Apar\" />
     <Folder Include="Views\Shared\" />
-    <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>

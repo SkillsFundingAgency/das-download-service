@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.DownloadService.Web.Controllers
 {
+    [Route("")]
     public class AparController : Controller
     {
         private readonly IDownloadServiceApiClient _downloadServiceApiClient;
@@ -59,29 +60,21 @@ namespace SFA.DAS.DownloadService.Web.Controllers
         {
             List<CsvAparEntry> aparCsv;
 
-            try
+            _logger.LogInformation("Getting results from GetAparSummary");
+
+            var apar = await _downloadServiceApiClient.GetAparSummary();
+
+            if (!apar?.Any() ?? false)
             {
-                _logger.LogInformation("Getting results from GetAparSummary");
-
-                var apar = await _downloadServiceApiClient.GetAparSummary();
-
-                if (!apar?.Any() ?? false)
-                {
-                    _logger.LogError("No results from GetAparSummary");
-                    return RedirectToAction("ServiceUnavailable");
-                }
-
-                var aparFiltered = apar.Where(x => x.IsDateValid(DateTime.Now));
-
-                aparCsv = _mapper.MapCsv(aparFiltered.ToList());
-
-                _logger.LogInformation("{AparCsvCount} apar entries mapped to CSV-ready state", aparCsv.Count);
+                _logger.LogError("No results from GetAparSummary");
+                return RedirectToAction("ServiceUnavailable");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unable to retrieve results for getting all APAR details, message: [{Message}]", ex.Message);
-                throw;
-            }
+
+            var aparFiltered = apar.Where(x => x.IsDateValid(DateTime.Now));
+
+            aparCsv = _mapper.MapCsv(aparFiltered.ToList());
+
+            _logger.LogInformation("{AparCsvCount} apar entries mapped to CSV-ready state", aparCsv.Count);
 
             var date = await _downloadServiceApiClient.GetLatestNonOnboardingOrganisationChangeDate() ?? DateTime.Now;
 
