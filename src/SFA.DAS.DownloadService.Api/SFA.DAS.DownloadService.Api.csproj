@@ -26,7 +26,13 @@
 
   <!--Transitive Packages-->
   <ItemGroup>
-    <PackageReference Include="Azure.Identity" Version="1.16.0" />
+    <PackageReference Include="Azure.Identity" Version="1.17.1" />
+	  <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
+	  <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.1" />
+	  <PackageReference Include="Microsoft.IdentityModel.Protocols" Version="8.0.1" />
+	  <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.0.1" />
+	  <PackageReference Include="Microsoft.IdentityModel.Protocols.WsFederation" Version="8.0.1" />
+	  <PackageReference Include="System.IO.Pipelines" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>

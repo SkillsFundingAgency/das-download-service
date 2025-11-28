@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using CsvHelper;
+﻿using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.DownloadService.Api.Client.Interfaces;
 using SFA.DAS.DownloadService.Api.Types;
 using SFA.DAS.DownloadService.Services.Interfaces;
 using SFA.DAS.DownloadService.Services.Utility;
 using SFA.DAS.DownloadService.Web.Models;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.DownloadService.Web.Controllers
 {
+    [Route("")]
     public class AparController : Controller
     {
         private readonly IDownloadServiceApiClient _downloadServiceApiClient;
@@ -32,6 +32,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
         [Route("apar", Name = RouteAparGetIndex)]
         [ResponseCache(Duration = 600)]
         public async Task<IActionResult> Index()
@@ -52,40 +53,28 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             return View(viewModel);
         }
 
-
+        [HttpGet]
         [Route("apar/downloadcsv", Name = RouteAparDownloadCsv)]
         [ResponseCache(Duration = 600)]
         public async Task<IActionResult> DownloadCsv()
         {
-            var aparCsv = new List<CsvAparEntry>();
+            List<CsvAparEntry> aparCsv;
 
-            try
+            _logger.LogInformation("Getting results from GetAparSummary");
+
+            var apar = await _downloadServiceApiClient.GetAparSummary();
+
+            if (!apar?.Any() ?? false)
             {
-                _logger.LogInformation("Getting results from GetAparSummary");
-
-                var apar = await _downloadServiceApiClient.GetAparSummary();
-
-                if (!apar?.Any() ?? false)
-                {
-                    _logger.LogError("No results from GetAparSummary");
-                    return RedirectToAction("ServiceUnavailable");
-                }
-
-                _logger.LogInformation("{apar.Count()} results from GetAparSummary", apar.Count());
-
-                var aparFiltered = apar.Where(x => x.IsDateValid(DateTime.Now));
-
-                _logger.LogInformation("{aparFiltered.Count()} results filtered from GetAparSummary", aparFiltered.Count());
-
-                aparCsv = _mapper.MapCsv(aparFiltered.ToList());
-
-                _logger.LogInformation("{aparCsv.Count} apar entries mapped to CSV-ready state", aparCsv.Count);
+                _logger.LogError("No results from GetAparSummary");
+                return RedirectToAction("ServiceUnavailable");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unable to retrieve results for getting all APAR details, message: [{Message}]", ex.Message);
-                throw;
-            }
+
+            var aparFiltered = apar.Where(x => x.IsDateValid(DateTime.Now));
+
+            aparCsv = _mapper.MapCsv(aparFiltered.ToList());
+
+            _logger.LogInformation("{AparCsvCount} apar entries mapped to CSV-ready state", aparCsv.Count);
 
             var date = await _downloadServiceApiClient.GetLatestNonOnboardingOrganisationChangeDate() ?? DateTime.Now;
 
@@ -105,6 +94,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             }
         }
 
+        [HttpGet]
         [Route("roatp")]
         public IActionResult IndexRoapt()
         {
@@ -112,6 +102,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             return RedirectToRoute(RouteAparGetIndex);
         }
 
+        [HttpGet]
         [Route("roatp/downloadcsv")]
         public IActionResult DownloadCsvRoatp()
         {
@@ -124,6 +115,7 @@ namespace SFA.DAS.DownloadService.Web.Controllers
             return $"apar-{date.ToSeoFormat()}.csv";
         }
 
+        [HttpGet]
         [Route("/service-unavailable")]
         public IActionResult ServiceUnavailable()
         {
