@@ -1,41 +1,56 @@
-﻿using System.Text;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace SFA.DAS.DownloadService.Web.Controllers
 {
+    [Route("")]
     public class HomeController : Controller
     {
+        [HttpGet]
         public IActionResult Index()
         {
-            return RedirectToAction("Index", "Roatp");
+            return RedirectToAction("Index", "Apar");
         }
 
+        [HttpGet]
         [Route("cookie-details")]
         public IActionResult CookieDetails()
         {
             return View();
         }
 
+        [HttpGet]
         [Route("cookie-settings")]
         public IActionResult CookieSettings()
         {
             return View();
         }
 
-        public ActionResult Api()
+        [HttpGet]
+        [Route("terms")]
+        public IActionResult Terms()
         {
             return View();
         }
 
-        [ResponseCache(Duration = 86400)]
-        public ContentResult RobotsText()
+        [HttpGet]
+        [Route("privacy")]
+        public IActionResult Privacy()
         {
-            var builder = new StringBuilder();
+            return View();
+        }
 
-            builder.AppendLine("User-agent: *");      
-            builder.AppendLine("Disallow: /");
- 
-            return Content(builder.ToString(), "text/plain", Encoding.UTF8);
+        [HttpGet]
+        [Route("contact")]
+        public IActionResult Contact()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        [Route("accessibility-statement")]
+        public IActionResult Accessibility()
+        {
+            return View();
         }
     }
 }

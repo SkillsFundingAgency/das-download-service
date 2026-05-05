@@ -11,17 +11,19 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
+      "launchUrl": "api",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "SFA.DAS.DownloadService.Api": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
+      "launchUrl": "api",
+      "applicationUrl": "http://localhost:52818/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "http://localhost:52818/"
+      }
     }
   }
 }
