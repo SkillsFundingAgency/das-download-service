@@ -19,5 +19,9 @@ namespace SFA.DAS.DownloadService.Api.Types
 
         [JsonProperty("Application Determined Date")]
         public string ApplicationDeterminedDate { get; set; }
+
+        public bool CanDeliverApprenticeships { get; set; }
+
+        public bool CanDeliverApprenticeshipUnits { get; set; }
     }
 }

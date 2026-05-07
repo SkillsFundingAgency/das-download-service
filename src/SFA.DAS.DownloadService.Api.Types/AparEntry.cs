@@ -41,6 +41,10 @@ namespace SFA.DAS.DownloadService.Api.Types
         /// </summary>
         public bool? CurrentlyNotStartingNewApprentices { get; set; }
 
+        public bool CanDeliverApprenticeships { get; set; }
+
+        public bool CanDeliverApprenticeshipUnits { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
