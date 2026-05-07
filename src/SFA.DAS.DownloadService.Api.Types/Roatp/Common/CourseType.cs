@@ -1,6 +1,7 @@
 ﻿namespace SFA.DAS.DownloadService.Api.Types.Roatp.Common;
-public enum LearningType
+
+public enum CourseType
 {
-    Standard = 1,
+    Apprenticeship = 1,
     ShortCourse = 2
 }

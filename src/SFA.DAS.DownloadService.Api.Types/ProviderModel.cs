@@ -1,7 +1,8 @@
-﻿using SFA.DAS.DownloadService.Api.Types.Roatp.Common;
-using SFA.DAS.DownloadService.Api.Types.Roatp.Models;
-using System;
+﻿using System;
 using System.ComponentModel;
+using System.Linq;
+using SFA.DAS.DownloadService.Api.Types.Roatp.Common;
+using SFA.DAS.DownloadService.Api.Types.Roatp.Models;
 
 namespace SFA.DAS.DownloadService.Api.Types;
 
@@ -15,6 +16,8 @@ public class ProviderModel
     public DateTime? StartDate { get; set; }
     public DateTime? ApplicationDeterminedDate { get; set; }
     public bool? CurrentlyNotStartingNewApprentices { get; set; }
+    public bool CanDeliverApprenticeships { get; set; }
+    public bool CanDeliverApprenticeshipUnits { get; set; }
 
     public static implicit operator ProviderModel(OrganisationModel source) =>
         new()
@@ -24,6 +27,8 @@ public class ProviderModel
             ApplicationType = (ProviderType)(int)source.ProviderType,
             StartDate = source.StartDate,
             ApplicationDeterminedDate = source.ApplicationDeterminedDate,
-            CurrentlyNotStartingNewApprentices = source.Status == OrganisationStatus.ActiveNoStarts
+            CurrentlyNotStartingNewApprentices = source.Status == OrganisationStatus.ActiveNoStarts,
+            CanDeliverApprenticeships = source.AllowedCourseTypes.Any(c => c.CourseTypeId == (int)CourseType.Apprenticeship),
+            CanDeliverApprenticeshipUnits = source.AllowedCourseTypes.Any(c => c.CourseTypeId == (int)CourseType.ShortCourse)
         };
 }
