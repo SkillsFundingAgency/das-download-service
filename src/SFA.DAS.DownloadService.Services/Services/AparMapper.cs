@@ -1,9 +1,9 @@
-﻿using SFA.DAS.DownloadService.Api.Types;
-using SFA.DAS.DownloadService.Services.Interfaces;
-using SFA.DAS.DownloadService.Services.Utility;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SFA.DAS.DownloadService.Api.Types;
+using SFA.DAS.DownloadService.Services.Interfaces;
+using SFA.DAS.DownloadService.Services.Utility;
 
 namespace SFA.DAS.DownloadService.Services.Services
 {
@@ -21,7 +21,9 @@ namespace SFA.DAS.DownloadService.Services.Services
                 ApplicationType = Enumerations.GetEnumDescription(aparEntry.ApplicationType),
                 StartDate = FormatDate(aparEntry.StartDate),
                 Status = aparEntry.CurrentlyNotStartingNewApprentices.GetValueOrDefault(false) ? "Not Currently Starting New Apprentices" : string.Empty,
-                ApplicationDeterminedDate = FormatDate(aparEntry.ApplicationDeterminedDate)
+                ApplicationDeterminedDate = FormatDate(aparEntry.ApplicationDeterminedDate),
+                CanDeliverApprenticeships = aparEntry.CanDeliverApprenticeships,
+                CanDeliverApprenticeshipUnits = aparEntry.CanDeliverApprenticeshipUnits
             };
 
             return csvAparEntry;

@@ -1,10 +1,8 @@
-﻿using NUnit.Framework;
-using SFA.DAS.DownloadService.Api.Types;
-using SFA.DAS.DownloadService.Api.Types.Roatp;
-using SFA.DAS.DownloadService.Services.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using NUnit.Framework;
+using SFA.DAS.DownloadService.Api.Types;
+using SFA.DAS.DownloadService.Services.Services;
 
 namespace SFA.DAS.DownloadService.UnitTests.Mappers
 {
@@ -30,7 +28,9 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
                 ApplicationType = ProviderType.MainProvider,
                 StartDate = DateTime.Now,
                 CurrentlyNotStartingNewApprentices = true,
-                ApplicationDeterminedDate = DateTime.Now
+                ApplicationDeterminedDate = DateTime.Now,
+                CanDeliverApprenticeships = true,
+                CanDeliverApprenticeshipUnits = true
             };
 
             // Act
@@ -44,6 +44,8 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
                 Assert.AreEqual("TestName", result.Name);
                 Assert.AreEqual("Main provider", result.ApplicationType); //Assuming GetEnumDescription returns string representation of the enum value
                 Assert.AreEqual("Not Currently Starting New Apprentices", result.Status);
+                Assert.That(result.CanDeliverApprenticeships, Is.True);
+                Assert.That(result.CanDeliverApprenticeshipUnits, Is.True);
             });
         }
 
@@ -60,7 +62,9 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
                     ApplicationType = ProviderType.MainProvider,
                     StartDate = DateTime.Now,
                     CurrentlyNotStartingNewApprentices = true,
-                    ApplicationDeterminedDate = DateTime.Now
+                    ApplicationDeterminedDate = DateTime.Now,
+                    CanDeliverApprenticeships = true,
+                    CanDeliverApprenticeshipUnits = true
                 },
                 new AparEntry
                 {
@@ -69,7 +73,9 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
                     ApplicationType = ProviderType.SupportingProvider,
                     StartDate = DateTime.Now,
                     CurrentlyNotStartingNewApprentices = false,
-                    ApplicationDeterminedDate = DateTime.Now
+                    ApplicationDeterminedDate = DateTime.Now,
+                    CanDeliverApprenticeships = false,
+                    CanDeliverApprenticeshipUnits = false
                 }
             };
 
@@ -86,11 +92,15 @@ namespace SFA.DAS.DownloadService.UnitTests.Mappers
                 Assert.AreEqual("TestName1", results[0].Name);
                 Assert.AreEqual("Main provider", results[0].ApplicationType);
                 Assert.AreEqual("Not Currently Starting New Apprentices", results[0].Status);
+                Assert.That(results[0].CanDeliverApprenticeships, Is.True);
+                Assert.That(results[0].CanDeliverApprenticeshipUnits, Is.True);
 
                 Assert.AreEqual(87654321, results[1].Ukprn);
                 Assert.AreEqual("TestName2", results[1].Name);
                 Assert.AreEqual("Supporting provider", results[1].ApplicationType);
                 Assert.AreEqual(string.Empty, results[1].Status);
+                Assert.That(results[1].CanDeliverApprenticeships, Is.False);
+                Assert.That(results[1].CanDeliverApprenticeshipUnits, Is.False);
             });
         }
     }
