@@ -11,6 +11,12 @@
     <PackageReference Include="Refit.HttpClientFactory" Version="10.1.6" />
   </ItemGroup>
 
+  <!--Transitive Packages-->
+  <ItemGroup>
+	<PackageReference Include="NuGet.Packaging" Version="7.6.0" />
+	<PackageReference Include="NuGet.Protocol" Version="7.6.0" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.DownloadService.Api.Types\SFA.DAS.DownloadService.Api.Types.csproj" />
     <ProjectReference Include="..\SFA.DAS.DownloadService.Services\SFA.DAS.DownloadService.Services.csproj" />
