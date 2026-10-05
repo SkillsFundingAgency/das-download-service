@@ -139,6 +139,10 @@
       "metadata": {
         "description": "Location used when creating the service resource group."
       }
+    },
+    "vnetRouteAllEnabled": {
+        "type": "bool",
+        "defaultValue": false
     }
   },
   "variables": {
@@ -383,6 +387,9 @@
           },
           "ipSecurityRestrictions": {
             "value": "[parameters('backEndAccessRestrictions')]"
+          },
+          "vnetRouteAllEnabled": {
+            "value": "[parameters('vnetRouteAllEnabled')]"
           }
         }
       },
@@ -476,6 +483,9 @@
           },
           "ipSecurityRestrictions": {
             "value": "[parameters('frontEndAccessRestrictions')]"
+          },
+          "vnetRouteAllEnabled": {
+            "value": "[parameters('vnetRouteAllEnabled')]"
           }
         }
       },
