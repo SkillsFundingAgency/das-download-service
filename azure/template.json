@@ -140,6 +140,16 @@
         "description": "Location used when creating the service resource group."
       }
     },
+    "sharedManagementResourceGroup": {
+      "type": "string"
+    },
+    "logAnalyticsSubscriptionId": {
+      "type": "string",
+      "defaultValue": "[subscription().subscriptionId]"
+    },
+    "logAnalyticsWorkspaceName": {
+      "type": "string"
+    },
     "vnetRouteAllEnabled": {
         "type": "bool",
         "defaultValue": false
@@ -233,6 +243,9 @@
           },
           "attachedService": {
             "value": "[variables('apiAppServiceName')]"
+          },
+          "logAnalyticsWorkspaceId": {
+            "value": "[resourceId(parameters('logAnalyticsSubscriptionId'),parameters('sharedManagementResourceGroup'),'Microsoft.OperationalInsights/workspaces',parameters('logAnalyticsWorkspaceName'))]"
           }
         }
       },
@@ -282,6 +295,9 @@
           },
           "attachedService": {
             "value": "[variables('uiAppServiceName')]"
+          },
+          "logAnalyticsWorkspaceId": {
+            "value": "[resourceId(parameters('logAnalyticsSubscriptionId'),parameters('sharedManagementResourceGroup'),'Microsoft.OperationalInsights/workspaces',parameters('logAnalyticsWorkspaceName'))]"
           }
         }
       },
@@ -350,8 +366,8 @@
                   "value": "[parameters('configurationStorageConnectionString')]"
                 },
                 {
-                  "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference(concat('api-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                  "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                  "value": "[reference(concat('api-application-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
                 },
                 {
                   "name": "ASPNETCORE_ENVIRONMENT",
@@ -434,8 +450,8 @@
                   "value": "[parameters('configurationStorageConnectionString')]"
                 },
                 {
-                  "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference(concat('ui-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                  "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                  "value": "[reference(concat('ui-application-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
                 },
                 {
                   "name": "ASPNETCORE_ENVIRONMENT",
